@@ -1,4 +1,4 @@
-import shutil
+from shutil import get_terminal_size
 from textwrap import TextWrapper
 
 LOGO = '''
@@ -33,7 +33,7 @@ LOGO = '''
 def print_header(width=None):
     # Fill width of screen
     if not width:
-        width = shutil.get_terminal_size(fallback=(100, 24))[0]
+        width = get_terminal_size(fallback=(100, 24))[0]
 
     logo = LOGO.replace('\n', '\n' + ' ' * int((width - 50) / 2))
     print(logo)
@@ -54,6 +54,7 @@ def print_header(width=None):
                   'corner of the app.') + '\n' +
           tw.fill('When connected, you should receive a popup in the app informing you that a connection was ' +
                   'made, as well as output from this server with the MAC of the device.') + '\n' +
-          tw.fill('To quit the server, press Ctrl-C, confirm that you want to quit, wait for the server to close, ' +
-                  'and press Ctrl-C again.'))
+          tw.fill('To retrieve data for strategy, type "s" and hit enter, then enter the team numbers.') + '\n' +
+          tw.fill('To quit the server, type "q" or "quit" and press enter, or press Ctrl-C, confirm that you want to ' +
+                  'quit, and wait for the server to close.'))
     print('_' * width + '\n\n')

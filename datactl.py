@@ -1,10 +1,8 @@
 from queue import Queue
-from os import listdir
-from subprocess import run
 
-import dataconstants
-from ouralliance import OurAlliance
+from dataconstants import HEADERS, DATA_FILE, TEAM
 from otheralliance import OtherAlliance
+from ouralliance import OurAlliance
 
 to_add = Queue()
 
@@ -12,14 +10,14 @@ to_add = Queue()
 def makefile():
     # Check if there is already a data file, if not, make one
     try:
-        f = open(dataconstants.DATA_FILE)
+        f = open(DATA_FILE)
         d = f.read()
         f.close()
         if not d:
             raise FileNotFoundError
     except FileNotFoundError:
-        f = open(dataconstants.DATA_FILE, 'w')
-        f.write(dataconstants.HEADERS + '\n')
+        f = open(DATA_FILE, 'w')
+        f.write(HEADERS + '\n')
         f.close()
 
 
@@ -29,10 +27,10 @@ def addtoqueue(match):
 
 # Adds a match to the data file
 def addtodatafile(match):
-    f = open(dataconstants.DATA_FILE)
+    f = open(DATA_FILE)
     s = f.read()
     f.close()
-    f = open(dataconstants.DATA_FILE, 'w')
+    f = open(DATA_FILE, 'w')
     s += match[1] + '\n'
     f.write(s)
     f.close()
@@ -48,12 +46,12 @@ def update():
 
 # Get the data string to return from the list of teams
 def getdata(team_numbers):
-    f = open(dataconstants.DATA_FILE)
+    f = open(DATA_FILE)
     # noinspection PyTypeChecker
     teams = [OurAlliance(t) for t in team_numbers[:3]] + [OtherAlliance(t) for t in team_numbers[3:]]
     for line in f:
         splitline = line.split(',')
-        t = splitline[dataconstants.TEAM]
+        t = splitline[TEAM]
         if t in team_numbers:
             teams[team_numbers.index(t)].addline(splitline)
     return '\n'.join(map(lambda x: x.tostring(), teams))
