@@ -14,14 +14,19 @@ def main():
 
     Thread(target=socketctl.connect).start()
 
-    while True:
+    running = True
+    while running:
         try:
             datactl.update()
         except KeyboardInterrupt:
-            q = input('Are you sure you want to quit? (y/n) ')
-            if q == 'y':
+            q = input('Would you like to access strategy data (s), quit (q), or cancel (c)? ')
+            if q == 's':
+                # noinspection PyUnusedLocal
+                teams = [input("Our alliance: ") for i in range(3)] + [input("Other alliance: ") for i in range(3)]
+                print(datactl.getdata(teams))
+            elif q == 'q' or q == 'quit':
                 socketctl.close()
-                break
+                running = False
 
 
 if __name__ == '__main__':

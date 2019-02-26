@@ -42,8 +42,8 @@ def update():
     # While there is data to add, add it to the file
     while not to_add.empty():
         addtodatafile(to_add.get())
-    if listdir(dataconstants.MEDIA_DIR):
-        updatedrive()
+    # if listdir(dataconstants.MEDIA_DIR):
+    #     updatedrive()
 
 
 # Get the data string to return from the list of teams
