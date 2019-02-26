@@ -1,5 +1,5 @@
 import dataconstants
-# from getdata import percent
+from alliance import Alliance
 
 
 # Helper function to convert floats to percents and round
@@ -8,14 +8,11 @@ def percent(n):
 
 
 # Calculates data we want for teams on the other alliance
-class OtherAlliance:
-    total, lowh, lowc, highc, highh = [0] * 5
+class OtherAlliance(Alliance):
+    total, lowh, lowc, highc, highh = 0, 0, 0, 0, 0
     habsuccess = [0, 0, 0, 0]
 
-    def __init__(self, team):
-        self.team = team
-
-    def add_line(self, line):
+    def addline(self, line):
         self.total += 1
 
         self.lowc += int(line[dataconstants.CSC]) + int(line[dataconstants.L1RC])

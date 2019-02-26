@@ -4,7 +4,7 @@ from otheralliance import OtherAlliance
 
 
 # Get the data string to return from the list of teams
-def get_data(team_numbers):
+def getdata(team_numbers):
     f = open(DATA_FILE, 'r')
     # noinspection PyTypeChecker
     teams = [OurAlliance(t) for t in team_numbers[:3]] + [OtherAlliance(t) for t in team_numbers[3:]]
@@ -12,13 +12,8 @@ def get_data(team_numbers):
         splitline = line.split(',')
         t = splitline[TEAM]
         if t in team_numbers:
-            teams[team_numbers.index(t)].add_line(splitline)
+            teams[team_numbers.index(t)].addline(splitline)
     return '\n'.join(map(lambda x: x.tostring(), teams))
-
-
-# Helper function to convert floats to percents and round
-# def percent(n):
-#     return str(int(n * 100))
 
 
 # Regenerates headers string

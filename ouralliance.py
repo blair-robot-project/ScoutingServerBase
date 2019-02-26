@@ -1,21 +1,13 @@
 import dataconstants
-# from getdata import percent
-
-
-# Helper function to convert floats to percents and round
-def percent(n):
-    return str(int(n * 100))
+from alliance import Alliance
 
 
 # Calculates data we want for teams on our alliance
-class OurAlliance:
-    total, autocross, start1, prec, preh, autoc, autoh, lowh, lowc, highc, highh = [0] * 11
-    habattempt, habsuccess = [0] * 4, [0] * 4
+class OurAlliance(Alliance):
+    total, autocross, start1, prec, preh, autoc, autoh, lowh, lowc, highc, highh = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    habattempt, habsuccess = [0, 0, 0, 0], [0, 0, 0, 0]
 
-    def __init__(self, team):
-        self.team = team
-
-    def add_line(self, line):
+    def addline(self, line):
         self.total += 1
 
         self.autocross += int(line[dataconstants.MOVED_FORWARD])
@@ -37,11 +29,11 @@ class OurAlliance:
 
     def tostring(self):
         if self.total:
-            autocross = percent(self.autocross / self.total)
+            autocross = self.percent(self.autocross / self.total)
             start = self.start1 / self.total
-            start_str = percent(start) + ':' + percent(1 - start)
-            preload = percent(self.prec / self.total) + ':' + percent(self.preh / self.total)
-            accuracy = percent(0 if not self.prec else self.autoc / self.prec) + ':' + percent(
+            start_str = self.percent(start) + ':' + self.percent(1 - start)
+            preload = self.percent(self.prec / self.total) + ':' + self.percent(self.preh / self.total)
+            accuracy = self.percent(0 if not self.prec else self.autoc / self.prec) + ':' + self.percent(
                 0 if not self.preh else self.autoh / self.preh)
 
             lowc = str(self.lowc / self.total)
@@ -49,10 +41,10 @@ class OurAlliance:
             highc = str(self.highc / self.total)
             highh = str(self.highh / self.total)
 
-            attempt = percent(self.habattempt[1] / self.total) + ':' + percent(
-                self.habattempt[2] / self.total) + ':' + percent(self.habattempt[3] / self.total)
-            success = percent(
-                0 if not self.habattempt[2] else self.habsuccess[2] / self.habattempt[2]) + ':' + percent(
+            attempt = self.percent(self.habattempt[1] / self.total) + ':' + self.percent(
+                self.habattempt[2] / self.total) + ':' + self.percent(self.habattempt[3] / self.total)
+            success = self.percent(
+                0 if not self.habattempt[2] else self.habsuccess[2] / self.habattempt[2]) + ':' + self.percent(
                 0 if not self.habattempt[3] else self.habsuccess[3] / self.habattempt[3])
 
             order = [self.team, '', autocross, start_str, accuracy, preload, '#', lowh, lowc,

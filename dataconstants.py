@@ -37,3 +37,18 @@ COMMENTS = ind['comments']
 PLACE_HOLDER = 'qual'
 SEP = ' | '
 NO_DATA = 'No data has been collected for this team'
+
+
+# Regenerates headers string
+# Copy the google doc here
+# (https://docs.google.com/document/d/1o1PA9TC6kWBYI-BygvdmtlZ6l5LsLmh46P6CQnqiw8U/edit?usp=sharing)
+# Alternatively, copy the return statement of the toString of Match and it will generate it off of the comments
+def recalc_headers(code, docs=True):
+    global HEADERS
+    c = code.split('\n')
+    if docs:
+        q = list(map(lambda x: x.split('\t')[0].strip(), c))
+    else:
+        q = list(map(lambda x: x.split('//')[1].strip(), c))
+    HEADERS = ','.join(q)
+    return HEADERS

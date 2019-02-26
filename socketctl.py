@@ -1,9 +1,9 @@
 import socket
 from threading import Thread
-from queue import Queue
 
-from dataconstants import GETDATA_TRIGGER
-from getdata import get_data
+import dataconstants
+import getdata
+import datactl
 
 # This should be the MAC address of your Bluetooth adapter
 # Carter's desktop (essuomelpmap)
@@ -35,14 +35,14 @@ def read(sock, info):
         # Receive data
         data = sock.recv(SIZE)
         str_data = data.decode()
-        if str_data[:len(GETDATA_TRIGGER)] == GETDATA_TRIGGER:
+        if str_data[:len(dataconstants.GETDATA_TRIGGER)] == dataconstants.GETDATA_TRIGGER:
             # If it is a strategy request, return the data
-            print('Data request ' + str_data[len(GETDATA_TRIGGER)+1:])
+            print('Data request ' + str_data[len(dataconstants.GETDATA_TRIGGER) + 1:])
             # sock.send(bytes(get_data(data.split(':')[1]), 'UTF-8'))
-            print(get_data(str_data.split()[1:]))
+            print(getdata.getdata(str_data.split()[1:]))
         else:
             # Add it to the data file
-            to_add.put((info, str_data))
+            datactl.addtoqueue((info, str_data))
             # Print summary to server
             match = str_data[1].split(',')
             print('Data from ' + match[0] + ' on ' + MAC_DICT.get(match[0], match[0]) + ' for team ' +

@@ -1,3 +1,4 @@
+import shutil
 from textwrap import TextWrapper
 
 LOGO = '''
@@ -29,7 +30,11 @@ LOGO = '''
 '''
 
 
-def print_header(width):
+def print_header(width=None):
+    # Fill width of screen
+    if not width:
+        width = shutil.get_terminal_size(fallback=(100, 24))[0]
+
     logo = LOGO.replace('\n', '\n' + ' ' * int((width - 50) / 2))
     print(logo)
 
