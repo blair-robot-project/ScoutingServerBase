@@ -5,6 +5,9 @@ Sever for scouting app for the FIRST Robotics Competition.
 
 Developed by FRC Team 449: The Blair Robot Project.
 
+To run this server, run server.py with Python3 on a Linux computer with Bluetooth enabled, and follow the printed instructions.
+Make sure to change the MAC address in socketctl to be the MAC address of your Bluetooth adapter.
+
 Scouting App: https://github.com/carter-wilson/DeepSpaceScoutingApp
 
 Strategy app to retrieve data from bluetooth server: https://github.com/carter-wilson/StrategyApp
