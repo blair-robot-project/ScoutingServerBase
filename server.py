@@ -3,6 +3,7 @@ from _thread import interrupt_main
 from os import _exit as osexit
 from threading import Thread
 
+import printing
 import datactl
 import socketctl
 from header import print_header
@@ -13,7 +14,7 @@ def main():
 
     datactl.makefile()
 
-    print('Waiting for connections')
+    printing.printf('Waiting for connections', style=printing.STATUS)
 
     Thread(target=handleinput).start()
 
@@ -31,14 +32,15 @@ def main():
 def handleinput():
     i = input()
     if i == 'q' or i == 'quit':
-        q = input('Are you sure you want to quit? (y/n) ')
+        printing.printf('Are you sure you want to quit? (y/n)', style=printing.QUIT, end=' ')
+        q = input()
         if q == 'y':
             interrupt_main()
     else:
         if i == 's':
             # noinspection PyUnusedLocal
             teams = [input("Our alliance: ") for i in range(3)] + [input("Other alliance: ") for i in range(3)]
-            print(datactl.getdata(teams))
+            printing.printf(datactl.getdata(teams), style=printing.DATA_OUTPUT)
     Thread(target=handleinput).start()
 
 

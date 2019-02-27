@@ -1,5 +1,6 @@
 import subprocess as sub
 
+import printing
 from dataconstants import MEDIA_DIR
 
 DRIVE_DEV_LOCS = ['/dev/sdb', '/dev/sda', '/dev/sdc']
@@ -22,32 +23,37 @@ def mount():
     if not devs:
         return False
     dev = devs[0]
-    print('Found drive at ' + dev + ', attempting to mount to ' + MEDIA_DIR + ' ...', end=' ')
+    printing.printf('Found drive at ' + dev + ', attempting to mount to ' + MEDIA_DIR + ' ...', end=' ', style=printing.FLASH_DRIVE)
     p = _run('sudo mount ' + dev + ' ' + MEDIA_DIR)
     if p[1]:
-        print('Error mounting: ' + p[1].decode('utf-8'))
+        printing.printf('Error mounting: ' + p[1].decode('utf-8'), style=printing.ERROR)
         return False
     else:
-        print('Mounting successful' + stdoutmessage(p[0]))
+        printing.printf('Mounting successful' + stdoutmessage(p[0]), style=printing.FLASH_DRIVE)
         return True
 
 
 def copy(fin, fout):
-    print('Copying ' + fin + ' to ' + fout + ' ...', end=' ')
+    printing.printf('Copying ' + fin + ' to ' + fout + ' ...', end=' ', style=printing.FLASH_DRIVE)
     p = _run('sudo cp ' + fin + ' ' + fout)
     if p[1]:
-        print('Error copying: ' + p[1].decode('utf-8'))
+        printing.printf('Error copying: ' + p[1].decode('utf-8'), style=printing.ERROR)
     else:
-        print('Copying successful' + stdoutmessage(p[0]))
+        printing.printf('Copying successful' + stdoutmessage(p[0]), style=printing.FLASH_DRIVE)
 
 
 def unmount():
-    print('Unmounting drive from ' + MEDIA_DIR + ' ...', end=' ')
+    printing.printf('Unmounting drive from ' + MEDIA_DIR + ' ...', end=' ', style=printing.FLASH_DRIVE)
     p = _run('sudo umount ' + MEDIA_DIR)
     if p[1]:
-        print('Error unmounting: ' + p[1].decode('utf-8'))
+        printing.printf('Error unmounting: ' + p[1].decode('utf-8'), style=printing.ERROR)
     else:
-        print('Unmounting successful' + stdoutmessage(p[0]))
+        printing.printf('Unmounting successful' + stdoutmessage(p[0]), style=printing.FLASH_DRIVE)
+
+
+# noinspection PyPep8Naming
+def gethostMAC():
+    return _run('bluetoothctl list')[0].decode('utf8').split()[1]
 
 
 def stdoutmessage(s):

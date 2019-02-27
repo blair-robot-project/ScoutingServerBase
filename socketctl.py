@@ -1,19 +1,21 @@
 import socket
 from threading import Thread
 
+import printing
 from dataconstants import GETDATA_TRIGGER, NAME, TEAM, MATCH
 from datactl import addtoqueue
 from getdata import getdata
+from system import gethostMAC
 
 # This should be the MAC address of your Bluetooth adapter
 # Carter's desktop (essuomelpmap)
-HOST_MAC = '00:1A:7D:DA:71:13'
-
+# HOST_MAC = '00:1A:7D:DA:71:13'
 # Nate's laptop (DESKTOP-9HL0MM7)
 # HOST_MAC = 'E4:F8:9C:BC:93:0E'
-
 # Carter's laptop (gallium)
 # HOST_MAC = 'A4:C4:94:4F:6F:63'
+
+HOST_MAC = gethostMAC()
 
 PORT = 1
 BACKLOG = 1
@@ -39,20 +41,20 @@ def read(sock, info):
         str_data = data.decode()
         if str_data[:len(GETDATA_TRIGGER)] == GETDATA_TRIGGER:
             # If it is a strategy request, return the data
-            print('Data request ' + str_data[len(GETDATA_TRIGGER) + 1:])
+            printing.printf('Data request ' + str_data[len(GETDATA_TRIGGER) + 1:], style=printing.NEW_DATA)
             # sock.send(bytes(getdata(data.split(':')[1]), 'UTF-8'))
-            print(getdata(str_data.split()[1:]))
+            printing.printf(getdata(str_data.split()[1:]), style=printing.DATA_OUTPUT)
         else:
             # Add it to the data file
             addtoqueue((info, str_data))
-            # Print summary to server
+            # printing.printf summary to server
             match = str_data.split(',')
-            print('Data from ' + match[NAME] + ' on ' + MAC_DICT.get(info, info) + ' for team ' +
-                  match[TEAM] + ' in match ' + match[MATCH])
+            printing.printf('Data from ' + match[NAME] + ' on ' + MAC_DICT.get(info, info) + ' for team ' +
+                  match[TEAM] + ' in match ' + match[MATCH], style=printing.NEW_DATA)
         # Wait for the next match
         read(sock, info)
     except ConnectionResetError:
-        print('Disconnected from', MAC_DICT.get(info, info))
+        printing.printf('Disconnected from', MAC_DICT.get(info, info), style=printing.DISCONNECTED)
         sock.close()
         clients.remove((sock, info))
 
@@ -62,7 +64,7 @@ def connect():
     # Wait for connection
     client_sock, client_info = server_sock.accept()
     # Connect to device
-    print('Accepted connection from', MAC_DICT.get(client_info[0], client_info[0]))
+    printing.printf('Accepted connection from', MAC_DICT.get(client_info[0], client_info[0]), style=printing.CONNECTED)
     clients.append((client_sock, client_info[0]))
 
     # Start reading it
@@ -76,7 +78,7 @@ def connect():
 def close():
     for sock in clients:
         sock[0].close()
-        print('Closed connection with', sock[1])
+        printing.printf('Closed connection with', sock[1], style=printing.STATUS)
     clients.clear()
     server_sock.close()
-    print('Closed server')
+    printing.printf('Closed server', style=printing.STATUS)
