@@ -1,7 +1,7 @@
 import socket
 from threading import Thread
 
-from dataconstants import GETDATA_TRIGGER
+from dataconstants import GETDATA_TRIGGER, NAME, TEAM, MATCH
 from datactl import addtoqueue
 from getdata import getdata
 
@@ -13,7 +13,7 @@ HOST_MAC = '00:1A:7D:DA:71:13'
 # HOST_MAC = 'E4:F8:9C:BC:93:0E'
 
 # Carter's laptop (gallium)
-#HOST_MAC = 'A4:C4:94:4F:6F:63'
+# HOST_MAC = 'A4:C4:94:4F:6F:63'
 
 PORT = 1
 BACKLOG = 1
@@ -47,8 +47,8 @@ def read(sock, info):
             addtoqueue((info, str_data))
             # Print summary to server
             match = str_data.split(',')
-            print('Data from ' + match[0] + ' on ' + MAC_DICT.get(match[0], match[0]) + ' for team ' +
-                  match[2] + ' in match ' + match[1])
+            print('Data from ' + match[NAME] + ' on ' + MAC_DICT.get(info, info) + ' for team ' +
+                  match[TEAM] + ' in match ' + match[MATCH])
         # Wait for the next match
         read(sock, info)
     except ConnectionResetError:
@@ -72,6 +72,7 @@ def connect():
     connect()
 
 
+# Closes all connections and the server
 def close():
     for sock in clients:
         sock[0].close()

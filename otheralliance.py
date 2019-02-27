@@ -2,11 +2,6 @@ import dataconstants
 from alliance import Alliance
 
 
-# Helper function to convert floats to percents and round
-def percent(n):
-    return str(int(n * 100))
-
-
 # Calculates data we want for teams on the other alliance
 class OtherAlliance(Alliance):
     total, lowh, lowc, highc, highh = 0, 0, 0, 0, 0
@@ -29,8 +24,8 @@ class OtherAlliance(Alliance):
             highc = str(self.highc / self.total)
             highh = str(self.highh / self.total)
 
-            success = percent(self.habsuccess[2] / self.total) + ':' + \
-                      percent(self.habsuccess[3] / self.total)
+            success = self.percent(self.habsuccess[2] / self.total) + ':' + \
+                      self.percent(self.habsuccess[3] / self.total)
 
             order = [self.team, '', lowh, lowc, highc, highh, dataconstants.PLACE_HOLDER, success,
                      dataconstants.PLACE_HOLDER]

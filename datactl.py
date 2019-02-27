@@ -1,22 +1,24 @@
 from queue import Queue
 
-from dataconstants import HEADERS, DATA_FILE, TEAM
+import system
+from dataconstants import HEADERS, DATA_FILE, ABS_DATA_DIR, TEAM, MEDIA_DIR
 from otheralliance import OtherAlliance
 from ouralliance import OurAlliance
 
 to_add = Queue()
+datachange = False
 
 
 def makefile():
     # Check if there is already a data file, if not, make one
     try:
-        f = open(DATA_FILE)
+        f = open(ABS_DATA_DIR)
         d = f.read()
         f.close()
         if not d:
             raise FileNotFoundError
     except FileNotFoundError:
-        f = open(DATA_FILE, 'w')
+        f = open(ABS_DATA_DIR, 'w')
         f.write(HEADERS + '\n')
         f.close()
 
@@ -27,10 +29,12 @@ def addtoqueue(match):
 
 # Adds a match to the data file
 def addtodatafile(match):
-    f = open(DATA_FILE)
+    global datachange
+    datachange = True
+    f = open(ABS_DATA_DIR)
     s = f.read()
     f.close()
-    f = open(DATA_FILE, 'w')
+    f = open(ABS_DATA_DIR, 'w')
     s += match[1] + '\n'
     f.write(s)
     f.close()
@@ -40,13 +44,13 @@ def update():
     # While there is data to add, add it to the file
     while not to_add.empty():
         addtodatafile(to_add.get())
-    # if listdir(dataconstants.MEDIA_DIR):
-    #     updatedrive()
+    if datachange and system.checkdev():
+        updatedrive()
 
 
 # Get the data string to return from the list of teams
 def getdata(team_numbers):
-    f = open(DATA_FILE)
+    f = open(ABS_DATA_DIR)
     # noinspection PyTypeChecker
     teams = [OurAlliance(t) for t in team_numbers[:3]] + [OtherAlliance(t) for t in team_numbers[3:]]
     for line in f:
@@ -59,13 +63,8 @@ def getdata(team_numbers):
 
 # Writes data to a removable device
 def updatedrive():
-    ...
-
-# 	ls = listdir(MEDIA_DIR)
-# 	if ls:
-# 		dataf = open(DATA_FILE)
-# 		data = dataf.read()
-# 		dataf.close()
-# 		usb = open(MEDIA_DIR+'/'+ls[0]+'/'+DATA_FILE,'w')
-# 		usb.write(data)
-# 		usb.close()
+    global datachange
+    if system.mount():
+        system.copy(ABS_DATA_DIR, MEDIA_DIR + DATA_FILE)
+        datachange = False
+        system.unmount()

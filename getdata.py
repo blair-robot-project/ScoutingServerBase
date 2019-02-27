@@ -5,7 +5,7 @@ from ouralliance import OurAlliance
 
 # Get the data string to return from the list of teams
 def getdata(team_numbers):
-    f = open(DATA_FILE, 'r')
+    f = open(DATA_FILE)
     # noinspection PyTypeChecker
     teams = [OurAlliance(t) for t in team_numbers[:3]] + [OtherAlliance(t) for t in team_numbers[3:]]
     for line in f:

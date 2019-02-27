@@ -38,7 +38,7 @@ def print_header(width=None):
     logo = LOGO.replace('\n', '\n' + ' ' * int((width - 50) / 2))
     print(logo)
 
-    print(('{:^' + str(width) + '}').format('FRC Team 449, The Blair Robot Project'))
+    print(('{:^' + str(width) + '}').format('FRC Team 449: The Blair Robot Project'))
     print(('{:^' + str(width) + '}').format('Bluetooth Scouting Server'))
     print('-' * width)
     print(('{:^' + str(width) + '}').format('Runs with Python3 on Linux'))
@@ -55,6 +55,6 @@ def print_header(width=None):
           tw.fill('When connected, you should receive a popup in the app informing you that a connection was ' +
                   'made, as well as output from this server with the MAC of the device.') + '\n' +
           tw.fill('To retrieve data for strategy, type "s" and hit enter, then enter the team numbers.') + '\n' +
-          tw.fill('To quit the server, type "q" or "quit" and press enter, or press Ctrl-C, confirm that you want to ' +
+          tw.fill('To quit the server, type "q" or "quit" and press enter, confirm that you want to ' +
                   'quit, and wait for the server to close.'))
     print('_' * width + '\n\n')

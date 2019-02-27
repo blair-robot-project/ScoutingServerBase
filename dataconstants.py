@@ -1,5 +1,6 @@
 DATA_FILE = 'data.csv'
-MEDIA_DIR = '/media/carter'
+ABS_DATA_DIR = '/home/carter/Desktop/' + DATA_FILE
+MEDIA_DIR = '/home/carter/Desktop/ScoutingDrive/'
 
 HEADERS = 'scout name,team #,match #,alliance color,starting level,preload,no show,moved forward,' \
           'placed piece in auto,placed location in auto,ship cargo,level 1 cargo,level 2 cargo,' \

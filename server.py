@@ -19,29 +19,27 @@ def main():
 
     Thread(target=socketctl.connect).start()
 
-    running = True
-    while running:
+    while True:
         try:
             datactl.update()
         except KeyboardInterrupt:
-            q = input('Are you sure you want to quit? (y/n) ')
-            if q == 'y':
-                datactl.update()
-                socketctl.close()
-                running = False
-                osexit(1)
+            datactl.update()
+            socketctl.close()
+            osexit(1)
 
 
 def handleinput():
     i = input()
     if i == 'q' or i == 'quit':
-        interrupt_main()
+        q = input('Are you sure you want to quit? (y/n) ')
+        if q == 'y':
+            interrupt_main()
     else:
         if i == 's':
             # noinspection PyUnusedLocal
             teams = [input("Our alliance: ") for i in range(3)] + [input("Other alliance: ") for i in range(3)]
             print(datactl.getdata(teams))
-        Thread(target=handleinput).start()
+    Thread(target=handleinput).start()
 
 
 if __name__ == '__main__':
