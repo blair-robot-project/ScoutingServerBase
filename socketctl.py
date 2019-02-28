@@ -44,9 +44,9 @@ def read(sock, info):
             printing.printf('Data request ' + str_data[len(GETDATA_TRIGGER) + 1:], style=printing.NEW_DATA)
             # sock.send(bytes(getdata(data.split(':')[1]), 'UTF-8'))
             printing.printf(getdata(str_data.split()[1:]), style=printing.DATA_OUTPUT)
-        else:
+        elif str_data.strip():
             # Add it to the data file
-            addtoqueue((info, str_data))
+            addtoqueue((info, str_data.strip()))
             # printing.printf summary to server
             match = str_data.split(',')
             printing.printf('Data from ' + match[NAME] + ' on ' + MAC_DICT.get(info, info) + ' for team ' +
@@ -78,7 +78,7 @@ def connect():
 def close():
     for sock in clients:
         sock[0].close()
-        printing.printf('Closed connection with', sock[1], style=printing.STATUS)
+        printing.printf('Closed connection with', MAC_DICT.get(sock[1],sock[1]), style=printing.STATUS)
     clients.clear()
     server_sock.close()
     printing.printf('Closed server', style=printing.STATUS)

@@ -4,8 +4,14 @@ from alliance import Alliance
 
 # Calculates data we want for teams on our alliance
 class OurAlliance(Alliance):
-    total, autocross, start1, prec, preh, autoc, autoh, lowh, lowc, highc, highh = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    habattempt, habsuccess = [0, 0, 0, 0], [0, 0, 0, 0]
+    header = ('team', 'cross', 'start lvl', 'accuracy', 'preload', 'low h', 'low c', 'low r', 'high c', 'high h',
+              'defence', 'attempt', 'success', 'time')
+
+    form = '{0:4d}: {1:4d}% | {2:^7s} | {3:8d} | {4:^7s} |#| {5:2.1f} | {6:2.1f} | {7:2.1f}'
+
+    total, autocross, start1, prec, preh, autoc, autoh, lowh, lowc, highc, highh, defence = \
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    habattempt, habsuccess, climbtime = [0, 0, 0, 0], [0, 0, 0, 0], [0, 0]
 
     def addline(self, line):
         self.total += 1

@@ -2,11 +2,11 @@ DATA_FILE = 'data.csv'
 ABS_DATA_DIR = '/home/carter/Desktop/' + DATA_FILE
 MEDIA_DIR = '/home/carter/Desktop/ScoutingDrive/'
 
-HEADERS = 'scout name,team #,match #,alliance color,starting level,preload,no show,moved forward,' \
-          'placed piece in auto,placed location in auto,ship cargo,level 1 cargo,level 2 cargo,' \
-          'level 3 cargo,ship hatches,level 1 hatches,level 2 hatches,level 3 hatches,hatches dropped,' \
-          'cargo dropped,habitat attempt level,habitat success,habitat level reached,climb time,' \
-          'achieved nothing,dead,defense,comments'
+HEADERS = 'team #,match #,alliance color,starting level,preload,no show,moved forward,auto piece placed,double auto,' \
+          'ship cargo,level 1 cargo,level 2 cargo,level 3 cargo,ship hatches,level 1 hatches,level 2 hatches,' \
+          'level 3 hatches,hatches dropped,cargo dropped,hab attempt level,hab success,hab level reached,climb time,' \
+          'dead,defense,comments,scout name,time stamp, '
+
 
 GETDATA_TRIGGER = 'GETDATA'
 
@@ -20,8 +20,7 @@ NO_SHOW = _ind['no show']
 STARTING_LEVEL = _ind['starting level']
 PRELOAD = _ind['preload']
 MOVED_FORWARD = _ind['moved forward']
-AUTO_PLACE = _ind['placed piece in auto']
-AUTO_PLACE_LOC = _ind['placed location in auto']
+AUTO_PLACE = _ind['auto piece placed']
 L1RC = _ind['level 1 cargo']
 L2RC = _ind['level 2 cargo']
 L3RC = _ind['level 3 cargo']
@@ -30,9 +29,9 @@ L2RH = _ind['level 2 hatches']
 L3RH = _ind['level 3 hatches']
 CSC = _ind['ship cargo']
 CSH = _ind['ship hatches']
-HAB_ATTEMPT = _ind['habitat attempt level']
-HAB_SUCCESS = _ind['habitat success']
-HAB_REACHED = _ind['habitat level reached']
+HAB_ATTEMPT = _ind['hab attempt level']
+HAB_SUCCESS = _ind['hab success']
+HAB_REACHED = _ind['hab level reached']
 COMMENTS = _ind['comments']
 
 PLACE_HOLDER = 'qual'
@@ -42,7 +41,7 @@ NO_DATA = 'No data has been collected for this team'
 
 # Regenerates headers string
 # Copy the google doc here
-# (https://docs.google.com/document/d/1o1PA9TC6kWBYI-BygvdmtlZ6l5LsLmh46P6CQnqiw8U/edit?usp=sharing)
+# (https://docs.google.com/document/d/e/2PACX-1vSp7j7vCPgH-OLdPKhMAEnKDSYsi99BufqXZlAtQ5-3uarYPo0ePbIv9WJOP2oC02fvnjt30iEE5z3C/pub)
 # Alternatively, copy the return statement of the toString of Match and it will generate it off of the comments
 def recalc_headers(code, docs=True):
     c = code.split('\n')

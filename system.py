@@ -23,7 +23,8 @@ def mount():
     if not devs:
         return False
     dev = devs[0]
-    printing.printf('Found drive at ' + dev + ', attempting to mount to ' + MEDIA_DIR + ' ...', end=' ', style=printing.FLASH_DRIVE)
+    printing.printf('Found drive at ' + dev + ', attempting to mount to ' + MEDIA_DIR + ' ...',
+                    end=' ', style=printing.FLASH_DRIVE)
     p = _run('sudo mount ' + dev + ' ' + MEDIA_DIR)
     if p[1]:
         printing.printf('Error mounting: ' + p[1].decode('utf-8'), style=printing.ERROR)
@@ -48,7 +49,7 @@ def unmount():
     if p[1]:
         printing.printf('Error unmounting: ' + p[1].decode('utf-8'), style=printing.ERROR)
     else:
-        printing.printf('Unmounting successful' + stdoutmessage(p[0]), style=printing.FLASH_DRIVE)
+        printing.printf('Unmounting successful' + stdoutmessage(p[0]), style=(printing.GREEN, printing.HIGHLIGHT))
 
 
 # noinspection PyPep8Naming
