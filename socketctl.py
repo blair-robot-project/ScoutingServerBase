@@ -23,6 +23,12 @@ SIZE = 1024
 
 MAC_DICT = {'78:E1:03:A4:F7:70': 'Poseidon',
             '00:FC:8B:3B:42:46': 'Demeter',
+            '00:FC:8B:39:C1:09': 'Hestia',
+            '78:E1:03:A1:E2:F2': 'Hades',
+            '78:E1:03:A3:18:78': 'Hera',
+            '???': '???',
+            '00:FC:8B:3F:28:28': 'Backup 1',
+            '00:FC:8B:3F:E4:EF': 'Backup 2',
             '44:65:0D:E0:D6:3A': 'Strategy Tablet'}
 
 # Setup server socket
