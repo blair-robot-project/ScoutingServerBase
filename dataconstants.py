@@ -1,4 +1,4 @@
-DATA_FILE = 'data.csv'
+DATA_FILE = 'haymarket.csv'
 ABS_DATA_DIR = '/home/carter/Desktop/' + DATA_FILE
 MEDIA_DIR = '/home/carter/Desktop/ScoutingDrive/'
 

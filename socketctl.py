@@ -27,7 +27,7 @@ MAC_DICT = {'78:E1:03:A4:F7:70': 'Poseidon',
             '78:E1:03:A3:18:78': 'Hera',
             '???': '???',
             '00:FC:8B:3F:28:28': 'Backup 1',
-            '00:FC:8B:3F:E4:EF': 'Backup 2',
+            '00:FC:8B:3F:E4:EF': 'Zeus',#'Backup 2',
             '44:65:0D:E0:D6:3A': 'Strategy Tablet'}
             
             
@@ -49,13 +49,8 @@ def init():
 def read(sock, info):
     try:
         # Receive data
-        try:
-            data = sock.recv(SIZE)
-        except ConnectionResetError:
-            printing.printf('Connection reset by '+MAC_DICT.get(info, info),style=printing.DISCONNECTED)
-        except TimeoutError:
-            printing.printf('Timeout, restarting sock.recv (this is probably fine, though it shouldn\'t be happening)')
-
+        data = sock.recv(SIZE)
+   
         str_data = data.decode()
         if str_data[:len(GETDATA_TRIGGER)] == GETDATA_TRIGGER:
             # If it is a strategy request, return the data
@@ -74,7 +69,10 @@ def read(sock, info):
     except ConnectionResetError:
         printing.printf('Disconnected from', MAC_DICT.get(info, info), style=printing.DISCONNECTED)
         sock.close()
-        clients.remove((sock, info))
+        clients.remove((sock, info))  
+    except TimeoutError:
+        printing.printf('Timeout, restarting sock.recv (this is probably fine, though it shouldn\'t be happening)')
+        read(sock, info)
 
 
 # Waits for a device to try to connect, then starts a thread to read that device, and stays open for connections

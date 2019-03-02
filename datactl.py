@@ -6,7 +6,7 @@ from otheralliance import OtherAlliance
 from ouralliance import OurAlliance
 
 to_add = Queue()
-datachange = False
+datachange = True
 
 
 def makefile():
@@ -35,7 +35,7 @@ def addtodatafile(match):
     s = f.read()
     f.close()
     f = open(ABS_DATA_DIR, 'w')
-    s += match[1] + '\n'
+    s += match[1].replace('\n','/') + '\n'
     f.write(s)
     f.close()
 
