@@ -15,7 +15,6 @@ from system import gethostMAC
 # Carter's laptop (gallium)
 # HOST_MAC = 'A4:C4:94:4F:6F:63'
 
-HOST_MAC = gethostMAC()
 
 PORT = 1
 BACKLOG = 1
@@ -30,20 +29,30 @@ MAC_DICT = {'78:E1:03:A4:F7:70': 'Poseidon',
             '00:FC:8B:3F:28:28': 'Backup 1',
             '00:FC:8B:3F:E4:EF': 'Backup 2',
             '44:65:0D:E0:D6:3A': 'Strategy Tablet'}
+            
+            
+def init():
+	global server_sock, clients
+	
+	HOST_MAC = gethostMAC()
+	
+	# Setup server socket
+	server_sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+	server_sock.bind((HOST_MAC, PORT))
+	server_sock.listen(BACKLOG)
+	server_sock.settimeout(None)
 
-# Setup server socket
-server_sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
-server_sock.bind((HOST_MAC, PORT))
-server_sock.listen(BACKLOG)
-
-clients = []
-
+	clients = []
+	
 
 # Read loop to continually read data from a client
 def read(sock, info):
     try:
         # Receive data
-        data = sock.recv(SIZE)
+        try:
+        	data = sock.recv(SIZE)
+        except socket.TimeoutErrot:
+        	printing.printf('Timeout, restarting sock.recv (this is probably fine, though it shouldn\'t be happening)')
         str_data = data.decode()
         if str_data[:len(GETDATA_TRIGGER)] == GETDATA_TRIGGER:
             # If it is a strategy request, return the data

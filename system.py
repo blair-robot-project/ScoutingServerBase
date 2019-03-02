@@ -49,7 +49,7 @@ def unmount():
     if p[1]:
         printing.printf('Error unmounting: ' + p[1].decode('utf-8'), style=printing.ERROR)
     else:
-        printing.printf('Unmounting successful' + stdoutmessage(p[0]), style=(printing.GREEN, printing.HIGHLIGHT))
+        printing.printf('Unmounting successful, remove device' + stdoutmessage(p[0]), style=(printing.GREEN, printing.HIGHLIGHT))
 
 
 # noinspection PyPep8Naming
