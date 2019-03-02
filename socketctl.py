@@ -50,9 +50,12 @@ def read(sock, info):
     try:
         # Receive data
         try:
-        	data = sock.recv(SIZE)
-        except socket.TimeoutErrot:
-        	printing.printf('Timeout, restarting sock.recv (this is probably fine, though it shouldn\'t be happening)')
+            data = sock.recv(SIZE)
+        except ConnectionResetError:
+            printing.printf('Connection reset by '+MAC_DICT.get(info, info),style=printing.DISCONNECTED)
+        except TimeoutError:
+            printing.printf('Timeout, restarting sock.recv (this is probably fine, though it shouldn\'t be happening)')
+
         str_data = data.decode()
         if str_data[:len(GETDATA_TRIGGER)] == GETDATA_TRIGGER:
             # If it is a strategy request, return the data

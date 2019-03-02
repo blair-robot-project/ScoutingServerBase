@@ -18,6 +18,7 @@ def main():
 
     Thread(target=handleinput).start()
 
+    socketctl.init()
     Thread(target=socketctl.connect).start()
 
     while True:
