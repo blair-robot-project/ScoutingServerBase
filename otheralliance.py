@@ -6,6 +6,7 @@ from alliance import Alliance
 class OtherAlliance(Alliance):
     total, lowh, lowc, highc, highh = 0, 0, 0, 0, 0
     habsuccess = [0, 0, 0, 0]
+    header = 'header'
 
     def addline(self, line):
         self.total += 1

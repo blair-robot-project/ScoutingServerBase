@@ -58,7 +58,8 @@ def getdata(team_numbers):
         t = splitline[TEAM]
         if t in team_numbers:
             teams[team_numbers.index(t)].addline(splitline)
-    return '\n'.join(map(lambda x: x.tostring(), teams))
+    d = '\n'.join(map(lambda t: t.tostring(), teams))
+    return teams[0].getheader() + '\n' + d[:3] + '\n' + teams[3].getheader() + '\n' + d[3:]
 
 
 # Writes data to a removable device

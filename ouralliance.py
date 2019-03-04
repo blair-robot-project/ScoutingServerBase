@@ -4,10 +4,11 @@ from alliance import Alliance
 
 # Calculates data we want for teams on our alliance
 class OurAlliance(Alliance):
-    header = ('team', 'cross', 'start lvl', 'accuracy', 'preload', 'low h', 'low c', 'low r', 'high c', 'high h',
-              'defence', 'attempt', 'success', 'time')
+    header = 'team: cross | start lvl | accuracy | preload |#| low h | low c | low r | high c | high h | defence |#| ' \
+             'attempt | success | time '
 
-    form = '{0:4d}: {1:4d}% | {2:^7s} | {3:8d} | {4:^7s} |#| {5:2.1f} | {6:2.1f} | {7:2.1f}'
+    form = '{0:4d}: {1:4d}% | {2:^7s} | {3:8d} | {4:^7s} |#| {5:2.1f} | {6:2.1f} | {7:2.1f} | {8:2.1f} | {9:2.1f} | ' \
+        '{10:3d}% |#| {11:^8s}% | {12:^5s}% | {13:^5s}'
 
     total, autocross, start1, prec, preh, autoc, autoh, lowh, lowc, highc, highh, defence = \
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -53,8 +54,8 @@ class OurAlliance(Alliance):
                 0 if not self.habattempt[2] else self.habsuccess[2] / self.habattempt[2]) + ':' + self.percent(
                 0 if not self.habattempt[3] else self.habsuccess[3] / self.habattempt[3])
 
-            order = [self.team, '', autocross, start_str, accuracy, preload, '#', lowh, lowc,
-                     dataconstants.PLACE_HOLDER, highc, highh, dataconstants.PLACE_HOLDER, '#', attempt, success,
+            order = [self.team, autocross, start_str, accuracy, preload, lowh, lowc,
+                     dataconstants.PLACE_HOLDER, highc, highh, dataconstants.PLACE_HOLDER, attempt, success,
                      dataconstants.PLACE_HOLDER]
-            return dataconstants.SEP.join(order)
+            return self.form.format(*order)
         return self.team + ': ' + dataconstants.NO_DATA
