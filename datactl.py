@@ -33,9 +33,9 @@ def addtodatafile(match):
     datachange = True
     f = open(ABS_DATA_DIR)
     s = f.read()
+    s += match[1]
     f.close()
     f = open(ABS_DATA_DIR, 'w')
-    s += match[1].replace('\n','/') + '\n'
     f.write(s)
     f.close()
 
@@ -68,3 +68,8 @@ def updatedrive():
         system.copy(ABS_DATA_DIR, MEDIA_DIR + DATA_FILE)
         datachange = False
         system.unmount()
+
+
+def driveupdaterequest():
+    global datachange
+    datachange = True

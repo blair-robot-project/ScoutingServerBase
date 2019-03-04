@@ -32,16 +32,17 @@ def main():
 
 def handleinput():
     i = input()
-    if i == 'q' or i == 'quit':
+    if i in ('q', 'quit'):
         printing.printf('Are you sure you want to quit? (y/n)', style=printing.QUIT, end=' ')
         q = input()
         if q == 'y':
             interrupt_main()
-    else:
-        if i == 's':
-            # noinspection PyUnusedLocal
-            teams = [input("Our alliance: ") for i in range(3)] + [input("Other alliance: ") for i in range(3)]
-            printing.printf(datactl.getdata(teams), style=printing.DATA_OUTPUT)
+    elif i in ('d','data','drive','flash drive','u','update','dump','data dump'):
+        datactl.driveupdaterequest()
+    elif i in ('s', 'strat', 'match strat', 'strategy', 'match strategy'):
+        # noinspection PyUnusedLocal
+        teams = [input("Our alliance: ") for i in range(3)] + [input("Other alliance: ") for i in range(3)]
+        printing.printf(datactl.getdata(teams), style=printing.DATA_OUTPUT)
     Thread(target=handleinput).start()
 
 
