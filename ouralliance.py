@@ -4,14 +4,15 @@ from alliance import Alliance
 
 # Calculates data we want for teams on our alliance
 class OurAlliance(Alliance):
-    header = 'team: cross | start lvl | accuracy | preload |#| low h | low c | low r | high c | high h | defence |#| ' \
+    header = 'team: cross | start lvl | accuracy(c:h) | pre (c:h) |#| low h | low c | low r | high c | high h | defense |#| ' \
              'attempt | success | time '
 
-    form = '{0:4d}: {1:4d}% | {2:^7s} | {3:8d} | {4:^7s} |#| {5:2.1f} | {6:2.1f} | {7:2.1f} | {8:2.1f} | {9:2.1f} | ' \
-        '{10:3d}% |#| {11:^8s}% | {12:^5s}% | {13:^5s}'
+    form = '{team:4d}: {cross:4d}% | {start1:3d}:{start2:3d} | {autoc:3d}:{autoh:3d} | {preloadc:3d}:{preloadh:3d} ' \
+           '|#| {lowh:2.1f} | {lowc:2.1f} | {lowr:2.1f} | {highc:2.1f} | {highh:2.1f} | {defense:3d}% |#| ' \
+           '{attempt1:3d}:{attempt2:3d}:{attempt3:3d}% | {success2:3d}:{success3:3d}% | {time3:2d}:{time3:2d}'
 
-    total, autocross, start1, prec, preh, autoc, autoh, lowh, lowc, highc, highh, defence = \
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    total, autocross, start1, start2, prec, preh, autoc, autoh, lowh, lowc, highc, highh, defence = \
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     habattempt, habsuccess, climbtime = [0, 0, 0, 0], [0, 0, 0, 0], [0, 0]
 
     def addline(self, line):
@@ -19,6 +20,7 @@ class OurAlliance(Alliance):
 
         self.autocross += int(line[dataconstants.MOVED_FORWARD])
         self.start1 += line[dataconstants.STARTING_LEVEL] == '1'
+        self.start2 += line[dataconstants.STARTING_LEVEL] == '2'
         if line[dataconstants.PRELOAD] == '2':
             self.prec += 1
             self.autoc += line[dataconstants.AUTO_PLACE] == '2'
@@ -36,26 +38,28 @@ class OurAlliance(Alliance):
 
     def tostring(self):
         if self.total:
-            autocross = self.percent(self.autocross / self.total)
-            start = self.start1 / self.total
-            start_str = self.percent(start) + ':' + self.percent(1 - start)
-            preload = self.percent(self.prec / self.total) + ':' + self.percent(self.preh / self.total)
-            accuracy = self.percent(0 if not self.prec else self.autoc / self.prec) + ':' + self.percent(
-                0 if not self.preh else self.autoh / self.preh)
+            values = {
+                'cross': self.percent(self.autocross / self.total),
+                'start1': self.percent(self.start1 / self.total),
+                'start2': self.percent(self.start2 / self.total),
+                'preloadc': self.percent(self.prec / self.total),
+                'preloadh': self.percent(self.preh / self.total),
+                'autoc': self.percent(0 if not self.prec else self.autoc / self.prec),
+                'autoh': self.percent(0 if not self.preh else self.autoh / self.preh),
+                'lowc': self.lowc / self.total,
+                'lowh': self.lowh / self.total,
+                'highc': self.highc / self.total,
+                'highh': self.highh / self.total,
+                'attempt1': self.percent(self.habattempt[1] / self.total),
+                'attempt2': self.percent(self.habattempt[2] / self.total),
+                'attempt3': self.percent(self.habattempt[3] / self.total),
+                'success2': self.percent(0 if not self.habattempt[2] else self.habsuccess[2] / self.habattempt[2]),
+                'success3': self.percent(0 if not self.habattempt[3] else self.habsuccess[3] / self.habattempt[3]),
+            }
 
-            lowc = str(self.lowc / self.total)
-            lowh = str(self.lowh / self.total)
-            highc = str(self.highc / self.total)
-            highh = str(self.highh / self.total)
-
-            attempt = self.percent(self.habattempt[1] / self.total) + ':' + self.percent(
-                self.habattempt[2] / self.total) + ':' + self.percent(self.habattempt[3] / self.total)
-            success = self.percent(
-                0 if not self.habattempt[2] else self.habsuccess[2] / self.habattempt[2]) + ':' + self.percent(
-                0 if not self.habattempt[3] else self.habsuccess[3] / self.habattempt[3])
-
-            order = [self.team, autocross, start_str, accuracy, preload, lowh, lowc,
-                     dataconstants.PLACE_HOLDER, highc, highh, dataconstants.PLACE_HOLDER, attempt, success,
-                     dataconstants.PLACE_HOLDER]
-            return self.form.format(*order)
+            # order = [self.team, autocross, start_str, accuracy, preload, lowh, lowc,
+            #          dataconstants.PLACE_HOLDER, highc, highh, dataconstants.PLACE_HOLDER, attempt, success,
+            #          dataconstants.PLACE_HOLDER]
+            # return self.form.format(*order)
+            return self.form.format(**values)
         return self.team + ': ' + dataconstants.NO_DATA

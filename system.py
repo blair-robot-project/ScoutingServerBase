@@ -54,7 +54,10 @@ def unmount():
 
 # noinspection PyPep8Naming
 def gethostMAC():
-    return _run('hcitool dev')[0].decode('utf8').split('\n')[1].split()[1]
+    try:
+        return _run('hcitool dev')[0].decode('utf8').split('\n')[1].split()[1]
+    except IndexError:
+        printing.printf('No bluetooth adapter available', style=printing.ERROR)
 
 
 def stdoutmessage(s):
