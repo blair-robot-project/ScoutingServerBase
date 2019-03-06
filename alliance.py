@@ -18,7 +18,10 @@ class Alliance(ABC):
     def tostring(self):
         ...
 
-    # Helper function to convert floats to percents and round
     @staticmethod
     def percent(n):
         return int(n * 100)
+
+    @staticmethod
+    def avg(l):
+        return int(sum(l) / (1 if len(l) == 0 else len(l)))

@@ -32,6 +32,7 @@ CSH = _ind['ship hatches']
 HAB_ATTEMPT = _ind['hab attempt level']
 HAB_SUCCESS = _ind['hab success']
 HAB_REACHED = _ind['hab level reached']
+CLIMB_TIME = _ind['climb time']
 DEFENSE = _ind['defense']
 COMMENTS = _ind['comments']
 
