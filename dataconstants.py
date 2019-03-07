@@ -8,6 +8,7 @@ HEADERS = 'team #,match #,alliance color,starting level,preload,no show,moved fo
           'dead,defense,comments,scout name,time stamp, '
 
 
+EDIT_TRIGGER = 'REPLACE'
 GETDATA_TRIGGER = 'GETDATA'
 
 

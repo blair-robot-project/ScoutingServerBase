@@ -1,7 +1,8 @@
 from queue import Queue
 
+import printing
 import system
-from dataconstants import HEADERS, DATA_FILE, ABS_DATA_DIR, TEAM, MEDIA_DIR
+from dataconstants import HEADERS, DATA_FILE, ABS_DATA_DIR, TEAM, MEDIA_DIR, EDIT_TRIGGER, NAME, MATCH
 from otheralliance import OtherAlliance
 from ouralliance import OurAlliance
 
@@ -23,8 +24,21 @@ def makefile():
         f.close()
 
 
-def addtoqueue(match):
-    to_add.put(match)
+def parsedata(data, info):
+    for line in data.split('\n'):
+        line = line.strip()
+        print(line)
+        if line[:len(EDIT_TRIGGER)] == EDIT_TRIGGER:
+            removefromdatafile(line[len(EDIT_TRIGGER):])
+        elif line:
+            addtodatafile(line)
+            match = line.split(',')
+            printing.printf('Data from ' + match[NAME] + ' on ' + info + ' for team ' +
+                            match[TEAM] + ' in match ' + match[MATCH], style=printing.NEW_DATA)
+
+
+def addtoqueue(match, info):
+    to_add.put((match, info))
 
 
 # Adds a match to the data file
@@ -33,17 +47,30 @@ def addtodatafile(match):
     datachange = True
     f = open(ABS_DATA_DIR)
     s = f.read()
-    s += match[1]
     f.close()
+    s += match + '\n'
+    f = open(ABS_DATA_DIR, 'w')
+    f.write(s)
+    f.close()
+
+
+# Removes a match from the data file
+def removefromdatafile(match):
+    global datachange
+    datachange = True
+    f = open(ABS_DATA_DIR)
+    s = f.read()
+    f.close()
+    s = s.replace(match + '\n', '')
     f = open(ABS_DATA_DIR, 'w')
     f.write(s)
     f.close()
 
 
 def update():
-    # While there is data to add, add it to the file
+    # While there is data to add, parse it
     while not to_add.empty():
-        addtodatafile(to_add.get())
+        parsedata(*to_add.get())
     if datachange and system.checkdev():
         updatedrive()
 

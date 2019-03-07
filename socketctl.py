@@ -2,10 +2,8 @@ import socket
 from threading import Thread
 
 import printing
-from dataconstants import GETDATA_TRIGGER, NAME, TEAM, MATCH
-from datactl import addtoqueue, getdata
+from datactl import addtoqueue
 from system import gethostMAC
-
 
 PORT = 1
 BACKLOG = 1
@@ -43,18 +41,9 @@ def read(sock, info):
         data = sock.recv(SIZE)
 
         str_data = data.decode()
-        if str_data[:len(GETDATA_TRIGGER)] == GETDATA_TRIGGER:
-            # If it is a strategy request, return the data
-            printing.printf('Data request ' + str_data[len(GETDATA_TRIGGER) + 1:], style=printing.NEW_DATA)
-            # sock.send(bytes(getdata(data.split(':')[1]), 'UTF-8'))
-            printing.printf(getdata(str_data.split()[1:]), style=printing.DATA_OUTPUT)
-        elif str_data.strip():
-            # Add it to the data file
-            addtoqueue((info, str_data.strip()))
-            # printing.printf summary to server
-            match = str_data.split(',')
-            printing.printf('Data from ' + match[NAME] + ' on ' + MAC_DICT.get(info, info) + ' for team ' +
-                            match[TEAM] + ' in match ' + match[MATCH], style=printing.NEW_DATA)
+
+        addtoqueue(str_data, MAC_DICT.get(info, info))
+
         # Wait for the next match
         read(sock, info)
     except ConnectionResetError:
