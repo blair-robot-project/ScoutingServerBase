@@ -1,6 +1,6 @@
-DATA_FILE = 'whitman.csv'
+DATA_FILE = 'haymarket.csv'
 ABS_DATA_DIR = '/home/carter/Desktop/' + DATA_FILE
-MEDIA_DIR = '/home/carter/Desktop/ScoutingDrive/'
+MEDIA_DIR = '/home/carter/ScoutingDrive/'
 
 HEADERS = 'team #,match #,alliance color,starting level,preload,no show,moved forward,auto piece placed,double auto,' \
           'ship cargo,level 1 cargo,level 2 cargo,level 3 cargo,ship hatches,level 1 hatches,level 2 hatches,' \
@@ -30,6 +30,8 @@ L2RH = _ind['level 2 hatches']
 L3RH = _ind['level 3 hatches']
 CSC = _ind['ship cargo']
 CSH = _ind['ship hatches']
+DROP_HATCH = _ind['hatches dropped']
+DROP_CARGO = _ind['cargo dropped']
 HAB_ATTEMPT = _ind['hab attempt level']
 HAB_SUCCESS = _ind['hab success']
 HAB_REACHED = _ind['hab level reached']

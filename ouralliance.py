@@ -4,18 +4,23 @@ from alliance import Alliance
 
 # Calculates data we want for teams on our alliance
 class OurAlliance(Alliance):
-    header = 'team: cross | start lvl | accuracy(c:h) | pre (c:h) |#| low h | low c | low r | high c | high h | defense |#| ' \
-             'attempt | success | time '
+    header = 'team: cross | srt lvl | auto(c:h) | pre (c:h) |#| l h | l c | l r | h c | h h |   d  |#| ' \
+             '   attempt   |  success | time '
 
-    form = '{team:4s}: {cross:4d}% | {start1:3d}:{start2:3d} | {autoc:3d}:{autoh:3d} | {preloadc:3d}:{preloadh:3d} ' \
-           '|#| {lowh:2.1f} | {lowc:2.1f} | {lowr:2s} | {highc:2.1f} | {highh:2.1f} | {defense:3d}% |#| ' \
+    form = '{team:4s}:  {cross:3d}% | {start1:3d}:{start2:3d} | {autoc:4d}:{autoh:4d} |  {preloadc:3d}:{preloadh:3d}% ' \
+           '|#| {lowh:3.1f} | {lowc:3.1f} |  {lowr:1s}  | {highc:3.1f} | {highh:3.1f} | {defense:3d}% |#| ' \
            '{attempt1:3d}:{attempt2:3d}:{attempt3:3d}% | {success2:3d}:{success3:3d}% | {time2:2d}:{time3:2d}'
 
     total, autocross, start1, start2, prec, preh, autoc, autoh, lowh, lowc, highc, highh, defense = \
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     lowr = False
-    habattempt, habsuccess, climbtime = [0, 0, 0, 0], [0, 0, 0, 0], [[], []]
     comments = ''
+    
+    
+    def __init__(self,team):
+        super().__init__(team)
+        self.habattempt, self.habsuccess, self.climbtime = [0, 0, 0, 0], [0, 0, 0, 0], [[], []]
+
 
     def addline(self, line):
         self.total += 1
@@ -48,7 +53,7 @@ class OurAlliance(Alliance):
 
         comment = line[dataconstants.COMMENTS]
         if comment:
-            self.comments += comment + '\n'
+            self.comments += comment + ';'
 
     def tostring(self):
         if self.total:
@@ -75,14 +80,12 @@ class OurAlliance(Alliance):
                 'time3': self.avg(self.climbtime[1]),
                 'defense': self.percent(self.defense / self.total),
             }
-
-            # order = [self.team, autocross, start_str, accuracy, preload, lowh, lowc,
-            #          dataconstants.PLACE_HOLDER, highc, highh, dataconstants.PLACE_HOLDER, attempt, success,
-            #          dataconstants.PLACE_HOLDER]
-            # return self.form.format(*order)
             return self.form.format(**values)
         return self.team + ': ' + dataconstants.NO_DATA
 
+
+    def getteam(self):
+        return self.team
 
     def getcomments(self):
         return self.comments
