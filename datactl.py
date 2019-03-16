@@ -25,16 +25,18 @@ def makefile():
 
 
 def parsedata(data, info):
+    t = 'Data'
     for line in data.split('\n'):
         line = line.strip()
-        print(line)
         if line[:len(EDIT_TRIGGER)] == EDIT_TRIGGER:
             removefromdatafile(line[len(EDIT_TRIGGER):])
+            t = 'Edit'
         elif line:
             addtodatafile(line)
             match = line.split(',')
-            printing.printf('Data from ' + match[NAME] + ' on ' + info + ' for team ' +
+            printing.printf(t + ' from ' + match[NAME] + ' on ' + info + ' for team ' +
                             match[TEAM] + ' in match ' + match[MATCH], style=printing.NEW_DATA)
+            t = 'Data'
 
 
 def addtoqueue(match, info):

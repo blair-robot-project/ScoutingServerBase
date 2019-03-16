@@ -4,12 +4,12 @@ from alliance import Alliance
 
 # Calculates data we want for teams on our alliance
 class OurAlliance(Alliance):
-    header = 'team: cross | srt lvl | auto(c:h) | pre (c:h) |#| l h | l c | l r | h c | h h |   d  |#| ' \
-             '   attempt   |  success | time '
+    header = 'team: cross | srt lvl | auto(c:h) | pre(c:h) |#| l h | l c | l r | h c | h h |  d  |#| ' \
+             '  attempt   | success | time '
 
-    form = '{team:4s}:  {cross:3d}% | {start1:3d}:{start2:3d} | {autoc:4d}:{autoh:4d} |  {preloadc:3d}:{preloadh:3d}% ' \
-           '|#| {lowh:3.1f} | {lowc:3.1f} |  {lowr:1s}  | {highc:3.1f} | {highh:3.1f} | {defense:3d}% |#| ' \
-           '{attempt1:3d}:{attempt2:3d}:{attempt3:3d}% | {success2:3d}:{success3:3d}% | {time2:2d}:{time3:2d}'
+    form = '{team:4s}:  {cross:3d}% | {start1:3d}:{start2:3d} | {autoc:4d}:{autoh:4d} |  {preloadc:3d}:{preloadh:3d} ' \
+           '|#| {lowh:3.1f} | {lowc:3.1f} |  {lowr:1s}  | {highc:3.1f} | {highh:3.1f} | {defense:3d} |#| ' \
+           '{attempt1:3d}:{attempt2:3d}:{attempt3:3d} | {success2:3d}:{success3:3d} | {time2:2d}:{time3:2d}'
 
     total, autocross, start1, start2, prec, preh, autoc, autoh, lowh, lowc, highc, highh, defense = \
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -28,12 +28,12 @@ class OurAlliance(Alliance):
         self.autocross += int(line[dataconstants.MOVED_FORWARD])
         self.start1 += line[dataconstants.STARTING_LEVEL] == '1'
         self.start2 += line[dataconstants.STARTING_LEVEL] == '2'
-        if line[dataconstants.PRELOAD] == '2':
-            self.prec += 1
-            self.autoc += line[dataconstants.AUTO_PLACE] == '2'
-        elif line[dataconstants.PRELOAD] == '3':
+        if line[dataconstants.PRELOAD] == '1':
             self.preh += 1
-            self.autoh += line[dataconstants.AUTO_PLACE] == '3'
+            self.autoh += line[dataconstants.AUTO_PLACE] == '1'
+        elif line[dataconstants.PRELOAD] == '2':
+            self.prec += 1
+            self.autoc += line[dataconstants.AUTO_PLACE] == '1'
 
         self.lowc += int(line[dataconstants.CSC]) + int(line[dataconstants.L1RC])
         self.lowh += int(line[dataconstants.CSH]) + int(line[dataconstants.L1RH])
@@ -43,9 +43,10 @@ class OurAlliance(Alliance):
         if int(line[dataconstants.L1RH]) + int(line[dataconstants.L3RH]) + int(line[dataconstants.L1RH]):
             self.lowr = True
 
-        self.habattempt[int(line[dataconstants.HAB_ATTEMPT])] += 1
-        self.habsuccess[int(line[dataconstants.HAB_ATTEMPT])] += line[dataconstants.HAB_SUCCESS] == '3'
-
+        attempt = int(line[dataconstants.HAB_ATTEMPT])
+        self.habattempt[attempt] += 1
+        self.habsuccess[attempt] += attempt == int(line[dataconstants.HAB_REACHED])
+        
         if int(line[dataconstants.HAB_SUCCESS]) > 1:
             self.climbtime[int(line[dataconstants.HAB_SUCCESS]) - 2].append(int(line[dataconstants.CLIMB_TIME]))
 
@@ -89,3 +90,4 @@ class OurAlliance(Alliance):
 
     def getcomments(self):
         return self.comments
+

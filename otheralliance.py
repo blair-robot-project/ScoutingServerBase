@@ -9,7 +9,7 @@ class OtherAlliance(Alliance):
     
     header = 'team: l h | l c | h c | h h | drop(h:c) | climb '
     form = '{team:4s}: {lowh:3.1f} | {lowc:3.1f} | {highc:3.1f} | {highh:3.1f} |  ' \
-           '{droph:3.1f}:{dropc:3.1f}  | {climb2:3d}:{climb3:3d}%'
+           '{droph:3.1f}:{dropc:3.1f}  | {climb2:3d}:{climb3:3d}'
 
     def __init__(self,team):
         super().__init__(team)
@@ -28,14 +28,8 @@ class OtherAlliance(Alliance):
         self.dropc += int(line[dataconstants.DROP_CARGO])
 
     
-        print(self.team)
-        print(line[dataconstants.HAB_REACHED])
-        print(self.climb)
-        
         if int(line[dataconstants.HAB_REACHED])>1:
             self.climb[int(line[dataconstants.HAB_REACHED])-2] += 1
-
-        print(self.climb)
 		        
         comment = line[dataconstants.COMMENTS]
         if comment:
