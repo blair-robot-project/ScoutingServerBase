@@ -46,14 +46,15 @@ def read(sock, info):
 
         # Wait for the next match
         read(sock, info)
-    except ConnectionResetError:
+    except ConnectionResetError, TimeoutError as e:
         printing.printf('Disconnected from', MAC_DICT.get(info, info), style=printing.DISCONNECTED)
         sock.close()
         clients.remove((sock, info))
-    except TimeoutError:
-        printing.printf('Timeout on ' + MAC_DICT.get(info, info) + ', restarting sock.recv (this is probably fine, '
-                                                                   'though it shouldn\'t be happening)')
-        read(sock, info)
+    except Exception as e:
+        printing.printf('Unknown error from', MAC_DICT.get(info, info), style=printing.DISCONNECTED)
+        printing.printf(e,style=printing.ERROR)
+        sock.close()
+        clients.remove((sock, info))
 
 
 # Waits for a device to try to connect, then starts a thread to read that device, and stays open for connections

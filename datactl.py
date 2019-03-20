@@ -9,6 +9,9 @@ from ouralliance import OurAlliance
 to_add = Queue()
 datachange = True
 
+#TODO: use this to not add things that have been removed (edit match that wasn't uploaded while connected)
+void = []
+
 
 def makefile():
     # Check if there is already a data file, if not, make one

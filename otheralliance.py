@@ -51,3 +51,4 @@ class OtherAlliance(Alliance):
             }
             return self.form.format(**values)
         return self.team + ': ' + dataconstants.NO_DATA
+
