@@ -14,7 +14,6 @@ class OurAlliance(Alliance):
     total, autocross, start1, start2, prec, preh, autoc, autoh, lowh, lowc, highc, highh, defense = \
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     lowr = False
-    comments = ''
     
     
     def __init__(self,team):
