@@ -14,12 +14,10 @@ class OurAlliance(Alliance):
     total, autocross, start1, start2, prec, preh, autoc, autoh, lowh, lowc, highc, highh, defense = \
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     lowr = False
-    
-    
-    def __init__(self,team):
+
+    def __init__(self, team):
         super().__init__(team)
         self.habattempt, self.habsuccess, self.climbtime = [0, 0, 0, 0], [0, 0, 0, 0], [[], []]
-
 
     def addline(self, line):
         self.total += 1
@@ -45,7 +43,7 @@ class OurAlliance(Alliance):
         attempt = int(line[dataconstants.HAB_ATTEMPT])
         self.habattempt[attempt] += 1
         self.habsuccess[attempt] += attempt == int(line[dataconstants.HAB_REACHED])
-        
+
         if int(line[dataconstants.HAB_SUCCESS]) > 1:
             self.climbtime[int(line[dataconstants.HAB_SUCCESS]) - 2].append(int(line[dataconstants.CLIMB_TIME]))
 
@@ -83,10 +81,8 @@ class OurAlliance(Alliance):
             return self.form.format(**values)
         return self.team + ': ' + dataconstants.NO_DATA
 
-
     def getteam(self):
         return self.team
 
     def getcomments(self):
         return self.comments
-
