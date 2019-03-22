@@ -25,8 +25,12 @@ def main():
         try:
             datactl.update()
         except KeyboardInterrupt:
+            # Make sure everything made it into the data file
             datactl.update()
+
             socketctl.close()
+
+            # Quit everything (closes all the many threads)
             osexit(1)
 
 

@@ -11,8 +11,7 @@ class Partner(Team):
            '|#| {lowh:3.1f} | {lowc:3.1f} |  {lowr:1s}  | {highc:3.1f} | {highh:3.1f} | {defense:3d} |#| ' \
            '{attempt1:3d}:{attempt2:3d}:{attempt3:3d} | {success2:3d}:{success3:3d} | {time2:2d}:{time3:2d}'
 
-    autocross, start1, start2, prec, preh, autoc, autoh, lowh, lowc, highc, highh, defense = \
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    autocross, start1, start2, prec, preh, autoc, autoh, defense = 0, 0, 0, 0, 0, 0, 0, 0
     lowr = False
 
     def __init__(self, team):
@@ -69,9 +68,3 @@ class Partner(Team):
                 'time3': self.avg(self.climbtime[1]),
 
                 'defense': self.percent(self.defense / self.total)}
-
-    def getteam(self):
-        return self.team
-
-    def getcomments(self):
-        return self.comments

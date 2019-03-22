@@ -7,8 +7,10 @@ from system import gethostMAC
 
 PORT = 1
 BACKLOG = 1
+# Max message size
 SIZE = 4096
 
+# Associates MAC addresses of the kindles with their user friendly names
 MAC_DICT = {'78:E1:03:A4:F7:70': 'Poseidon',
             '00:FC:8B:3B:42:46': 'Demeter',
             '00:FC:8B:39:C1:09': 'Hestia',
@@ -20,6 +22,7 @@ MAC_DICT = {'78:E1:03:A4:F7:70': 'Poseidon',
             '44:65:0D:E0:D6:3A': 'Strategy Tablet'}
 
 
+# Sets up the server
 def init():
     global server_sock, clients
 
@@ -39,9 +42,9 @@ def _read(sock, info):
     try:
         # Receive data
         data = sock.recv(SIZE)
-
         str_data = data.decode()
 
+        # Submit the data to be parsed and added to the file
         addtoqueue(str_data, MAC_DICT.get(info, info))
 
         # Wait for the next match

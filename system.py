@@ -3,6 +3,7 @@ import subprocess as sub
 import printing
 from dataconstants import MEDIA_DIR
 
+# Possible locations of a flash drive
 DRIVE_DEV_LOCS = ['/dev/sdb', '/dev/sda', '/dev/sdc']
 
 
@@ -12,12 +13,14 @@ def _run(command):
     return process.communicate()
 
 
-# Checks for a flashdrive
+# Checks for a flash drive
 def checkdev():
+    # Look through sd* devices, see if any of them are flash drives (but don't take the hard drive!)
     devs = str(_run('ls /dev/sd*')[0])
     return [d for d in DRIVE_DEV_LOCS if devs.count(d) == 1]
 
 
+# Mounts a flash drive
 def mount():
     devs = checkdev()
     if not devs:
@@ -34,6 +37,7 @@ def mount():
         return True
 
 
+# Copies the data file to the mounted flash drive
 def copy(fin, fout):
     printing.printf('Copying ' + fin + ' to ' + fout + ' ...', end=' ', style=printing.FLASH_DRIVE)
     p = _run('sudo cp ' + fin + ' ' + fout)
@@ -43,6 +47,7 @@ def copy(fin, fout):
         printing.printf('Copying successful' + _stdoutmessage(p[0]), style=printing.FLASH_DRIVE)
 
 
+# Unmounts the flash drive
 def unmount():
     printing.printf('Unmounting drive from ' + MEDIA_DIR + ' ...', end=' ', style=printing.FLASH_DRIVE)
     p = _run('sudo umount ' + MEDIA_DIR)
@@ -53,12 +58,21 @@ def unmount():
                         style=(printing.GREEN, printing.HIGHLIGHT))
 
 
+# Finds the MAC address of the bluetooth adapter
+# If hcitool is not installed, you can change the script to use some other command,
+#   or you can just find it manually and hard code it in
 # noinspection PyPep8Naming
 def gethostMAC():
+    out = ''
     try:
-        return _run('hcitool dev')[0].decode('utf8').split('\n')[1].split()[1]
+        out = _run('hcitool dev')
+        return out[0].decode('utf8').split('\n')[1].split()[1]
     except IndexError:
-        printing.printf('No bluetooth adapter available', style=printing.ERROR)
+        if out[0]:
+            printing.printf('No bluetooth adapter available', style=printing.ERROR)
+        else:
+            printing.printf('hcitool not found, please install it or edit system.py to use something else',
+                            style=printing.ERROR)
 
 
 def _stdoutmessage(s):

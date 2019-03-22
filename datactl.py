@@ -6,40 +6,46 @@ from dataconstants import HEADERS, DATA_FILE, ABS_DATA_DIR, TEAM, MEDIA_DIR, EDI
 from opponent import Opponent
 from partner import Partner
 
+# Thread-safe queue to add lines to the file without concurrent modification
 to_add = Queue()
+
+# Keeps track of data changes since the flash drive was updated
 datachange = True
 
+# Keeps track of lines that have been removed
+# Important for when a match is submitted without connection, then edited with connection, then 'newdata' is uploaded
 void = []
 
 
+# Check if there is already a data file, if not, make one
 def makefile():
-    # Check if there is already a data file, if not, make one
     try:
-        f = open(ABS_DATA_DIR)
-        d = f.read()
-        f.close()
+        d = _readfile()
         if not d:
             raise FileNotFoundError
     except FileNotFoundError:
-        f = open(ABS_DATA_DIR, 'w')
-        f.write(HEADERS + '\n')
-        f.close()
+        _writefile(HEADERS + '\n')
 
 
+# Parse a string with lines of data
 def _parsedata(data, info):
     t = 'Data'
     for line in data.split('\n'):
         line = line.strip()
         if line[:len(EDIT_TRIGGER)] == EDIT_TRIGGER:
+            # If this is an edit, remove the old version
             removefromdatafile(line[len(EDIT_TRIGGER):])
             void.append(line[len(EDIT_TRIGGER):])
+            # The next line will be an edit, not new data, so call it that
             t = 'Edit'
         elif line:
+            # If this wasn't already edited (could happen if this is an upload not a submit)
             if line not in void:
                 try:
                     match = line.split(',')
                     printing.printf(t + ' from ' + match[NAME] + ' on ' + info + ' for team ' +
                                     match[TEAM] + ' in match ' + match[MATCH], style=printing.NEW_DATA)
+
                     _addtodatafile(line)
                 except IndexError:
                     printing.printf('Incomplete line:', line, style=printing.ERROR)
@@ -77,6 +83,7 @@ def update():
     # While there is data to add, parse it
     while not to_add.empty():
         _parsedata(*to_add.get())
+    # If there is a flash drive and there is new data for it, upload the data
     if datachange and system.checkdev():
         _updatedrive()
 
