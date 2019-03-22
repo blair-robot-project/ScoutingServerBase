@@ -39,8 +39,6 @@ CLIMB_TIME = _ind['climb time']
 DEFENSE = _ind['defense']
 COMMENTS = _ind['comments']
 
-PLACE_HOLDER = 'qual'
-SEP = ' | '
 NO_DATA = 'No data has been collected for this team'
 
 

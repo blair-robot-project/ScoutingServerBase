@@ -9,11 +9,11 @@ UNDERLINE = '\033[4m'
 HIGHLIGHT = '\033[7m'
 
 
-def makecolor(i):
+def _makecolor(i):
     return BASE + str(i) + BASE_END
 
 
-DARKGRAY, RED, GREEN, YELLOW, BLUE, PURPLE, TEAL, LIGHTGRAY, DEFAULT = [makecolor(i) for i in range(9)]
+DARKGRAY, RED, GREEN, YELLOW, BLUE, PURPLE, TEAL, LIGHTGRAY, DEFAULT = [_makecolor(i) for i in range(9)]
 
 CONNECTED = GREEN
 DISCONNECTED = RED

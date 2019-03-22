@@ -30,7 +30,7 @@ def mount():
         printing.printf('Error mounting: ' + p[1].decode('utf-8'), style=printing.ERROR)
         return False
     else:
-        printing.printf('Mounting successful' + stdoutmessage(p[0]), style=printing.FLASH_DRIVE)
+        printing.printf('Mounting successful' + _stdoutmessage(p[0]), style=printing.FLASH_DRIVE)
         return True
 
 
@@ -40,7 +40,7 @@ def copy(fin, fout):
     if p[1]:
         printing.printf('Error copying: ' + p[1].decode('utf-8'), style=printing.ERROR)
     else:
-        printing.printf('Copying successful' + stdoutmessage(p[0]), style=printing.FLASH_DRIVE)
+        printing.printf('Copying successful' + _stdoutmessage(p[0]), style=printing.FLASH_DRIVE)
 
 
 def unmount():
@@ -49,7 +49,8 @@ def unmount():
     if p[1]:
         printing.printf('Error unmounting: ' + p[1].decode('utf-8'), style=printing.ERROR)
     else:
-        printing.printf('Unmounting successful, remove device' + stdoutmessage(p[0]), style=(printing.GREEN, printing.HIGHLIGHT))
+        printing.printf('Unmounting successful, remove device' + _stdoutmessage(p[0]),
+                        style=(printing.GREEN, printing.HIGHLIGHT))
 
 
 # noinspection PyPep8Naming
@@ -60,5 +61,5 @@ def gethostMAC():
         printing.printf('No bluetooth adapter available', style=printing.ERROR)
 
 
-def stdoutmessage(s):
+def _stdoutmessage(s):
     return ' with message: ' + s.decode('utf-8') if s else ''

@@ -3,13 +3,12 @@ from queue import Queue
 import printing
 import system
 from dataconstants import HEADERS, DATA_FILE, ABS_DATA_DIR, TEAM, MEDIA_DIR, EDIT_TRIGGER, NAME, MATCH
-from otheralliance import OtherAlliance
-from ouralliance import OurAlliance
+from opponent import Opponent
+from partner import Partner
 
 to_add = Queue()
 datachange = True
 
-# TODO: use this to not add things that have been removed (edit match that wasn't uploaded while connected)
 void = []
 
 
@@ -27,21 +26,23 @@ def makefile():
         f.close()
 
 
-def parsedata(data, info):
+def _parsedata(data, info):
     t = 'Data'
     for line in data.split('\n'):
         line = line.strip()
         if line[:len(EDIT_TRIGGER)] == EDIT_TRIGGER:
             removefromdatafile(line[len(EDIT_TRIGGER):])
+            void.append(line[len(EDIT_TRIGGER):])
             t = 'Edit'
         elif line:
-            try:
-                match = line.split(',')
-                printing.printf(t + ' from ' + match[NAME] + ' on ' + info + ' for team ' +
-                                match[TEAM] + ' in match ' + match[MATCH], style=printing.NEW_DATA)
-                addtodatafile(line)
-            except IndexError:
-                printing.printf('Incomplete line:', line, style=printing.ERROR)
+            if line not in void:
+                try:
+                    match = line.split(',')
+                    printing.printf(t + ' from ' + match[NAME] + ' on ' + info + ' for team ' +
+                                    match[TEAM] + ' in match ' + match[MATCH], style=printing.NEW_DATA)
+                    _addtodatafile(line)
+                except IndexError:
+                    printing.printf('Incomplete line:', line, style=printing.ERROR)
             t = 'Data'
 
 
@@ -49,27 +50,24 @@ def addtoqueue(match, info):
     to_add.put((match, info))
 
 
-# Adds a match to the data file
-def addtodatafile(match):
-    global datachange
-    datachange = True
-    f = open(ABS_DATA_DIR)
-    s = f.read()
-    f.close()
-    s += match + '\n'
-    f = open(ABS_DATA_DIR, 'w')
-    f.write(s)
-    f.close()
+def _addtodatafile(match):
+    _writefile(_readfile() + match + '\n')
 
 
-# Removes a match from the data file
 def removefromdatafile(match):
+    _writefile(_readfile().replace(match + '\n', ''))
+
+
+def _readfile():
     global datachange
     datachange = True
     f = open(ABS_DATA_DIR)
     s = f.read()
     f.close()
-    s = s.replace(match + '\n', '')
+    return s
+
+
+def _writefile(s):
     f = open(ABS_DATA_DIR, 'w')
     f.write(s)
     f.close()
@@ -78,16 +76,16 @@ def removefromdatafile(match):
 def update():
     # While there is data to add, parse it
     while not to_add.empty():
-        parsedata(*to_add.get())
+        _parsedata(*to_add.get())
     if datachange and system.checkdev():
-        updatedrive()
+        _updatedrive()
 
 
 # Get the data string to return from the list of teams
 def getdata(team_numbers):
     f = open(ABS_DATA_DIR)
     # noinspection PyTypeChecker
-    teams = [OurAlliance(t) for t in team_numbers[:3]] + [OtherAlliance(t) for t in team_numbers[3:]]
+    teams = [Partner(t) for t in team_numbers[:3]] + [Opponent(t) for t in team_numbers[3:]]
     for line in f:
         splitline = line.split(',')
         t = splitline[TEAM]
@@ -99,7 +97,7 @@ def getdata(team_numbers):
 
 
 # Writes data to a removable device
-def updatedrive():
+def _updatedrive():
     global datachange
     if system.mount():
         system.copy(ABS_DATA_DIR, MEDIA_DIR + DATA_FILE)

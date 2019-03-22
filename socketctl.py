@@ -35,7 +35,7 @@ def init():
 
 
 # Read loop to continually read data from a client
-def read(sock, info):
+def _read(sock, info):
     try:
         # Receive data
         data = sock.recv(SIZE)
@@ -45,7 +45,7 @@ def read(sock, info):
         addtoqueue(str_data, MAC_DICT.get(info, info))
 
         # Wait for the next match
-        read(sock, info)
+        _read(sock, info)
     except (ConnectionResetError, TimeoutError):
         printing.printf('Disconnected from', MAC_DICT.get(info, info), style=printing.DISCONNECTED)
         sock.close()
@@ -66,7 +66,7 @@ def connect():
     clients.append((client_sock, client_info[0]))
 
     # Start reading it
-    Thread(target=lambda: read(client_sock, client_info[0])).start()
+    Thread(target=lambda: _read(client_sock, client_info[0])).start()
 
     # Stay open for connections
     connect()
