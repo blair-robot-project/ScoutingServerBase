@@ -9,7 +9,7 @@ from ouralliance import OurAlliance
 to_add = Queue()
 datachange = True
 
-#TODO: use this to not add things that have been removed (edit match that wasn't uploaded while connected)
+# TODO: use this to not add things that have been removed (edit match that wasn't uploaded while connected)
 void = []
 
 
@@ -35,10 +35,13 @@ def parsedata(data, info):
             removefromdatafile(line[len(EDIT_TRIGGER):])
             t = 'Edit'
         elif line:
-            addtodatafile(line)
-            match = line.split(',')
-            printing.printf(t + ' from ' + match[NAME] + ' on ' + info + ' for team ' +
-                            match[TEAM] + ' in match ' + match[MATCH], style=printing.NEW_DATA)
+            try:
+                match = line.split(',')
+                printing.printf(t + ' from ' + match[NAME] + ' on ' + info + ' for team ' +
+                                match[TEAM] + ' in match ' + match[MATCH], style=printing.NEW_DATA)
+                addtodatafile(line)
+            except IndexError:
+                printing.printf('Incomplete line:', line, style=printing.ERROR)
             t = 'Data'
 
 

@@ -7,7 +7,7 @@ from system import gethostMAC
 
 PORT = 1
 BACKLOG = 1
-SIZE = 1024
+SIZE = 4096
 
 MAC_DICT = {'78:E1:03:A4:F7:70': 'Poseidon',
             '00:FC:8B:3B:42:46': 'Demeter',
@@ -46,9 +46,8 @@ def read(sock, info):
 
         # Wait for the next match
         read(sock, info)
-    except (ConnectionResetError, TimeoutError) as e:
+    except (ConnectionResetError, TimeoutError):
         printing.printf('Disconnected from', MAC_DICT.get(info, info), style=printing.DISCONNECTED)
-        printing.printf(e, style=printing.DISCONNECTED)
         sock.close()
         clients.remove((sock, info))
     except Exception as e:
