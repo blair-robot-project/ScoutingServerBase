@@ -9,8 +9,12 @@ DRIVE_DEV_LOCS = ['/dev/sdb', '/dev/sda', '/dev/sdc']
 
 # Runs a command in the shell
 def _run(command):
-    process = sub.Popen(command, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
-    return process.communicate()
+    try:
+        process = sub.Popen(command, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
+        return process.communicate()
+    except Exception as e:
+        printing.printf('Unknown exception on system._run(' + command + '):', end=' ', style=printing.ERROR)
+        printing.printf(e, style=printing.ERROR)
 
 
 # Checks for a flash drive

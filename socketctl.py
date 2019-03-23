@@ -54,7 +54,7 @@ def _read(sock, info):
         sock.close()
         clients.remove((sock, info))
     except Exception as e:
-        printing.printf('Unknown error from', MAC_DICT.get(info, info), style=printing.DISCONNECTED)
+        printing.printf('Unknown error from', MAC_DICT.get(info, info), end=' ', style=printing.DISCONNECTED)
         printing.printf(e, style=printing.ERROR)
         sock.close()
         clients.remove((sock, info))

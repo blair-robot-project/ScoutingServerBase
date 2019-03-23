@@ -24,15 +24,9 @@ class Opponent(Team):
             self.climb[int(line[dataconstants.HAB_REACHED]) - 2] += 1
 
     def calcvalues(self):
-        return {'team': self.team,
-
-                'lowc': self.lowc / self.total,
-                'lowh': self.lowh / self.total,
-                'highc': self.highc / self.total,
-                'highh': self.highh / self.total,
-
-                'droph': self.droph / self.total,
-                'dropc': self.dropc / self.total,
-
-                'climb2': self.percent(self.climb[0] / self.total),
-                'climb3': self.percent(self.climb[1] / self.total)}
+        v = super().calcvalues()
+        v.update({'droph': self.avg(self.droph),
+                  'dropc': self.avg(self.dropc),
+                  'climb2': self.avg(self.climb[0], perc=True),
+                  'climb3': self.avg(self.climb[1], perc=True)})
+        return v

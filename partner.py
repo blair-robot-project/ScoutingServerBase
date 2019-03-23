@@ -39,32 +39,26 @@ class Partner(Team):
         self.habsuccess[attempt] += attempt == int(line[dataconstants.HAB_REACHED])
 
         if int(line[dataconstants.HAB_SUCCESS]) > 1:
-            self.climbtime[int(line[dataconstants.HAB_SUCCESS]) - 2].append(int(line[dataconstants.CLIMB_TIME]))
+            self.climbtime[int(line[dataconstants.HAB_REACHED]) - 2].append(int(line[dataconstants.CLIMB_TIME]))
 
         self.defense += int(line[dataconstants.DEFENSE])
 
     def calcvalues(self):
-        return {'team': self.team,
-                'cross': self.percent(self.autocross / self.total),
-                'start1': self.percent(self.start1 / self.total),
-                'start2': self.percent(self.start2 / self.total),
-                'preloadc': self.percent(self.prec / self.total),
-                'preloadh': self.percent(self.preh / self.total),
-                'autoc': self.percent(0 if not self.prec else self.autoc / self.prec),
-                'autoh': self.percent(0 if not self.preh else self.autoh / self.preh),
-
-                'lowc': self.lowc / self.total,
-                'lowh': self.lowh / self.total,
-                'lowr': 'y' if self.lowr else 'n',
-                'highc': self.highc / self.total,
-                'highh': self.highh / self.total,
-
-                'attempt1': self.percent(self.habattempt[1] / self.total),
-                'attempt2': self.percent(self.habattempt[2] / self.total),
-                'attempt3': self.percent(self.habattempt[3] / self.total),
-                'success2': self.percent(0 if not self.habattempt[2] else self.habsuccess[2] / self.habattempt[2]),
-                'success3': self.percent(0 if not self.habattempt[3] else self.habsuccess[3] / self.habattempt[3]),
-                'time2': self.avg(self.climbtime[0]),
-                'time3': self.avg(self.climbtime[1]),
-
-                'defense': self.percent(self.defense / self.total)}
+        v = super().calcvalues()
+        v.update({'cross': self.avg(self.autocross, perc=True),
+                  'start1': self.avg(self.start1, perc=True),
+                  'start2': self.avg(self.start2, perc=True),
+                  'preloadc': self.avg(self.prec, perc=True),
+                  'preloadh': self.avg(self.preh, perc=True),
+                  'autoc': self.percent(0 if not self.prec else self.autoc / self.prec),
+                  'autoh': self.percent(0 if not self.preh else self.autoh / self.preh),
+                  'lowr': 'y' if self.lowr else 'n',
+                  'attempt1': self.avg(self.habattempt[1], perc=True),
+                  'attempt2': self.avg(self.habattempt[2], perc=True),
+                  'attempt3': self.avg(self.habattempt[3], perc=True),
+                  'success2': self.percent(0 if not self.habattempt[2] else self.habsuccess[2] / self.habattempt[2]),
+                  'success3': self.percent(0 if not self.habattempt[3] else self.habsuccess[3] / self.habattempt[3]),
+                  'time2': self.avg(self.climbtime[0]),
+                  'time3': self.avg(self.climbtime[1]),
+                  'defense': self.avg(self.defense, perc=True)})
+        return v

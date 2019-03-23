@@ -1,9 +1,9 @@
-from abc import ABC, abstractmethod
-
 from dataconstants import CSC, L2RC, L1RC, L1RH, CSH, L3RC, L3RH, L2RH, COMMENTS, NO_DATA
 
 
-class Team(ABC):
+# Abstract
+# Stores and calculates data about a team, and outputs it in the format of the match strategy sheets
+class Team:
     header = None
     form = None
 
@@ -34,19 +34,28 @@ class Team(ABC):
         if comment:
             self.comments += comment + '\n\t'
 
-    @abstractmethod
     def calcvalues(self):
-        ...
+        return {'team': self.team,
+                'lowc':  self.avg(self.lowc),
+                'lowh':  self.avg(self.lowh),
+                'highc': self.avg(self.highc),
+                'highh': self.avg(self.highh)}
 
     def tostring(self):
         if self.total:
+            print(self.calcvalues())
             return self.form.format(**self.calcvalues())
         return self.team + ': ' + NO_DATA
+
+    def avg(self, x, perc=False):
+        if type(x) in (int, float):
+            # Sum average
+            r = 0 if not self.total else x / self.total
+        else:
+            # Iterable average
+            r = int(sum(x) / (1 if len(x) == 0 else len(x)))
+        return r if not perc else self.percent(r)
 
     @staticmethod
     def percent(n):
         return int(n * 100)
-
-    @staticmethod
-    def avg(l):
-        return int(sum(l) / (1 if len(l) == 0 else len(l)))

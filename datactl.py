@@ -65,8 +65,6 @@ def removefromdatafile(match):
 
 
 def _readfile():
-    global datachange
-    datachange = True
     f = open(ABS_DATA_DIR)
     s = f.read()
     f.close()
@@ -74,6 +72,8 @@ def _readfile():
 
 
 def _writefile(s):
+    global datachange
+    datachange = True
     f = open(ABS_DATA_DIR, 'w')
     f.write(s)
     f.close()
@@ -99,8 +99,8 @@ def getdata(team_numbers):
         if t in team_numbers:
             teams[team_numbers.index(t)].addline(splitline)
     d = list(map(lambda t: t.tostring(), teams))
-    return teams[0].getheader() + '\n' + '\n'.join(d[:3]) + '\n---\n' + teams[3].getheader() + '\n' + '\n'.join(
-        d[3:]) + '\n===\n' + '\n'.join([t.getteam() + ': ' + t.getcomments() for t in teams])
+    return teams[0].getheader() + '\n' + '\n'.join(d[:3]) + '\n---\n' + teams[3].getheader() + '\n' + \
+           '\n'.join(d[3:]) + '\n===\n' + '\n'.join([t.getteam() + ': ' + t.getcomments() for t in teams])
 
 
 # Writes data to a removable device
