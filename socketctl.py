@@ -43,6 +43,7 @@ def _read(sock, info):
         # Receive data
         data = sock.recv(SIZE)
         str_data = data.decode()
+        printing.printf(str_data,log=True,logtag='raw')
 
         # Submit the data to be parsed and added to the file
         addtoqueue(str_data, MAC_DICT.get(info, info))
@@ -50,11 +51,13 @@ def _read(sock, info):
         # Wait for the next match
         _read(sock, info)
     except (ConnectionResetError, TimeoutError):
-        printing.printf('Disconnected from', MAC_DICT.get(info, info), style=printing.DISCONNECTED)
+        printing.printf('Disconnected from', MAC_DICT.get(info, info), style=printing.DISCONNECTED,
+                        log=True, logtag='socketctl._read')
         sock.close()
         clients.remove((sock, info))
     except Exception as e:
-        printing.printf('Unknown error from', MAC_DICT.get(info, info), end=' ', style=printing.DISCONNECTED)
+        printing.printf('Unknown error from', MAC_DICT.get(info, info), end=' ', style=printing.DISCONNECTED,
+                        log=True, logtag='socketctl._read')
         printing.printf(e, style=printing.ERROR)
         sock.close()
         clients.remove((sock, info))
@@ -65,7 +68,8 @@ def connect():
     # Wait for connection
     client_sock, client_info = server_sock.accept()
     # Connect to device
-    printing.printf('Accepted connection from', MAC_DICT.get(client_info[0], client_info[0]), style=printing.CONNECTED)
+    printing.printf('Accepted connection from', MAC_DICT.get(client_info[0], client_info[0]), style=printing.CONNECTED,
+                    log=True, logtag='socketctl.connect')
     clients.append((client_sock, client_info[0]))
 
     # Start reading it
@@ -79,7 +83,8 @@ def connect():
 def close():
     for sock in clients:
         sock[0].close()
-        printing.printf('Closed connection with', MAC_DICT.get(sock[1], sock[1]), style=printing.STATUS)
+        printing.printf('Closed connection with', MAC_DICT.get(sock[1], sock[1]), style=printing.STATUS,
+                        log=True, logtag='socketctl.close')
     clients.clear()
     server_sock.close()
-    printing.printf('Closed server', style=printing.STATUS)
+    printing.printf('Closed server', style=printing.STATUS, log=True, logtag='socketctl.close')

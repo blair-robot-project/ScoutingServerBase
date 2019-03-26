@@ -2,6 +2,8 @@ DATA_FILE = 'whitman.csv'
 ABS_DATA_DIR = '/home/carter/Desktop/' + DATA_FILE
 MEDIA_DIR = '/home/carter/ScoutingDrive/'
 
+LOG_FILE = 'log'
+
 HEADERS = 'team #,match #,alliance color,starting level,preload,no show,moved forward,auto piece placed,double auto,' \
           'ship cargo,level 1 cargo,level 2 cargo,level 3 cargo,ship hatches,level 1 hatches,level 2 hatches,' \
           'level 3 hatches,hatches dropped,cargo dropped,hab attempt level,hab success,hab level reached,climb time,' \

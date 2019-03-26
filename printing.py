@@ -1,3 +1,5 @@
+from logger import log as log_
+
 BASE = '\033[9'
 BASE_END = 'm'
 
@@ -19,10 +21,12 @@ CONNECTED = GREEN
 DISCONNECTED = RED
 STATUS = YELLOW
 NEW_DATA = BLUE
+EDIT = YELLOW
 DATA_OUTPUT = PURPLE
 FLASH_DRIVE = TEAL
 ERROR = (RED, BOLD)
 QUIT = (RED, HIGHLIGHT)
+FLASH_DRIVE_SUCCESS = (GREEN, HIGHLIGHT)
 
 LOGO = (RED, BOLD)
 HEADER = RED
@@ -32,7 +36,8 @@ INSTRUCTIONS = DEFAULT
 
 # Prints with color and font styles
 # Wrapper of print, so you can still use any kwargs that print understands
-def printf(*args, style=(DEFAULT, NORMAL), **kwargs):
+# Also has built in logging
+def printf(*args, style=(DEFAULT, NORMAL), log=False, logtag='printing.printf', **kwargs):
     endc = ENDC
     # Handel the style being just a color/font style, or a tuple of both
     if type(style) == tuple:
@@ -46,3 +51,6 @@ def printf(*args, style=(DEFAULT, NORMAL), **kwargs):
     print(style, end='')
     # Print the stuff
     print(*args, **kwargs, end=end)
+
+    if log:
+        log_(logtag, kwargs.get('sep', ' ').join(args))

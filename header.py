@@ -2,6 +2,7 @@ from shutil import get_terminal_size
 from textwrap import TextWrapper
 
 import printing
+from logger import log
 
 LOGO = '''
                      ,:++:,                      
@@ -52,18 +53,21 @@ def print_header(width=None):
     tw = TextWrapper(width=width)
     printing.printf(tw.fill(
         'This server is intended for use with the Team 449 scouting app (and strategy app) for android.') + '\n' +
-        tw.fill('On each scouting tablet, please launch the scouting app, select your device name from the '
-                'popup, and press connect. If there is no popup, press the Bluetooth icon in the top right '
-                'corner of the app.') + '\n' +
-        tw.fill('When connected, you should receive a popup in the app informing you that a connection was '
-                'made, as well as output from this server with the name of the device.') + '\n' +
-        tw.fill('To retrieve the data file for data analysis, plug in a USB flash drive, wait for output ' 
-                'saying that it was mounted, the data was copied, and it was unmounted, then remove it.') + '\n' +
-        tw.fill('If the drive does not get detected/updated, it may be because there is no new data since you last '
-                'updated it. If you would still like to update it (if, for example, you switched flash drives), '
-                'just type d, data, u, or update into the server.') + '\n' +
-        tw.fill('To retrieve data for strategy, type "s" and hit enter, then enter the team numbers.') + '\n' +
-        tw.fill('To quit the server, type "q" or "quit" and press enter, confirm that you want to ' 
-                'quit, and wait for the server to close.'), style=printing.INSTRUCTIONS)
+                    tw.fill('On each scouting tablet, please launch the scouting app, select your device name from the '
+                            'popup, and press connect. If there is no popup, press the Bluetooth icon in the top right '
+                            'corner of the app.') + '\n' +
+                    tw.fill('When connected, you should receive a popup in the app informing you that a connection was '
+                            'made, as well as output from this server with the name of the device.') + '\n' +
+                    tw.fill('To retrieve the data file for data analysis, plug in a USB flash drive, wait for output '
+                            'saying that it was mounted, the data was copied, and it was unmounted, then remove it.')
+                    + '\n' +
+                    tw.fill(
+                        'If the drive does not get detected/updated, it may be because there is no new data since you '
+                        'last updated it. If you would still like to update it (if, for example, you switched flash '
+                        'drives), just type d, data, u, or update into the server.') + '\n' +
+                    tw.fill(
+                        'To retrieve data for strategy, type "s" and hit enter, then enter the team numbers.') + '\n' +
+                    tw.fill('To quit the server, type "q" or "quit" and press enter, confirm that you want to '
+                            'quit, and wait for the server to close.'), style=printing.INSTRUCTIONS)
     printing.printf()
     printing.printf('-' * width + '\n\n', style=printing.UNDERLINE)
