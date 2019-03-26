@@ -55,7 +55,7 @@ def handleinput():
     elif i in ('s', 'strat', 'match strat', 'strategy', 'match strategy'):
         # noinspection PyUnusedLocal
         teams = [input("Our alliance: ") for i in range(3)] + [input("Other alliance: ") for i in range(3)]
-        printing.printf(datactl.getdata(teams), style=printing.DATA_OUTPUT, log=True, logtag='server.handleinput')
+        printing.printf(datactl.getdata(teams), style=printing.DATA_OUTPUT)
 
     Thread(target=handleinput).start()
 

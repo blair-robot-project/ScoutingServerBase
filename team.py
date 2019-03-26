@@ -43,7 +43,6 @@ class Team:
 
     def tostring(self):
         if self.total:
-            print(self.calcvalues())
             return self.form.format(**self.calcvalues())
         return self.team + ': ' + NO_DATA
 

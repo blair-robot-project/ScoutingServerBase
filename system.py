@@ -14,7 +14,7 @@ def _run(command):
         return process.communicate()
     except Exception as e:
         printing.printf('Unknown exception on system._run(' + command + '):', end=' ', style=printing.ERROR,
-                        log=True, logtag='system._run')
+                        log=True, logtag='system._run.error')
         printing.printf(e, style=printing.ERROR)
 
 
@@ -36,7 +36,7 @@ def mount():
     p = _run('sudo mount ' + dev + ' ' + MEDIA_DIR)
     if p[1]:
         printing.printf('Error mounting: ' + p[1].decode('utf-8'), style=printing.ERROR,
-                        log=True, logtag='system.mount')
+                        log=True, logtag='system.mount.error')
         return False
     else:
         printing.printf('Mounting successful' + _stdoutmessage(p[0]), style=printing.FLASH_DRIVE,
@@ -51,7 +51,7 @@ def copy(fin, fout):
     p = _run('sudo cp ' + fin + ' ' + fout)
     if p[1]:
         printing.printf('Error copying: ' + p[1].decode('utf-8'), style=printing.ERROR,
-                        log=True, logtag='system.copy')
+                        log=True, logtag='system.copy.error')
     else:
         printing.printf('Copying successful' + _stdoutmessage(p[0]), style=printing.FLASH_DRIVE,
                         log=True, logtag='system.copy')
@@ -64,7 +64,7 @@ def unmount():
     p = _run('sudo umount ' + MEDIA_DIR)
     if p[1]:
         printing.printf('Error unmounting: ' + p[1].decode('utf-8'), style=printing.ERROR,
-                        log=True, logtag='system.unmount')
+                        log=True, logtag='system.unmount.error')
     else:
         printing.printf('Unmounting successful, remove device' + _stdoutmessage(p[0]),
                         style=printing.FLASH_DRIVE_SUCCESS, log=True, logtag='system.unmount')
@@ -82,10 +82,10 @@ def gethostMAC():
     except IndexError:
         if out[0]:
             printing.printf('No bluetooth adapter available', style=printing.ERROR,
-                            log=True, logtag='system.gethostMAC')
+                            log=True, logtag='system.gethostMAC.error')
         else:
             printing.printf('hcitool not found, please install it or edit system.py to use something else',
-                            style=printing.ERROR, log=True, logtag='system.gethostMAC')
+                            style=printing.ERROR, log=True, logtag='system.gethostMAC.error')
 
 
 def _stdoutmessage(s):

@@ -3,6 +3,7 @@ from threading import Thread
 
 import printing
 from datactl import addtoqueue
+from logger import log
 from system import gethostMAC
 
 PORT = 1
@@ -43,10 +44,11 @@ def _read(sock, info):
         # Receive data
         data = sock.recv(SIZE)
         str_data = data.decode()
-        printing.printf(str_data,log=True,logtag='raw')
+        if str_data.strip():
+            log('socketctl._read.raw', str_data)
 
-        # Submit the data to be parsed and added to the file
-        addtoqueue(str_data, MAC_DICT.get(info, info))
+            # Submit the data to be parsed and added to the file
+            addtoqueue(str_data, MAC_DICT.get(info, info))
 
         # Wait for the next match
         _read(sock, info)
@@ -57,8 +59,8 @@ def _read(sock, info):
         clients.remove((sock, info))
     except Exception as e:
         printing.printf('Unknown error from', MAC_DICT.get(info, info), end=' ', style=printing.DISCONNECTED,
-                        log=True, logtag='socketctl._read')
-        printing.printf(e, style=printing.ERROR)
+                        log=True, logtag='socketctl._read.error')
+        printing.printf(e, style=printing.ERROR, log=True, logtag='socketctl._read.error')
         sock.close()
         clients.remove((sock, info))
 
