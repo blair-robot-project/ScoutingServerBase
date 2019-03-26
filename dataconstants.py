@@ -1,4 +1,4 @@
-DATA_FILE = 'whitman.csv'
+DATA_FILE = 'blacksburg.csv'
 ABS_DATA_DIR = '/home/carter/Desktop/' + DATA_FILE
 MEDIA_DIR = '/home/carter/ScoutingDrive/'
 
