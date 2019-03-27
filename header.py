@@ -46,7 +46,7 @@ def print_header(width=None):
     printing.printf(('{:^' + str(width) + '}').format('Bluetooth Scouting Server'), style=printing.TITLE)
     printing.printf()
     printing.printf(('{:^' + str(width) + '}').format('Runs with Python3 on Linux'), style=printing.INSTRUCTIONS)
-    printing.printf(('{:^' + str(width) + '}').format('Writen by Carter Wilson, 2019'), style=printing.INSTRUCTIONS)
+    printing.printf(('{:^' + str(width) + '}').format('Written by Carter Wilson, 2019'), style=printing.INSTRUCTIONS)
     printing.printf('-' * width + '\n', style=printing.INSTRUCTIONS)
 
     printing.printf('Instructions for use:', style=printing.INSTRUCTIONS)
