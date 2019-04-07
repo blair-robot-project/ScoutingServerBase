@@ -6,8 +6,8 @@ from team import Team
 class Opponent(Team):
     droph, dropc = 0, 0
 
-    header = 'team: l h | l c | h c | h h | drop(h:c) | climb '
-    form = '{team:4s}: {lowh:3.1f} | {lowc:3.1f} | {highc:3.1f} | {highh:3.1f} |  ' \
+    header = 'team: l h | l c | h h | h c | drop(h:c) | climb '
+    form = '{team:4s}: {lowh:3.1f} | {lowc:3.1f} | {highh:3.1f} | {highc:3.1f} |  ' \
            '{droph:3.1f}:{dropc:3.1f}  | {climb2:3d}:{climb3:3d}'
 
     def __init__(self, team):

@@ -4,11 +4,11 @@ from team import Team
 
 # Calculates data we want for teams on our alliance
 class Partner(Team):
-    header = 'team: cross | srt lvl | auto(c:h) | pre(c:h) |#| l h | l c | l r | h c | h h |  d  |#| ' \
+    header = 'team: cross | srt lvl | auto(h:c) | pre(h:c) |#| l h | l c | l r | h h | h c |  d  |#| ' \
              '  attempt   | success | time '
 
-    form = '{team:4s}:  {cross:3d}% | {start1:3d}:{start2:3d} | {autoc:4d}:{autoh:4d} |  {preloadc:3d}:{preloadh:3d} ' \
-           '|#| {lowh:3.1f} | {lowc:3.1f} |  {lowr:1s}  | {highc:3.1f} | {highh:3.1f} | {defense:3d} |#| ' \
+    form = '{team:4s}:  {cross:3d}% | {start1:3d}:{start2:3d} | {autoh:4d}:{autoc:4d} |  {preloadh:3d}:{preloadc:3d} ' \
+           '|#| {lowh:3.1f} | {lowc:3.1f} |  {lowr:1s}  | {highh:3.1f} | {highc:3.1f} | {defense:3d} |#| ' \
            '{attempt1:3d}:{attempt2:3d}:{attempt3:3d} | {success2:3d}:{success3:3d} | {time2:2d}:{time3:2d}'
 
     autocross, start1, start2, prec, preh, autoc, autoh, defense = 0, 0, 0, 0, 0, 0, 0, 0
