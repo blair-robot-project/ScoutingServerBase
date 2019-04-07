@@ -11,7 +11,8 @@ To run this server, run server.py with Python3 on a Linux computer with Bluetoot
 
 Devices must be paired (but not necessarily connected) before use.
 
-For automatic removable drive detection and copying, you must enable NOPASSWD for sudo usage. You can do this by adding "username ALL=(ALL) NOPASSWD: ALL" to the end of your /etc/sudoers file. Be aware that this poses a major security risk, your password is no longer required to use sudo.  
+For automatic removable drive detection and copying, you must enable NOPASSWD for sudo usage. You can do this by adding `username ALL=(ALL) NOPASSWD: ALL` to the end of your `/etc/sudoers` file (do this with `sudo visudo`). Be aware that this poses a major security risk, your password is no longer required to use sudo. 
+You also need an empty media directory to mount to.
 
 ### Related Repositories/Documents
 
