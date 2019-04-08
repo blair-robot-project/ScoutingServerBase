@@ -1,4 +1,4 @@
 .idea/
-data.csv
 __pycache__/
+*.csv
 log
