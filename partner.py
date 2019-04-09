@@ -4,19 +4,19 @@ from team import Team
 
 # Calculates data we want for teams on our alliance
 class Partner(Team):
-    header = 'team: cross | srt lvl | auto(h:c) | pre(h:c) |#| l h | l c | l r | h h | h c |  d  |#| ' \
+    header = 'team: cross | srt lvl | auto(h:c) | pre(h:c) |#| l h | l c | l r | h h | h c | defense |#| ' \
              '  attempt   | success | time '
 
     form = '{team:4s}:  {cross:3d}% | {start1:3d}:{start2:3d} | {autoh:4d}:{autoc:4d} |  {preloadh:3d}:{preloadc:3d} ' \
-           '|#| {lowh:3.1f} | {lowc:3.1f} |  {lowr:1s}  | {highh:3.1f} | {highc:3.1f} | {defense:3d} |#| ' \
-           '{attempt1:3d}:{attempt2:3d}:{attempt3:3d} | {success2:3d}:{success3:3d} | {time2:2d}:{time3:2d}'
+           '|#| {lowh:3.1f} | {lowc:3.1f} |  {lowr:1s}  | {highh:3.1f} | {highc:3.1f} | {defensep:3d}:{defenses:1.1f} '\
+           '|#| {attempt1:3d}:{attempt2:3d}:{attempt3:3d} | {success2:3d}:{success3:3d} | {time2:2d}:{time3:2d}'
 
-    autocross, start1, start2, prec, preh, autoc, autoh, defense = 0, 0, 0, 0, 0, 0, 0, 0
+    autocross, start1, start2, prec, preh, autoc, autoh = 0, 0, 0, 0, 0, 0, 0
     lowr = False
 
     def __init__(self, team):
         super().__init__(team)
-        self.habattempt, self.habsuccess, self.climbtime = [0, 0, 0, 0], [0, 0, 0, 0], [[], []]
+        self.habattempt, self.habsuccess, self.climbtime, self.defense = [0, 0, 0, 0], [0, 0, 0, 0], [[], []], []
 
     def addline(self, line):
         super().addline(line)
@@ -41,7 +41,9 @@ class Partner(Team):
         if int(line[dataconstants.HAB_SUCCESS]) > 1:
             self.climbtime[int(line[dataconstants.HAB_REACHED]) - 2].append(int(line[dataconstants.CLIMB_TIME]))
 
-        self.defense += int(line[dataconstants.DEFENSE])
+        d = int(line[dataconstants.DEFENSE])
+        if d:
+            self.defense.append(d)
 
     def calcvalues(self):
         v = super().calcvalues()
@@ -60,5 +62,6 @@ class Partner(Team):
                   'success3': self.percent(0 if not self.habattempt[3] else self.habsuccess[3] / self.habattempt[3]),
                   'time2': self.avg(self.climbtime[0]),
                   'time3': self.avg(self.climbtime[1]),
-                  'defense': self.avg(self.defense, perc=True)})
+                  'defensep': self.avg(len(self.defense), perc=True),
+                  'defenses': self.avg(self.defense, itint=False)})
         return v

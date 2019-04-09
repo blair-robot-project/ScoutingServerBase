@@ -46,13 +46,15 @@ class Team:
             return self.form.format(**self.calcvalues())
         return self.team + ': ' + NO_DATA
 
-    def avg(self, x, perc=False):
+    def avg(self, x, perc=False, itint=True):
         if type(x) in (int, float):
             # Sum average
             r = 0 if not self.total else x / self.total
         else:
             # Iterable average
-            r = int(sum(x) / (1 if len(x) == 0 else len(x)))
+            r = sum(x) / (1 if len(x) == 0 else len(x))
+            if itint:
+                r = int(r)
         return r if not perc else self.percent(r)
 
     @staticmethod
