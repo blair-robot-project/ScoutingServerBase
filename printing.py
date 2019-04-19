@@ -38,15 +38,13 @@ INSTRUCTIONS = DEFAULT
 # Wrapper of print, so you can still use any kwargs that print understands
 # Also has built in logging
 def printf(*args, style=(DEFAULT, NORMAL), log=False, logtag='printing.printf', **kwargs):
-    endc = ENDC
     # Handel the style being just a color/font style, or a tuple of both
     if type(style) == tuple:
-        endc *= len(style)
         style = ''.join(style)
     elif not type(style) == str:
         print(*args, **kwargs)
     # End the style so things printed after don't have it
-    end = endc + kwargs.pop('end', '\n')
+    end = ENDC + kwargs.pop('end', '\n')
     # Start the style
     print(style, end='')
     # Print the stuff

@@ -3,9 +3,6 @@ from queue import Queue
 import printing
 import system
 from dataconstants import HEADERS, DATA_FILE, ABS_DATA_DIR, TEAM, MEDIA_DIR, EDIT_TRIGGER, NAME, MATCH
-from logger import log
-from opponent import Opponent
-from partner import Partner
 
 # Thread-safe queue to add lines to the file without concurrent modification
 to_add = Queue()
@@ -94,36 +91,6 @@ def update():
     # If there is a flash drive and there is new data for it, upload the data
     if datachange and system.checkdev():
         _updatedrive()
-
-
-# Get the data string to return from the list of teams
-def getdata(team_numbers):
-    log('datactl.getdata', 'Strategy data request for ' + ', '.join(team_numbers))
-
-    f = open(ABS_DATA_DIR)
-    # noinspection PyTypeChecker
-    teams = [Partner(t) for t in team_numbers[:3]] + [Opponent(t) for t in team_numbers[3:]]
-    for line in f:
-        splitline = line.split(',')
-        t = splitline[TEAM]
-        if t in team_numbers:
-            try:
-                teams[team_numbers.index(t)].addline(splitline)
-            except IndexError as e:
-                printing.printf('Incomplete line in data: ', style=printing.ERROR, log=True,
-                                logtag='Team.addline.error')
-                printing.printf(line, style=printing.YELLOW, log=True, logtag='Team.addline.error')
-                log('Team.addline.error', str(e))
-            except Exception as e:
-                printing.printf('Unknown error in strategy request: ', style=printing.ERROR, log=True,
-                                logtag='Team.addline.error')
-                printing.printf(str(e), style=printing.ERROR, log=True, logtag='Team.addline.error')
-                printing.printf('On line: ' + line, style=printing.YELLOW, log=True, logtag='Team.addline.error')
-
-    d = list(map(lambda t: t.tostring(), teams))
-    log('datactl.getdata', '/'.join(d))
-    return teams[0].getheader() + '\n' + '\n'.join(d[:3]) + '\n---\n' + teams[3].getheader() + '\n' + \
-           '\n'.join(d[3:]) + '\n===\n' + '\n'.join([t.getteam() + ': ' + t.getcomments() for t in teams])
 
 
 # Writes data to a removable device
