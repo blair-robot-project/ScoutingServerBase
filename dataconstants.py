@@ -1,4 +1,4 @@
-DATA_FILE = 'dchamps.csv'
+DATA_FILE = 'worlds.csv'
 ABS_DATA_DIR = '/home/carter/Desktop/' + DATA_FILE
 MEDIA_DIR = '/home/carter/ScoutingDrive/'
 
@@ -7,7 +7,7 @@ LOG_FILE = 'log'
 HEADERS = 'team #,match #,alliance color,starting level,preload,no show,moved forward,auto piece placed,double auto,' \
           'ship cargo,level 1 cargo,level 2 cargo,level 3 cargo,ship hatches,level 1 hatches,level 2 hatches,' \
           'level 3 hatches,hatches dropped,cargo dropped,hab attempt level,hab success,hab level reached,climb time,' \
-          'dead,defense,comments,scout name,time stamp, '
+          'dead,defense,defended,comments,scout name,time stamp, '
 
 
 EDIT_TRIGGER = 'REPLACE'
@@ -39,6 +39,7 @@ HAB_SUCCESS = _ind['hab success']
 HAB_REACHED = _ind['hab level reached']
 CLIMB_TIME = _ind['climb time']
 DEFENSE = _ind['defense']
+DEFENDED = _ind['defended']
 COMMENTS = _ind['comments']
 
 NO_DATA = 'No data has been collected for this team'
