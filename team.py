@@ -18,9 +18,10 @@ class Team:
     opp_form = '{team:4s}: {lowh:3.1f} | {lowc:3.1f} | {highh:3.1f} | {highc:3.1f} |  ' \
                '{droph:3.1f}:{dropc:3.1f}  | {climb2:3d}:{climb3:3d} | {defensep:3d}:{defenses:1.1f}'
 
-    quick_form = '\033[7m\033[95m{team:s}\033[0m'
+    quick_form = '\033[7m\033[95m{team:4s}\033[0m SS:{autoh:3d}:{autoc:3d} H:{allhatch:2.1f} C:{allcargo:2.1f} ' \
+                 'HI:{height:2s} EG:{success2:3d}:{success3:3d}'
 
-    detail_form = '\033[7m\033[95m{team:s}\033[0m\n'
+    detail_form = '\033[7m\033[95m{team:4s}\033[0m\n'
 
     # noinspection PyArgumentList
     Forms = Enum('Forms', 'strat quick detail')
@@ -118,7 +119,11 @@ class Team:
                 'droph': self.avg(self.droph),
                 'dropc': self.avg(self.dropc),
                 'climb2': self.avg(self.climb[0], perc=True),
-                'climb3': self.avg(self.climb[1], perc=True), }
+                'climb3': self.avg(self.climb[1], perc=True),
+
+                'allhatch': self.avg(self.lowh + self.highh),
+                'allcargo': self.avg(self.lowc + self.highc),
+                'height': ('h' if self.highh > 2 else 'x') + ('c' if self.highc > 2 else 'x'), }
 
     def summary(self, form=Forms.strat):
         forms = {self.Forms.strat: self.strat_form, self.Forms.quick: self.quick_form,

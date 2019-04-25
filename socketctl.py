@@ -56,10 +56,19 @@ def _read(sock, info):
                         log=True, logtag='socketctl._read')
         sock.close()
         clients.remove((sock, info))
+    except OSError:
+        printing.printf('Disconnected from', MAC_DICT.get(info, info), '(OSError function not implemented)',
+                        style=printing.DISCONNECTED, log=True, logtag='socketctl._read')
+        sock.close()
+        clients.remove((sock, info))
     except Exception as e:
         printing.printf('Unknown error from', MAC_DICT.get(info, info), end=' ', style=printing.DISCONNECTED,
                         log=True, logtag='socketctl._read.error')
-        printing.printf(e, style=printing.ERROR, log=True, logtag='socketctl._read.error')
+        print(e)
+        try:
+            printing.printf(str(e), style=printing.ERROR, log=True, logtag='socketctl._read.error')
+        except TypeError:
+            printing.printf('Can\'t log the error', log=True, logtag='socketctl._read.error')
         sock.close()
         clients.remove((sock, info))
 

@@ -12,7 +12,7 @@ from logger import log
 
 
 def main():
-    log('server.main', '+'*20)
+    log('server.main', '+' * 20)
     log('server.main', 'Server started')
 
     print_header()
@@ -59,23 +59,14 @@ def handleinput():
         teams = [input("Our alliance: ") for i in range(3)] + [input("Other alliance: ") for i in range(3)]
         printing.printf(summarize.strategy(teams), style=printing.DATA_OUTPUT)
 
-    elif ii[0] in ('sum', 'summary', 'detail', 'info', 'detailed', 'full', 'ds'):
-        printing.printf(summarize.detailed_summary(handleargument(ii)[0]))
+    elif len(ii):
+        if ii[0] in ('sum', 'summary', 'detail', 'info', 'detailed', 'full', 'ds', 'dcomp', 'dc'):
+            [printing.printf(q) for q in summarize.detailed_summary(ii[1:])]
 
-    elif ii[0] in ('qsum', 'quick', 'brief', 'qsummary', 'qinfo', 'qk', 'qs'):
-        printing.printf(summarize.quick_summary(handleargument(ii)[0]))
-
-    elif ii[0] in ('comp', 'c', 'compare', 'comparison', 'diff'):
-        printing.printf(summarize.quick_summary(handleargument(ii, n=len(ii)-1 if len(ii) > 2 else input('n: '))))
-
-    elif ii[0] in ('dcomp', 'dc', 'dcompare', 'dcomparison', 'ddiff', 'detail comp', 'full comp'):
-        printing.printf(summarize.detailed_summary(handleargument(ii, n=len(ii)-1 if len(ii) > 2 else input('n: '))))
+        elif ii[0] in ('qsum', 'quick', 'brief', 'qsummary', 'qinfo', 'qk', 'qs', 'comp', 'c'):
+            [printing.printf(q) for q in summarize.quick_summary(ii[1:])]
 
     Thread(target=handleinput).start()
-
-
-def handleargument(ii, n=1):
-    [ii[i] if len(ii) > i else input('Team: ') for i in range(1)]
 
 
 if __name__ == '__main__':

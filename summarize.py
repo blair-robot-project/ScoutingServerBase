@@ -8,8 +8,19 @@ from team import Team
 def strategy(team_numbers):
     log('datactl.getdata', 'Strategy data request for ' + ', '.join(team_numbers))
 
+    teams = _maketeams(team_numbers)
+
+    d = list(map(lambda t: t.summary(), teams))
+    log('datactl.getdata', '/'.join(d))
+    return teams[0].getheader() + '\n' + '\n'.join(d[:3]) + '\n---\n' + teams[3].getheader() + '\n' + \
+           '\n'.join(d[3:]) + '\n===\n' + '\n'.join([t.getteam() + ': ' + t.getcomments() for t in teams])
+
+
+def _maketeams(team_numbers):
     f = open(ABS_DATA_DIR)
-    teams = [Team(t, partner=i <3) for i, t in enumerate(team_numbers)]
+
+    teams = [Team(t, partner=i < 3) for i, t in enumerate(team_numbers)]
+
     for line in f:
         splitline = line.split(',')
         t = splitline[TEAM]
@@ -26,16 +37,14 @@ def strategy(team_numbers):
                                 logtag='Team.addline.error')
                 printing.printf(str(e), style=printing.ERROR, log=True, logtag='Team.addline.error')
                 printing.printf('On line: ' + line, style=printing.YELLOW, log=True, logtag='Team.addline.error')
-
-    d = list(map(lambda t: t.summary(), teams))
-    log('datactl.getdata', '/'.join(d))
-    return teams[0].getheader() + '\n' + '\n'.join(d[:3]) + '\n---\n' + teams[3].getheader() + '\n' + \
-           '\n'.join(d[3:]) + '\n===\n' + '\n'.join([t.getteam() + ': ' + t.getcomments() for t in teams])
+    return teams
 
 
-def detailed_summary(number):
-    ...
+def detailed_summary(team_numbers):
+    teams = _maketeams(team_numbers)
+    return list(map(lambda x: x.summary(form=Team.Forms.detail), teams))
 
-def quick_summary(number):
-    ...
 
+def quick_summary(team_numbers):
+    teams = _maketeams(team_numbers)
+    return list(map(lambda x: x.summary(form=Team.Forms.quick), teams))
