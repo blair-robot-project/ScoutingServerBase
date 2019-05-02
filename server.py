@@ -59,6 +59,9 @@ def handleinput():
         teams = [input("Our alliance: ") for i in range(3)] + [input("Other alliance: ") for i in range(3)]
         printing.printf(summarize.strategy(teams), style=printing.DATA_OUTPUT)
 
+    elif i in ('missing','m','count','msng'):
+        datactl.findmissing()
+
     elif len(ii):
         if ii[0] in ('sum', 'summary', 'detail', 'info', 'detailed', 'full', 'ds', 'dcomp', 'dc'):
             [printing.printf(q) for q in summarize.detailed_summary(ii[1:])]

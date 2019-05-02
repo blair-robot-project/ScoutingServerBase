@@ -105,3 +105,18 @@ def _updatedrive():
 def driveupdaterequest():
     global datachange
     datachange = True
+
+def findmissing():
+    q=_readfile().strip().split('\n')
+    w=list(map(lambda x: x.split(','),q))
+    a=list(map(lambda x:(int(x[1]),int(x[0]),x[27 if len(x)>27 else 0]),w[1:]))
+    s = [set() for i in range(max(map(lambda x:x[0],a)))]
+    l = [list() for i in range(max(map(lambda x:x[0],a)))]
+    for p in a:
+        l[p[0]-1].append(p[1:])
+        s[p[0]-1].add(p[1:2])
+    for i in range(len(l)):
+        if len(l[i])!=6 or len(s[i])!=6:
+            print(i+1,':',len(l[i]))
+            print(' ',l[i])
+            print()
