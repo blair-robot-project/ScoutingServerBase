@@ -16,10 +16,6 @@ You also need an empty media directory to mount to.
 
 ### Related Repositories/Documents
 
-Scouting App: https://github.com/carter-wilson/DeepSpaceScoutingApp
-
-Strategy app to retrieve data from bluetooth server (in progress, not currently functional): https://github.com/carter-wilson/StrategyApp
-
-Document explaining the fields for data analysis: https://docs.google.com/document/d/e/2PACX-1vSp7j7vCPgH-OLdPKhMAEnKDSYsi99BufqXZlAtQ5-3uarYPo0ePbIv9WJOP2oC02fvnjt30iEE5z3C/pub
+Scouting App: https://github.com/carter-wilson/ScoutingAppBase
 
 Document with instructions for troubleshooting: https://docs.google.com/document/d/e/2PACX-1vQee5Sqv6SeAFb2fKwDNr9rSXkZXnjioS3S4TC8sNpsfiSedAvtZzxlJ8ffhN09tpQuTQDwXQFh2eT-/pub
