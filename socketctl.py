@@ -9,7 +9,7 @@ from system import gethostMAC
 PORT = 1
 BACKLOG = 1
 # Max message size
-SIZE = 4096
+SIZE = 1024
 
 # Associates MAC addresses of the kindles with their user friendly names
 MAC_DICT = {'00:FC:8B:3B:42:46': 'R1 Demeter',
@@ -71,6 +71,10 @@ def _read(sock, info):
             printing.printf('Can\'t log the error', log=True, logtag='socketctl._read.error')
         sock.close()
         clients.remove((sock, info))
+
+
+def send(clientid, msg):
+    clients[clientid][0].send(msg.encode())
 
 
 # Waits for a device to try to connect, then starts a thread to read that device, and stays open for connections

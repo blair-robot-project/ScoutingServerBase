@@ -69,6 +69,9 @@ def handleinput():
         elif ii[0] in ('qsum', 'quick', 'brief', 'qsummary', 'qinfo', 'qk', 'qs', 'comp', 'c'):
             [printing.printf(q) for q in summarize.quick_summary(ii[1:])]
 
+        elif ii[0] == 'send':
+            socketctl.send(0,ii[1])
+
     Thread(target=handleinput).start()
 
 
