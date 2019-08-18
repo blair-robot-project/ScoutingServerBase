@@ -38,7 +38,7 @@ def invalid_msg(msg, client):
 
 def summarize_data(data, client_name):
     printing.printf('Data from ' + data[Fields.SCOUT_NAME.value] + ' on ' + client_name + ' for team ' +
-                    data[Fields.TEAM_ID.value] + ' in match ' + data[Fields.MATCH_ID.value],
+                    str(data[Fields.TEAM_ID.value]) + ' in match ' + str(data[Fields.MATCH_ID.value]),
                     style=printing.NEW_DATA, log=True, logtag='msgctl.handle_msg')
 
 
