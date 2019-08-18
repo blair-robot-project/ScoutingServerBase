@@ -5,10 +5,10 @@ from threading import Thread
 
 import datactl
 import printing
-import socketctl
 import summarize
 from header import print_header
 from logger import log
+from socketctl import SocketCtl
 
 
 def main():
@@ -23,8 +23,8 @@ def main():
 
     Thread(target=handleinput).start()
 
-    socketctl.init()
-    Thread(target=socketctl.connect).start()
+    socketctl = SocketCtl()
+    socketctl.start_connecting()
 
     while True:
         try:
@@ -69,8 +69,8 @@ def handleinput():
         elif ii[0] in ('qsum', 'quick', 'brief', 'qsummary', 'qinfo', 'qk', 'qs', 'comp', 'c'):
             [printing.printf(q) for q in summarize.quick_summary(ii[1:])]
 
-        elif ii[0] == 'send':
-            socketctl.send(0,ii[1])
+        # elif ii[0] == 'send':
+        #     socketctl.blanket_send(ii[1])
 
     Thread(target=handleinput).start()
 

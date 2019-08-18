@@ -24,9 +24,13 @@ def makefile():
     except FileNotFoundError:
         _writefile(HEADERS + '\n')
 
-
+import json
 # Parse a string with lines of data
 def _parsedata(data, info):
+    m = json.loads(data)
+    print(m)
+    b = json.loads(m['body'])
+    print(b)
     for line in data.split('\n'):
         line = line.strip()
         if line[:len(EDIT_TRIGGER)] == EDIT_TRIGGER:

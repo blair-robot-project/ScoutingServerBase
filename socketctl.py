@@ -2,8 +2,8 @@ import socket
 from threading import Thread
 
 import printing
+from connection import Connection
 from datactl import addtoqueue
-from logger import log
 from system import gethostMAC
 
 PORT = 1
@@ -22,83 +22,50 @@ MAC_DICT = {'00:FC:8B:3B:42:46': 'R1 Demeter',
             '44:65:0D:E0:D6:3A': 'Strategy Tablet'}
 
 
-# Sets up the server
-def init():
-    global server_sock, clients
-
-    host_mac = gethostMAC()
-
-    # Setup server socket
-    server_sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
-    server_sock.bind((host_mac, PORT))
-    server_sock.listen(BACKLOG)
-    server_sock.settimeout(None)
-
-    clients = []
+def recieve_msg(msg, name):
+    addtoqueue(msg, name)
 
 
-# Read loop to continually read data from a client
-def _read(sock, info):
-    try:
-        # Receive data
-        data = sock.recv(SIZE)
-        str_data = data.decode()
-        if str_data.strip():
-            log('socketctl._read.raw', str_data)
+class SocketCtl:
+    clients = set()
+    connecting = False
 
-            # Submit the data to be parsed and added to the file
-            addtoqueue(str_data, MAC_DICT.get(info, info))
+    def __init__(self):
+        self.host_mac = gethostMAC()
 
-        # Wait for the next match
-        _read(sock, info)
-    except (ConnectionResetError, TimeoutError):
-        printing.printf('Disconnected from', MAC_DICT.get(info, info), style=printing.DISCONNECTED,
-                        log=True, logtag='socketctl._read')
-        sock.close()
-        clients.remove((sock, info))
-    except OSError:
-        printing.printf('Disconnected from', MAC_DICT.get(info, info), '(OSError function not implemented)',
-                        style=printing.DISCONNECTED, log=True, logtag='socketctl._read')
-        sock.close()
-        clients.remove((sock, info))
-    except Exception as e:
-        printing.printf('Unknown error from', MAC_DICT.get(info, info), end=' ', style=printing.DISCONNECTED,
-                        log=True, logtag='socketctl._read.error')
-        print(e)
-        try:
-            printing.printf(str(e), style=printing.ERROR, log=True, logtag='socketctl._read.error')
-        except TypeError:
-            printing.printf('Can\'t log the error', log=True, logtag='socketctl._read.error')
-        sock.close()
-        clients.remove((sock, info))
+        # Setup server socket
+        self.server_sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+        self.server_sock.bind((self.host_mac, PORT))
+        self.server_sock.listen(BACKLOG)
+        self.server_sock.settimeout(None)
 
+    def start_connecting(self):
+        self.connecting = True
+        Thread(target=self.connect).start()
 
-def send(clientid, msg):
-    clients[clientid][0].send(msg.encode())
+    def connect(self):
+        while self.connecting:
+            # Wait for connection
+            client_sock, client_info = self.server_sock.accept()
 
+            # Setup connection
+            connection = Connection(client_sock, MAC_DICT.get(client_info[0], client_info[0]),
+                                    lambda msg: recieve_msg(msg, connection.name),
+                                    lambda: self.clients.remove(connection))
+            self.clients.add(connection)
 
-# Waits for a device to try to connect, then starts a thread to read that device, and stays open for connections
-def connect():
-    # Wait for connection
-    client_sock, client_info = server_sock.accept()
-    # Connect to device
-    printing.printf('Accepted connection from', MAC_DICT.get(client_info[0], client_info[0]), style=printing.CONNECTED,
-                    log=True, logtag='socketctl.connect')
-    clients.append((client_sock, client_info[0]))
+            # Listen for data
+            connection.start_listening()
 
-    # Start reading it
-    Thread(target=lambda: _read(client_sock, client_info[0])).start()
+    def blanket_send(self, msg):
+        for connection in self.clients:
+            connection.send(msg)
 
-    # Stay open for connections
-    connect()
-
-
-# Closes all connections and the server
-def close():
-    for sock in clients:
-        sock[0].close()
-        printing.printf('Closed connection with', MAC_DICT.get(sock[1], sock[1]), style=printing.STATUS,
-                        log=True, logtag='socketctl.close')
-    clients.clear()
-    server_sock.close()
-    printing.printf('Closed server', style=printing.STATUS, log=True, logtag='socketctl.close')
+    # Closes all connections and the server
+    def close(self):
+        self.connecting = False
+        for connection in self.clients:
+            connection.close()
+        self.clients.clear()
+        self.server_sock.close()
+        printing.printf('Closed server', style=printing.STATUS, log=True, logtag='socketctl.close')
