@@ -12,8 +12,8 @@ class DataController:
     data_changed = True
 
     def __init__(self):
-        # TODO: load existing data
-        ...
+        if False:  # TODO: Check for file
+            self.data = load_json_file()
 
     def queue_data(self, data):
         self.data_queue.put(data)
@@ -29,7 +29,8 @@ class DataController:
     def parsedata(self, data):
         print(data)
         self.data.append(data)
-
+        write_json(self.data)
+        self.data_changed = True
 
     def driveupdaterequest(self):
         self.data_changed = True
@@ -45,9 +46,15 @@ def write_file(s, mode='a'):
         f.write(s)
 
 
-def load_json_fil():
+def load_json_file():
     with open(ABS_DATA_DIR) as f:
         return json.load(f)
+
+
+def write_json(o):
+    with open(ABS_DATA_DIR, 'w') as f:
+        json.dump(o, f)
+
 
 # Writes data to a removable device
 def _updatedrive():

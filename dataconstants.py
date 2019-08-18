@@ -8,8 +8,6 @@ MESSAGE_SIZE = 1024
 
 LOG_FILE = 'log'
 
-TEAM = 'Ill update summarize.py later, for now this lets it compile'
-
 
 class Fields(Enum):
     SCOUT_NAME = 'scoutName'
