@@ -1,6 +1,6 @@
 import subprocess as sub
 
-import printing
+from interface import printing
 from dataconstants import MEDIA_DIR
 
 # Possible locations of a flash drive
@@ -24,7 +24,8 @@ def checkdev():
     devs = str(_run('ls /dev/sd*')[0])
     return [d for d in DRIVE_DEV_LOCS if devs.count(d) == 1]
 
-
+# Use this instead: udisksctl mount -b /dev/sdXY
+# Doesn't require sudo
 # Mounts a flash drive
 def mount():
     devs = checkdev()
@@ -84,7 +85,7 @@ def gethostMAC():
             printing.printf('No bluetooth adapter available', style=printing.ERROR,
                             log=True, logtag='system.gethostMAC.error')
         else:
-            printing.printf('hcitool not found, please install it or edit system.py to use something else',
+            printing.printf('hcitool not found, please install it or edit systemctl.py to use something else',
                             style=printing.ERROR, log=True, logtag='system.gethostMAC.error')
 
 

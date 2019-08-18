@@ -1,7 +1,7 @@
-import printing
-from dataconstants import ABS_DATA_DIR, TEAM
-from logger import log
-from team import Team
+from interface import printing
+import dataconstants
+from interface.logger import log
+from strat.team import Team
 
 
 # Get the data string to return from the list of teams
@@ -17,13 +17,13 @@ def strategy(team_numbers):
 
 
 def _maketeams(team_numbers):
-    f = open(ABS_DATA_DIR)
+    f = open(dataconstants.ABS_DATA_DIR)
 
     teams = [Team(t, partner=i < 3) for i, t in enumerate(team_numbers)]
 
     for line in f:
         splitline = line.split(',')
-        t = splitline[TEAM]
+        t = splitline[dataconstants.TEAM]
         if t in team_numbers:
             try:
                 teams[team_numbers.index(t)].addline(splitline)

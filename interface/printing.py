@@ -1,4 +1,4 @@
-from logger import log as log_
+from interface.logger import log as log_
 
 BASE = '\033[9'
 BASE_END = 'm'
