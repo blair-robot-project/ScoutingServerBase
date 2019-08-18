@@ -1,7 +1,7 @@
 from queue import Queue
 
-import printing
-import system
+from interface import printing
+from controllers import systemctl
 from dataconstants import HEADERS, DATA_FILE, ABS_DATA_DIR, TEAM, MEDIA_DIR, EDIT_TRIGGER, NAME, MATCH
 
 # Thread-safe queue to add lines to the file without concurrent modification
@@ -93,17 +93,17 @@ def update():
     while not to_add.empty():
         _parsedata(*to_add.get())
     # If there is a flash drive and there is new data for it, upload the data
-    if datachange and system.checkdev():
+    if datachange and systemctl.checkdev():
         _updatedrive()
 
 
 # Writes data to a removable device
 def _updatedrive():
     global datachange
-    if system.mount():
-        system.copy(ABS_DATA_DIR, MEDIA_DIR + DATA_FILE)
+    if systemctl.mount():
+        systemctl.copy(ABS_DATA_DIR, MEDIA_DIR + DATA_FILE)
         datachange = False
-        system.unmount()
+        systemctl.unmount()
 
 
 def driveupdaterequest():

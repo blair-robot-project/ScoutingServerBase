@@ -1,7 +1,7 @@
-import printing
+from interface import printing
 from dataconstants import ABS_DATA_DIR, TEAM
-from logger import log
-from team import Team
+from interface.logger import log
+from strat.team import Team
 
 
 # Get the data string to return from the list of teams

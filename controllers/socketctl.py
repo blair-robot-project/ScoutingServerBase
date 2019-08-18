@@ -1,10 +1,10 @@
 import socket
 from threading import Thread
 
-import printing
-from connection import Connection
-from datactl import addtoqueue
-from system import gethostMAC
+from interface import printing
+from controllers.connection import Connection
+from controllers.datactl import addtoqueue
+from controllers.systemctl import gethostMAC
 
 PORT = 1
 BACKLOG = 1

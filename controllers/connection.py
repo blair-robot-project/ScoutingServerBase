@@ -1,7 +1,7 @@
 from threading import Thread
 
-import printing
-from logger import log
+from interface import printing
+from interface.logger import log
 
 SIZE = 1024
 

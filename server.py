@@ -3,12 +3,12 @@ from _thread import interrupt_main
 from os import _exit as osexit
 from threading import Thread
 
-import datactl
-import printing
-import summarize
-from header import print_header
-from logger import log
-from socketctl import SocketCtl
+from controllers import datactl
+from interface import printing
+from strat import summarize
+from interface.header import print_header
+from interface.logger import log
+from controllers.socketctl import SocketCtl
 
 
 def main():

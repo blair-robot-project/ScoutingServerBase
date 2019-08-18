@@ -1,8 +1,7 @@
 from shutil import get_terminal_size
 from textwrap import TextWrapper
 
-import printing
-from logger import log
+from interface import printing
 
 LOGO = '''
                      ,:++:,                      
