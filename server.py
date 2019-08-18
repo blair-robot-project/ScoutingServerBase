@@ -12,73 +12,73 @@ from interface.logger import log
 from strat import summarize
 
 
-def main():
-    global data_controller
-    log('server.main', '+' * 20)
-    log('server.main', 'Server started')
+class Server:
 
-    print_header()
+    def main(self):
+        log('server.main', '+' * 20)
+        log('server.main', 'Server started')
 
-    datactl.makefile()
-    data_controller = datactl.DataController()
-    msgctl = MessageController(data_controller)
+        print_header()
 
-    printing.printf('Waiting for connections', style=printing.STATUS, log=True, logtag='server.main')
+        datactl.makefile()
+        self.data_controller = datactl.DataController()
+        msgctl = MessageController(self.data_controller)
 
-    Thread(target=handleinput).start()
+        printing.printf('Waiting for connections', style=printing.STATUS, log=True, logtag='server.main')
 
-    socketctl = SocketController(msgctl.handle_msg)
-    socketctl.start_connecting()
+        Thread(target=self.handleinput).start()
 
-    while True:
-        try:
-            data_controller.update()
-        except KeyboardInterrupt:
-            # Make sure everything made it into the data file
-            data_controller.update()
+        self.socketctl = SocketController(msgctl.handle_msg)
+        self.socketctl.start_connecting()
 
-            socketctl.close()
+        while True:
+            try:
+                self.data_controller.update()
+            except KeyboardInterrupt:
+                # Make sure everything made it into the data file
+                self.data_controller.update()
 
-            log('server.main', 'Server stopped')
-            log('server.main', '-' * 20)
+                self.socketctl.close()
 
-            # Quit everything (closes all the many threads)
-            osexit(1)
+                log('server.main', 'Server stopped')
+                log('server.main', '-' * 20)
 
+                # Quit everything (closes all the many threads)
+                osexit(1)
 
-def handleinput():
-    global data_controller
-    i = input()
-    ii = i.split()
-    if i in ('q', 'quit'):
-        printing.printf('Are you sure you want to quit? (y/n)', style=printing.QUIT, end=' ')
-        q = input()
-        if q == 'y':
-            interrupt_main()
+    def handleinput(self):
+        while True:
+            i = input()
+            ii = i.split()
+            if i in ('q', 'quit'):
+                printing.printf('Are you sure you want to quit? (y/n)', style=printing.QUIT, end=' ')
+                q = input()
+                if q == 'y':
+                    interrupt_main()
+                    break
 
-    elif i in ('d', 'data', 'drive', 'flash drive', 'u', 'update', 'dump', 'data dump'):
-        data_controller.driveupdaterequest()
+            elif i in ('d', 'data', 'drive', 'flash drive', 'u', 'update', 'dump', 'data dump'):
+                self.data_controller.driveupdaterequest()
 
-    elif i in ('s', 'strat', 'match strat', 'strategy', 'match strategy'):
-        # noinspection PyUnusedLocal
-        teams = [input("Our alliance: ") for i in range(3)] + [input("Other alliance: ") for i in range(3)]
-        printing.printf(summarize.strategy(teams), style=printing.DATA_OUTPUT)
+            elif i in ('s', 'strat', 'match strat', 'strategy', 'match strategy'):
+                # noinspection PyUnusedLocal
+                teams = [input("Our alliance: ") for i in range(3)] + [input("Other alliance: ") for i in range(3)]
+                printing.printf(summarize.strategy(teams), style=printing.DATA_OUTPUT)
 
-    elif i in ('missing', 'm', 'count', 'msng'):
-        datactl.findmissing()
+            elif i in ('missing', 'm', 'count', 'msng'):
+                datactl.findmissing()
 
-    elif len(ii):
-        if ii[0] in ('sum', 'summary', 'detail', 'info', 'detailed', 'full', 'ds', 'dcomp', 'dc'):
-            [printing.printf(q) for q in summarize.detailed_summary(ii[1:])]
+            elif len(ii):
+                if ii[0] in ('sum', 'summary', 'detail', 'info', 'detailed', 'full', 'ds', 'dcomp', 'dc'):
+                    [printing.printf(q) for q in summarize.detailed_summary(ii[1:])]
 
-        elif ii[0] in ('qsum', 'quick', 'brief', 'qsummary', 'qinfo', 'qk', 'qs', 'comp', 'c'):
-            [printing.printf(q) for q in summarize.quick_summary(ii[1:])]
+                elif ii[0] in ('qsum', 'quick', 'brief', 'qsummary', 'qinfo', 'qk', 'qs', 'comp', 'c'):
+                    [printing.printf(q) for q in summarize.quick_summary(ii[1:])]
 
-        # elif ii[0] == 'send':
-        #     socketctl.blanket_send(ii[1])
-
-    Thread(target=handleinput).start()
+                # elif ii[0] == 'send':
+                #     socketctl.blanket_send(ii[1])
 
 
 if __name__ == '__main__':
-    main()
+    server = Server()
+    server.main()
