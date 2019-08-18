@@ -1,38 +1,37 @@
 from threading import Thread
 
+from dataconstants import MESSAGE_SIZE
 from interface import printing
 from interface.logger import log
-
-SIZE = 1024
 
 
 class Connection:
     listening = False
 
-    def __init__(self, socket, name, on_recieve, on_closed):
+    def __init__(self, socket, name, on_receive, on_closed):
         self.socket = socket
         self.name = name
-        self.on_recieve = on_recieve
+        self.on_receive = on_receive
         self.on_closed = on_closed
         printing.printf('Accepted connection from', name, style=printing.CONNECTED,
                         log=True, logtag='Connection.init')
 
     def start_listening(self):
         self.listening = True
-        Thread(target=self._listen).start()
+        Thread(target=self.listen).start()
 
-    def _listen(self):
+    def listen(self):
         while self.listening:
             try:
-                self._read(self.socket.recv(SIZE))
+                self.read(self.socket.recv(MESSAGE_SIZE))
             except Exception as e:
                 self._closed(e)
 
-    def _read(self, data):
+    def read(self, data):
         str_data = data.decode()
         if str_data.strip():
-            log('Connection._read.raw', str_data)
-            self.on_recieve(str_data)
+            log('Connection.read.raw', str_data)
+            self.on_receive(str_data)
 
     def send(self, msg):
         # TODO: Make safe and handle partial sends

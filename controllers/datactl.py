@@ -1,14 +1,50 @@
 from queue import Queue
 
-from interface import printing
 from controllers import systemctl
 from dataconstants import HEADERS, DATA_FILE, ABS_DATA_DIR, TEAM, MEDIA_DIR, EDIT_TRIGGER, NAME, MATCH
+from interface import printing
 
-# Thread-safe queue to add lines to the file without concurrent modification
-to_add = Queue()
 
-# Keeps track of data changes since the flash drive was updated
-datachange = True
+class DataController:
+    data_queue = Queue()
+    data_changed = True
+
+    def __init__(self):
+        ...
+
+    def queue_data(self, data):
+        self.data_queue.put(data)
+
+    def update(self):
+        # While there is data to add, parse it
+        while not self.data_queue.empty():
+            self.parsedata(self.data_queue.get())
+        # If there is a flash drive and there is new data for it, upload the data
+        if self.data_changed and systemctl.checkdev():
+            _updatedrive()
+
+    # Parse a string with lines of data
+    def parsedata(self, data):
+        print(data)
+        # for line in data.split('\n'):
+        #     line = line.strip()
+        #     if line[:len(EDIT_TRIGGER)] == EDIT_TRIGGER:
+        #         # If this is an edit, remove the old version
+        #         trimmedline = line[len(EDIT_TRIGGER):]
+        #         removefromdatafile(trimmedline)
+        #         void.append(trimmedline)
+        #
+        #         _summarize(trimmedline, info, action='Edit')
+        #
+        #     elif line:
+        #         # If this wasn't already edited (could happen if this is an upload not a submit)
+        #         if line not in void:
+        #             _addtodatafile(line)
+        #             _summarize(line, info)
+
+    def driveupdaterequest(self):
+        self.data_changed = True
+
 
 # Keeps track of lines that have been removed
 # Important for when a match is submitted without connection, then edited with connection, then 'newdata' is uploaded
@@ -24,29 +60,6 @@ def makefile():
     except FileNotFoundError:
         _writefile(HEADERS + '\n')
 
-import json
-# Parse a string with lines of data
-def _parsedata(data, info):
-    m = json.loads(data)
-    print(m)
-    b = json.loads(m['body'])
-    print(b)
-    for line in data.split('\n'):
-        line = line.strip()
-        if line[:len(EDIT_TRIGGER)] == EDIT_TRIGGER:
-            # If this is an edit, remove the old version
-            trimmedline = line[len(EDIT_TRIGGER):]
-            removefromdatafile(trimmedline)
-            void.append(trimmedline)
-
-            _summarize(trimmedline, info, action='Edit')
-
-        elif line:
-            # If this wasn't already edited (could happen if this is an upload not a submit)
-            if line not in void:
-                _addtodatafile(line)
-                _summarize(line, info)
-
 
 # Print a summary of the data received
 def _summarize(line, info, action='Data'):
@@ -59,10 +72,6 @@ def _summarize(line, info, action='Data'):
     except IndexError:
         printing.printf('Incomplete line:', line, style=printing.ERROR,
                         log=True, logtag='datactl._summarize.error')
-
-
-def addtoqueue(match, info):
-    to_add.put((match, info))
 
 
 def _addtodatafile(match):
@@ -81,46 +90,31 @@ def _readfile():
 
 
 def _writefile(s, mode='a'):
-    global datachange
-    datachange = True
     f = open(ABS_DATA_DIR, mode)
     f.write(s)
     f.close()
 
 
-def update():
-    # While there is data to add, parse it
-    while not to_add.empty():
-        _parsedata(*to_add.get())
-    # If there is a flash drive and there is new data for it, upload the data
-    if datachange and systemctl.checkdev():
-        _updatedrive()
-
-
 # Writes data to a removable device
 def _updatedrive():
-    global datachange
     if systemctl.mount():
         systemctl.copy(ABS_DATA_DIR, MEDIA_DIR + DATA_FILE)
-        datachange = False
         systemctl.unmount()
 
 
-def driveupdaterequest():
-    global datachange
-    datachange = True
+
 
 def findmissing():
-    q=_readfile().strip().split('\n')
-    w=list(map(lambda x: x.split(','),q))
-    a=list(map(lambda x:(int(x[1]),int(x[0]),x[27 if len(x)>27 else 0]),w[1:]))
-    s = [set() for i in range(max(map(lambda x:x[0],a)))]
-    l = [list() for i in range(max(map(lambda x:x[0],a)))]
+    q = _readfile().strip().split('\n')
+    w = list(map(lambda x: x.split(','), q))
+    a = list(map(lambda x: (int(x[1]), int(x[0]), x[27 if len(x) > 27 else 0]), w[1:]))
+    s = [set() for _ in range(max(map(lambda x: x[0], a)))]
+    l = [list() for _ in range(max(map(lambda x: x[0], a)))]
     for p in a:
-        l[p[0]-1].append(p[1:])
-        s[p[0]-1].add(p[1:2])
+        l[p[0] - 1].append(p[1:])
+        s[p[0] - 1].add(p[1:2])
     for i in range(len(l)):
-        if len(l[i])!=6 or len(s[i])!=6:
-            print(i+1,':',len(l[i]))
-            print(' ',l[i])
+        if len(l[i]) != 6 or len(s[i]) != 6:
+            print(i + 1, ':', len(l[i]))
+            print(' ', l[i])
             print()

@@ -24,7 +24,8 @@ def checkdev():
     devs = str(_run('ls /dev/sd*')[0])
     return [d for d in DRIVE_DEV_LOCS if devs.count(d) == 1]
 
-
+# Use this instead: udisksctl mount -b /dev/sdXY
+# Doesn't require sudo
 # Mounts a flash drive
 def mount():
     devs = checkdev()

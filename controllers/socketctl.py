@@ -3,7 +3,6 @@ from threading import Thread
 
 from interface import printing
 from controllers.connection import Connection
-from controllers.datactl import addtoqueue
 from controllers.systemctl import gethostMAC
 
 PORT = 1
@@ -22,15 +21,11 @@ MAC_DICT = {'00:FC:8B:3B:42:46': 'R1 Demeter',
             '44:65:0D:E0:D6:3A': 'Strategy Tablet'}
 
 
-def recieve_msg(msg, name):
-    addtoqueue(msg, name)
-
-
-class SocketCtl:
+class SocketController:
     clients = set()
     connecting = False
 
-    def __init__(self):
+    def __init__(self, on_receive):
         self.host_mac = gethostMAC()
 
         # Setup server socket
@@ -38,6 +33,8 @@ class SocketCtl:
         self.server_sock.bind((self.host_mac, PORT))
         self.server_sock.listen(BACKLOG)
         self.server_sock.settimeout(None)
+
+        self.on_receive = on_receive
 
     def start_connecting(self):
         self.connecting = True
@@ -50,7 +47,7 @@ class SocketCtl:
 
             # Setup connection
             connection = Connection(client_sock, MAC_DICT.get(client_info[0], client_info[0]),
-                                    lambda msg: recieve_msg(msg, connection.name),
+                                    lambda msg: self.on_receive(msg, connection),
                                     lambda: self.clients.remove(connection))
             self.clients.add(connection)
 

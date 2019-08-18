@@ -2,6 +2,8 @@ DATA_FILE = 'worlds.csv'
 ABS_DATA_DIR = '/home/carter/Desktop/' + DATA_FILE
 MEDIA_DIR = '/home/carter/ScoutingDrive/'
 
+MESSAGE_SIZE = 1024
+
 LOG_FILE = 'log'
 
 HEADERS = 'team #,match #,alliance color,starting level,preload,no show,moved forward,auto piece placed,double auto,' \

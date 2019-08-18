@@ -4,34 +4,38 @@ from os import _exit as osexit
 from threading import Thread
 
 from controllers import datactl
+from controllers.messagectl import MessageController
+from controllers.socketctl import SocketController
 from interface import printing
-from strat import summarize
 from interface.header import print_header
 from interface.logger import log
-from controllers.socketctl import SocketCtl
+from strat import summarize
 
 
 def main():
+    global data_controller
     log('server.main', '+' * 20)
     log('server.main', 'Server started')
 
     print_header()
 
     datactl.makefile()
+    data_controller = datactl.DataController()
+    msgctl = MessageController(data_controller)
 
     printing.printf('Waiting for connections', style=printing.STATUS, log=True, logtag='server.main')
 
     Thread(target=handleinput).start()
 
-    socketctl = SocketCtl()
+    socketctl = SocketController(msgctl.handle_msg)
     socketctl.start_connecting()
 
     while True:
         try:
-            datactl.update()
+            data_controller.update()
         except KeyboardInterrupt:
             # Make sure everything made it into the data file
-            datactl.update()
+            data_controller.update()
 
             socketctl.close()
 
@@ -43,6 +47,7 @@ def main():
 
 
 def handleinput():
+    global data_controller
     i = input()
     ii = i.split()
     if i in ('q', 'quit'):
@@ -52,14 +57,14 @@ def handleinput():
             interrupt_main()
 
     elif i in ('d', 'data', 'drive', 'flash drive', 'u', 'update', 'dump', 'data dump'):
-        datactl.driveupdaterequest()
+        data_controller.driveupdaterequest()
 
     elif i in ('s', 'strat', 'match strat', 'strategy', 'match strategy'):
         # noinspection PyUnusedLocal
         teams = [input("Our alliance: ") for i in range(3)] + [input("Other alliance: ") for i in range(3)]
         printing.printf(summarize.strategy(teams), style=printing.DATA_OUTPUT)
 
-    elif i in ('missing','m','count','msng'):
+    elif i in ('missing', 'm', 'count', 'msng'):
         datactl.findmissing()
 
     elif len(ii):
