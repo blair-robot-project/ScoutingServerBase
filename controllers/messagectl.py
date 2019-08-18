@@ -2,6 +2,7 @@ import hashlib
 import json
 from enum import Enum
 
+from dataconstants import Fields
 from interface import printing
 
 
@@ -21,13 +22,13 @@ def check_checksum(deserialized_msg):
     return checksum == deserialized_msg['checksum']
 
 
-def deserialize(msg, client_name):
-    msg = json.loads(msg)
-    if check_checksum(msg):
-        body = json.loads(msg['body'])
-        return {'type': IncomingMsgTypes(msg['type']), 'body': body, 'client_name': client_name}
-    else:
-        return None
+def deserialize(msg):
+    if msg:
+        msg = json.loads(msg)
+        if check_checksum(msg):
+            body = json.loads(msg['body'])
+            return {'type': IncomingMsgTypes(msg['type']), 'body': body}
+    return None
 
 
 def invalid_msg(msg, client):
@@ -35,17 +36,23 @@ def invalid_msg(msg, client):
                     log=True, logtag='messagectl.invalid_msg')
 
 
+def summarize_data(data, client_name):
+    printing.printf('Data from ' + data[Fields.SCOUT_NAME.value] + ' on ' + client_name + ' for team ' +
+                    data[Fields.TEAM_ID.value] + ' in match ' + data[Fields.MATCH_ID.value],
+                    style=printing.NEW_DATA, log=True, logtag='msgctl.handle_msg')
+
+
 class MessageController:
     def __init__(self, datactl):
         self.datactl = datactl
 
     def handle_msg(self, msg, client):
-        msg = deserialize(msg, client.name)
+        msg = deserialize(msg)
         if msg is None:
-            # TODO: Handle failed messages
-            pass
+            invalid_msg(msg, client)
         else:
             if msg['type'] == IncomingMsgTypes.DATA:
                 self.datactl.queue_data(msg['body'])
+                summarize_data(msg['body'], client.name)
             else:
                 invalid_msg(msg, client)

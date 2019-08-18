@@ -20,7 +20,6 @@ class Server:
 
         print_header()
 
-        datactl.makefile()
         self.data_controller = datactl.DataController()
         msgctl = MessageController(self.data_controller)
 
