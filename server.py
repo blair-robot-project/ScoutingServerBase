@@ -49,6 +49,7 @@ class Server:
         while True:
             i = input()
             ii = i.split()
+            self.socketctl.blanket_send(i)
             if i in ('q', 'quit'):
                 printing.printf('Are you sure you want to quit? (y/n)', style=printing.QUIT, end=' ')
                 q = input()

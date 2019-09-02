@@ -9,6 +9,7 @@ from interface import printing
 class IncomingMsgTypes(Enum):
     DATA = 'DATA'
     SUMMARY = 'SUMMARY'
+    ERROR = 'ERROR'
 
 
 class OutgoingMsgTypes(Enum):
@@ -26,13 +27,16 @@ def deserialize(msg):
     if msg:
         msg = json.loads(msg)
         if check_checksum(msg):
-            body = json.loads(msg['body'])
+            try:
+                body = json.loads(msg['body'])
+            except json.decoder.JSONDecodeError:
+                body = msg['body']
             return {'type': IncomingMsgTypes(msg['type']), 'body': body}
     return None
 
 
 def invalid_msg(msg, client):
-    printing.printf('Invalid message from', client.name, ':', msg, style=printing.YELLOW,
+    printing.printf('Invalid message from', client.name, ':', str(msg), style=printing.YELLOW,
                     log=True, logtag='messagectl.invalid_msg')
 
 
