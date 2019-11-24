@@ -21,18 +21,18 @@ class DataController:
     def update(self):
         # While there is data to add, parse it
         while not self.data_queue.empty():
-            self.parsedata(self.data_queue.get())
+            self.parse_data(self.data_queue.get())
         # If there is a flash drive and there is new data for it, upload the data
         if self.data_changed and systemctl.checkdev():
-            _updatedrive()
+            _update_drive()
 
-    def parsedata(self, data):
+    def parse_data(self, data):
         print(data)
         self.data.append(data)
         write_json(self.data)
         self.data_changed = True
 
-    def driveupdaterequest(self):
+    def drive_update_request(self):
         self.data_changed = True
 
 
@@ -57,11 +57,11 @@ def write_json(o):
 
 
 # Writes data to a removable device
-def _updatedrive():
+def _update_drive():
     # TODO: Implement
     ...
 
 
-def findmissing():
+def find_missing():
     # TODO: Implement
     ...

@@ -13,8 +13,7 @@ from strat import summarize
 
 
 class Server:
-
-    def main(self):
+    def __init__(self):
         log('server.main', '+' * 20)
         log('server.main', 'Server started')
 
@@ -22,12 +21,11 @@ class Server:
 
         self.data_controller = datactl.DataController()
         msgctl = MessageController(self.data_controller)
-
-        printing.printf('Waiting for connections', style=printing.STATUS, log=True, logtag='server.main')
-
-        Thread(target=self.handleinput).start()
-
         self.socketctl = SocketController(msgctl.handle_msg)
+
+    def main(self):
+        Thread(target=self.handleinput).start()
+        printing.printf('Waiting for connections', style=printing.STATUS, log=True, logtag='server.main')
         self.socketctl.start_connecting()
 
         while True:
@@ -49,7 +47,6 @@ class Server:
         while True:
             i = input()
             ii = i.split()
-            self.socketctl.blanket_send(i)
             if i in ('q', 'quit'):
                 printing.printf('Are you sure you want to quit? (y/n)', style=printing.QUIT, end=' ')
                 q = input()
@@ -58,7 +55,7 @@ class Server:
                     break
 
             elif i in ('d', 'data', 'drive', 'flash drive', 'u', 'update', 'dump', 'data dump'):
-                self.data_controller.driveupdaterequest()
+                self.data_controller.drive_update_request()
 
             elif i in ('s', 'strat', 'match strat', 'strategy', 'match strategy'):
                 # noinspection PyUnusedLocal
@@ -66,7 +63,7 @@ class Server:
                 printing.printf(summarize.strategy(teams), style=printing.DATA_OUTPUT)
 
             elif i in ('missing', 'm', 'count', 'msng'):
-                datactl.findmissing()
+                datactl.find_missing()
 
             elif len(ii):
                 if ii[0] in ('sum', 'summary', 'detail', 'info', 'detailed', 'full', 'ds', 'dcomp', 'dc'):
@@ -75,8 +72,8 @@ class Server:
                 elif ii[0] in ('qsum', 'quick', 'brief', 'qsummary', 'qinfo', 'qk', 'qs', 'comp', 'c'):
                     [printing.printf(q) for q in summarize.quick_summary(ii[1:])]
 
-                # elif ii[0] == 'send':
-                #     socketctl.blanket_send(ii[1])
+                elif ii[0] == 'send':
+                    self.socketctl.blanket_send(ii[1])
 
 
 if __name__ == '__main__':

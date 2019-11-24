@@ -45,17 +45,21 @@ class SocketController:
             # Wait for connection
             client_sock, client_info = self.server_sock.accept()
 
-            # Setup connection
-            connection = Connection(client_sock, MAC_DICT.get(client_info[0], client_info[0]),
-                                    lambda msg: self.on_receive(msg, connection),
-                                    lambda: self.clients.remove(connection))
-            self.clients.add(connection)
+            if self.connecting:
+                # Setup connection
+                connection = Connection(client_sock, MAC_DICT.get(client_info[0], client_info[0]),
+                                        lambda msg: self.on_receive(msg, connection),
+                                        lambda: self.clients.remove(connection))
+                self.clients.add(connection)
 
-            # Listen for data
-            connection.start_listening()
+                # Listen for data
+                connection.start_listening()
+            else:
+                client_sock.close()
 
     def blanket_send(self, msg):
         for connection in self.clients:
+            print(connection.name)
             connection.send(msg)
 
     # Closes all connections and the server
