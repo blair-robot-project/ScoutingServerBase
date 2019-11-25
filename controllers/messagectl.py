@@ -41,8 +41,8 @@ def invalid_msg(msg, client):
 
 
 def summarize_data(data, client_name):
-    printing.printf('Data from ' + data[Fields.SCOUT_NAME.value] + ' on ' + client_name + ' for team ' +
-                    str(data[Fields.TEAM_ID.value]) + ' in match ' + str(data[Fields.MATCH_ID.value]),
+    printing.printf('Data from ' + data[Fields.SCOUT_NAME] + ' on ' + client_name + ' for team ' +
+                    str(data[Fields.TEAM_ID]) + ' in match ' + str(data[Fields.MATCH_ID]),
                     style=printing.NEW_DATA, log=True, logtag='msgctl.handle_msg')
 
 
@@ -55,8 +55,11 @@ class MessageController:
         if msg is None:
             invalid_msg(msg, client)
         else:
+            print(msg)
             if msg['type'] == IncomingMsgTypes.DATA:
-                self.datactl.queue_data(msg['body'])
+                self.datactl.queue_data(msg['body'], client.name)
                 summarize_data(msg['body'], client.name)
+            elif msg['type'] == IncomingMsgTypes.ERROR:
+                print('invalid message sent to', client.name)
             else:
                 invalid_msg(msg, client)

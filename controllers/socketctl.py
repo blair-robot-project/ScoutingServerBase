@@ -59,7 +59,6 @@ class SocketController:
 
     def blanket_send(self, msg):
         for connection in self.clients:
-            print(connection.name)
             connection.send(msg)
 
     # Closes all connections and the server
