@@ -44,6 +44,9 @@ class DataController:
                 s += ','.join([str(m[f]) for f in ORDER]) + '\n'
         write_file(CSV_FILE, s, mode='w')
 
+    def sync_summary(self, client):
+        return {m: [int(r[Fields.REVISION]) for r in self.data[client][m]] for m in self.data[client]}
+
     def drive_update_request(self):
         self.data_changed = True
 

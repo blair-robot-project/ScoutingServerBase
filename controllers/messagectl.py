@@ -1,4 +1,3 @@
-import hashlib
 import json
 from enum import Enum
 
@@ -6,38 +5,31 @@ from dataconstants import Fields
 from interface import printing
 
 
-class IncomingMsgTypes(Enum):
+class MsgTypes(Enum):
     DATA = 'DATA'
-    SUMMARY = 'SUMMARY'
+    MULTI = 'MULTI'
+    SYNC = 'SYNC'
     ERROR = 'ERROR'
+    SYNC_SUMMARY = 'SYNC_SUMMARY'
 
 
-class OutgoingMsgTypes(Enum):
-    DATA_REQUEST = 'DATA_REQUEST'
-
-
-def check_checksum(deserialized_msg):
-    md5 = hashlib.md5()
-    md5.update(deserialized_msg['body'].encode())
-    checksum = md5.hexdigest()
-    return checksum == deserialized_msg['checksum']
-
-
-def deserialize(msg):
-    if msg:
-        msg = json.loads(msg)
-        if check_checksum(msg):
-            try:
-                body = json.loads(msg['body'])
-            except json.decoder.JSONDecodeError:
-                body = msg['body']
-            return {'type': IncomingMsgTypes(msg['type']), 'body': body}
-    return None
+def messages_to_json(msgs):
+    if not msgs:
+        return None
+    full = ''.join(msgs)
+    try:
+        msg = json.loads(full)
+        if 'type' in msg and 'body' in msg:
+            return msg
+        else:
+            raise json.JSONDecodeError
+    except json.JSONDecodeError:
+        return messages_to_json(msgs[1:])
 
 
 def invalid_msg(msg, client):
     printing.printf('Invalid message from', client.name, ':', str(msg), style=printing.YELLOW,
-                    log=True, logtag='messagectl.invalid_msg')
+                    log=True, logtag='msgctl.invalid_msg')
 
 
 def summarize_data(data, client_name):
@@ -47,19 +39,37 @@ def summarize_data(data, client_name):
 
 
 class MessageController:
+    msg_strings = dict()
+
     def __init__(self, datactl):
         self.datactl = datactl
 
     def handle_msg(self, msg, client):
-        msg = deserialize(msg)
+        if client not in self.msg_strings:
+            self.msg_strings[client] = []
+        self.msg_strings[client].append(msg)
+        msg = messages_to_json(self.msg_strings[client])
         if msg is None:
+            # TODO; not invalid if the message is split. Figure out a more meaningful way to deal with invalid messages
             invalid_msg(msg, client)
         else:
-            print(msg)
-            if msg['type'] == IncomingMsgTypes.DATA:
+            if msg['type'] == MsgTypes.DATA:
                 self.datactl.queue_data(msg['body'], client.name)
                 summarize_data(msg['body'], client.name)
-            elif msg['type'] == IncomingMsgTypes.ERROR:
+
+            elif msg['type'] == MsgTypes.MULTI:
+                for data in msg['body']:
+                    self.datactl.queue_data(data, client.name)
+                    summarize_data(data, client.name)
+
+            elif msg['type'] == MsgTypes.SYNC:
+                body = json.dumps(self.datactl.sync_summary(client.name))
+                summary_msg = {'type': MsgTypes.SYNC_SUMMARY, 'body': body}
+                client.send(summary_msg)
+
+            elif msg['type'] == MsgTypes.ERROR:
+                # TODO: Resend message?
                 print('invalid message sent to', client.name)
+
             else:
                 invalid_msg(msg, client)
