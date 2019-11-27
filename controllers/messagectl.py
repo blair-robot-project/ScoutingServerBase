@@ -20,6 +20,7 @@ def messages_to_json(msgs):
     try:
         msg = json.loads(full)
         if 'type' in msg and 'body' in msg:
+            msg['type'] = MsgTypes(msg['type'])
             return msg
         else:
             raise json.JSONDecodeError
@@ -33,8 +34,8 @@ def invalid_msg(msg, client):
 
 
 def summarize_data(data, client_name):
-    printing.printf('Data from ' + data[Fields.SCOUT_NAME] + ' on ' + client_name + ' for team ' +
-                    str(data[Fields.TEAM_ID]) + ' in match ' + str(data[Fields.MATCH_ID]),
+    printing.printf(('Data' if data[Fields.REVISION] == 0 else 'Edit') + ' from ' + data[Fields.SCOUT_NAME] + ' on ' +
+                    client_name + ' for team ' + str(data[Fields.TEAM_ID]) + ' in match ' + str(data[Fields.MATCH_ID]),
                     style=printing.NEW_DATA, log=True, logtag='msgctl.handle_msg')
 
 
@@ -63,9 +64,8 @@ class MessageController:
                     summarize_data(data, client.name)
 
             elif msg['type'] == MsgTypes.SYNC:
-                body = json.dumps(self.datactl.sync_summary(client.name))
-                summary_msg = {'type': MsgTypes.SYNC_SUMMARY, 'body': body}
-                client.send(summary_msg)
+                summary_msg = {'type': MsgTypes.SYNC_SUMMARY.name, 'body': self.datactl.sync_summary(client.name)}
+                client.send(json.dumps(summary_msg))
 
             elif msg['type'] == MsgTypes.ERROR:
                 # TODO: Resend message?

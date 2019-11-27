@@ -45,7 +45,7 @@ class DataController:
         write_file(CSV_FILE, s, mode='w')
 
     def sync_summary(self, client):
-        return {m: [int(r[Fields.REVISION]) for r in self.data[client][m]] for m in self.data[client]}
+        return {i: max(map(int, revs.keys())) for i, revs in self.data.get(client, dict()).items()}
 
     def drive_update_request(self):
         self.data_changed = True
