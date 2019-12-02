@@ -1,8 +1,10 @@
 from _thread import interrupt_main
 from threading import Thread
 
+from controllers.messagectl import make_message, MsgTypes
+from dataconstants import EVENT
 from interface import printing
-from tba.tba import main_event
+from tba.tba import main_event as tba_event
 
 
 class InputHandler:
@@ -33,25 +35,31 @@ class Commands:
             self.running = False
             interrupt_main()
 
-    q = quit
+    def send_schedule(self, *args):
+        schedule = tba_event.full_schedule()
+        if schedule:
+            self.server.socketctl.blanket_send(make_message(MsgTypes.SCHEDULE, schedule))
+        else:
+            printing.printf("Schedule not available for event:", EVENT, style=printing.YELLOW)
 
     def strat(self, *args, **kwargs):
         if len(args) == 1:
             # Match num
-            print(main_event.teams_in_match(*args, **kwargs))
+            print(tba_event.teams_in_match(*args, **kwargs))
         else:
             # List of teams
             print(*args)
 
-    s = strat
-
     def data(self, *args):
         self.server.data_controller.drive_update_request()
-
-    d = drive = data
 
     def send(self, *args):
         self.server.socketctl.blanket_send(' '.join(args))
 
     def sum(self, *args):
         pass
+
+    q = quit
+    ss = send_schedule
+    s = strat
+    d = drive = data

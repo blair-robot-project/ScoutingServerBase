@@ -9,8 +9,13 @@ class MsgTypes(Enum):
     DATA = 'DATA'
     MULTI = 'MULTI'
     SYNC = 'SYNC'
+    SCHEDULE = 'SCHEDULE'
     ERROR = 'ERROR'
     SYNC_SUMMARY = 'SYNC_SUMMARY'
+
+
+def make_message(msg_type, body):
+    return json.dumps({'type': msg_type.name, 'body': body})
 
 
 def messages_to_json(msgs):
@@ -33,6 +38,7 @@ def invalid_msg(msg, client):
                     log=True, logtag='msgctl.invalid_msg')
 
 
+# TODO: move to datactl
 def summarize_data(data, client_name):
     printing.printf(('Data' if data[Fields.REVISION] == 0 else 'Edit') + ' from ' + data[Fields.SCOUT_NAME] + ' on ' +
                     client_name + ' for team ' + str(data[Fields.TEAM_ID]) + ' in match ' + str(data[Fields.MATCH_ID]),
@@ -64,8 +70,7 @@ class MessageController:
                     summarize_data(data, client.name)
 
             elif msg['type'] == MsgTypes.SYNC:
-                summary_msg = {'type': MsgTypes.SYNC_SUMMARY.name, 'body': self.datactl.sync_summary(client.name)}
-                client.send(json.dumps(summary_msg))
+                client.send(make_message(MsgTypes.SYNC_SUMMARY, self.datactl.sync_summary(client.name)))
 
             elif msg['type'] == MsgTypes.ERROR:
                 # TODO: Resend message?

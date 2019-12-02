@@ -37,9 +37,12 @@ class Event(TBA):
         return self._get(API.TEAM_MATCHES.format(team=team, event=self.event_key))
 
     def get_schedule(self, team):
-        return {
-            (m['comp_level'] + str(m['set_number']) + 'm' if m['comp_level'] != 'qm' else '') + str(m['match_number']):
-                match_to_teams(m) for m in self.get_matches_for_team(team)}
+        return {(m['comp_level'] + str(m['set_number']) + 'm' if m['comp_level'] != 'qm' else '') +
+                str(m['match_number']): match_to_teams(m) for m in self.get_matches_for_team(team)}
+
+    def full_schedule(self):
+        return {(m['comp_level'] + str(m['set_number']) + 'm' if m['comp_level'] != 'qm' else '') +
+                str(m['match_number']): match_to_teams(m) for m in self.get_all_matches()}
 
     def teams_in_match(self, match, level='qm', set_num=None):
         return match_to_teams(self.get_match(match, level=level, set_num=set_num))
