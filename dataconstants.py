@@ -7,6 +7,8 @@ MESSAGE_SIZE = 1024
 
 LOG_FILE = 'log'
 
+EVENT = '2019chcmp'
+
 
 def enum(**enums):
     return type('Enum', (), enums)

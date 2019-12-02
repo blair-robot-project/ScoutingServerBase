@@ -2,6 +2,7 @@ from _thread import interrupt_main
 from threading import Thread
 
 from interface import printing
+from tba.tba import main_event
 
 
 class InputHandler:
@@ -13,8 +14,11 @@ class InputHandler:
 
     def input_loop(self):
         while self.commands.running:
-            i = input().split(' ')
-            exec('self.commands.' + i[0] + '("' + '","'.join(i[1:]) + '")')
+            try:
+                i = input().split(' ')
+                exec('self.commands.' + i[0] + '("' + '","'.join(i[1:]) + '")')
+            except Exception as e:
+                printing.printf("Invalid command.", e.__class__.__name__, e, style=printing.YELLOW)
 
 
 class Commands:
@@ -31,8 +35,13 @@ class Commands:
 
     q = quit
 
-    def strat(self, *args):
-        print(args)
+    def strat(self, *args, **kwargs):
+        if len(args) == 1:
+            # Match num
+            print(main_event.teams_in_match(*args, **kwargs))
+        else:
+            # List of teams
+            print(*args)
 
     s = strat
 
@@ -45,7 +54,4 @@ class Commands:
         self.server.socketctl.blanket_send(' '.join(args))
 
     def sum(self, *args):
-        print(args)
-
-    def qsum(self, *args):
-        print(args)
+        pass
