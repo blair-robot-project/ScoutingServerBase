@@ -18,18 +18,19 @@ class SocketController:
 
     def __init__(self, on_receive):
         self.host_mac = gethostMAC()
+        if self.host_mac:
+            # Setup server socket
+            self.server_sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+            self.server_sock.bind((self.host_mac, PORT))
+            self.server_sock.listen(BACKLOG)
+            self.server_sock.settimeout(None)
 
-        # Setup server socket
-        self.server_sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
-        self.server_sock.bind((self.host_mac, PORT))
-        self.server_sock.listen(BACKLOG)
-        self.server_sock.settimeout(None)
-
-        self.on_receive = on_receive
+            self.on_receive = on_receive
 
     def start_connecting(self):
-        self.connecting = True
-        Thread(target=self.connect).start()
+        if self.host_mac:
+            self.connecting = True
+            Thread(target=self.connect).start()
 
     def connect(self):
         while self.connecting:
