@@ -5,6 +5,7 @@ from dataconstants import EVENT
 from interface import printing
 
 
+# TODO: make everything safe on errors and on no internet
 class TBA:
     url = 'https://www.thebluealliance.com/api/v3/'
     auth_key = 'wUIrT2VGJOsHSz9zIOWHttKm4Ahid37DVYMmgb9gNyrtqS39cZkofL1dBBZNsx13'
@@ -13,10 +14,10 @@ class TBA:
     def __init__(self):
         self.session.headers.update({'X-TBA-Auth-Key': self.auth_key})
 
-    def _get(self, url):
-        get = self.session.get(self.url + url).json()
+    def _get(self, api_call):
+        get = self.session.get(self.url + api_call).json()
         if 'Errors' in get:
-            printing.printf('Invalid TBA API call: ', url, '\n', get['Errors'], style=printing.YELLOW)
+            printing.printf('Invalid TBA API call: ', api_call, '\n', get['Errors'], style=printing.YELLOW)
             return None
         return get
 
@@ -26,6 +27,9 @@ class Event(TBA):
         super().__init__()
         self.event_key = event
 
+    def get_teams(self):
+        return self._get(API.TEAMS.format(event=self.event_key))
+
     def get_all_matches(self):
         return self._get(API.ALL_MATCHES.format(event=self.event_key))
 
@@ -33,6 +37,7 @@ class Event(TBA):
         return self._get(API.MATCH.format(event=self.event_key,
                                           match=match if set_num is None else set_num + 'm' + str(match), level=level))
 
+    # TODO: Get this from the full schedule, API calls should only be made once, before competition starts
     def get_matches_for_team(self, team):
         return self._get(API.TEAM_MATCHES.format(team=team, event=self.event_key))
 

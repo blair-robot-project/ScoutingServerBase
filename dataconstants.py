@@ -1,7 +1,10 @@
+# TODO: Make file locations a in a .gitignored file, read them here or ask for input & save if they don't exist
 JSON_FILE = 'data.json'
 CSV_FILE = 'data.csv'
 ABS_DATA_DIR = ''  # '/home/carter/Desktop/' + DATA_FILE
 MEDIA_DIR = '/home/carter/ScoutingDrive/'
+
+TBA_SAVE_FILE = 'tba.json'
 
 MESSAGE_SIZE = 1024
 
