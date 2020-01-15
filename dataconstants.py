@@ -1,8 +1,22 @@
-# TODO: Make file locations a in a .gitignored file, read them here or ask for input & save if they don't exist
-JSON_FILE = 'data.json'
-CSV_FILE = 'data.csv'
-ABS_DATA_DIR = ''  # '/home/carter/Desktop/' + DATA_FILE
-MEDIA_DIR = '/home/carter/ScoutingDrive/'
+import json
+
+LOCAL_CONSTANTS_FILE = 'local_constants.json'
+try:
+    local_constants = json.load(open(LOCAL_CONSTANTS_FILE))
+except FileNotFoundError:
+    print('Please enter the following file names and directory locations:')
+    local_constants = {
+        'DATA_FILE_NAME': input('Data file base name (e.g. \'data\') '),
+        'ABS_DATA_DIR': input('Absolute data directory (e.g. \'/home/user/Desktop\') '),
+        'MEDIA_DIR': input('Media directory (location flash drive is mounted to) ')
+    }
+    with open(LOCAL_CONSTANTS_FILE, 'w') as f:
+        json.dump(local_constants, f)
+
+JSON_FILE = local_constants['DATA_FILE_NAME'] + '.json'
+CSV_FILE = local_constants['DATA_FILE_NAME'] + '.csv'
+ABS_DATA_DIR = local_constants['ABS_DATA_DIR']
+MEDIA_DIR = local_constants['MEDIA_DIR']
 
 TBA_SAVE_FILE = 'tba.json'
 
