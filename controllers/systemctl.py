@@ -1,4 +1,5 @@
 import subprocess as sub
+import sys
 
 from interface import printing
 from dataconstants import MEDIA_DIR
@@ -78,14 +79,22 @@ def unmount():
 def gethostMAC():
     out = ''
     try:
-        out = _run('hcitool dev')
-        return out[0].decode('utf8').split('\n')[1].split()[1]
+        platform = sys.platform
+        if platform == 'linux':
+            out = _run('hcitool dev')
+            return out[0].decode('utf8').split('\n')[1].split()[1]
+        elif platform == 'darwin': #macOS
+            out = _run('system_profiler SPBluetoothDataType')
+            return out[0].decode('utf8').split('\n')[5].split()[1]
+        else:
+            printing.printf('Server only runs on Linux & Mac, not Windows', style=printing.WARNING,
+                            log=True, logtag='system.gethostMAC')
     except IndexError:
         if out[0]:
             printing.printf('No bluetooth adapter available', style=printing.ERROR,
                             log=True, logtag='system.gethostMAC.error')
         else:
-            printing.printf('hcitool not found, please install it or edit systemctl.py to use something else',
+            printing.printf('hcitool/system_profiler not found, please install it or edit systemctl.py to use something else',
                             style=printing.ERROR, log=True, logtag='system.gethostMAC.error')
 
 
