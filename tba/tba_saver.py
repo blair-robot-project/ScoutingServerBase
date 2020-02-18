@@ -1,12 +1,11 @@
 import json
 
 from dataconstants import EVENT, TBA_SAVE_FILE
-from tba.tba import Event
+from tba.tba import main_event
 
 
 class TBASaver:
     def __init__(self):
-        self.event = Event(EVENT)
         try:
             self.schedules = json.load(open(TBA_SAVE_FILE))
         except FileNotFoundError:
@@ -14,8 +13,8 @@ class TBASaver:
 
     def update(self):
         self.schedules[EVENT] = {
-            'teams': self.event.get_teams(),
-            'matches': self.event.full_schedule(),
+            'teams': main_event.get_teams(),
+            'matches': main_event.full_schedule(),
             'revision': self.schedules.get(EVENT, {'revision': 0})['revision']
         }
         self.save()

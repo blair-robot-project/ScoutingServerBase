@@ -22,6 +22,7 @@ class TBA:
         return get
 
 
+# TODO: Derive everything from match schedule
 class Event(TBA):
     def __init__(self, event):
         super().__init__()
@@ -37,7 +38,6 @@ class Event(TBA):
         return self._get(API.MATCH.format(event=self.event_key,
                                           match=match if set_num is None else set_num + 'm' + str(match), level=level))
 
-    # TODO: Get this from the full schedule, API calls should only be made once, before competition starts
     def get_matches_for_team(self, team):
         return self._get(API.TEAM_MATCHES.format(team=team, event=self.event_key))
 
