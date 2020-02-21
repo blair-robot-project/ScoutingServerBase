@@ -42,6 +42,13 @@ class Commands:
         else:
             printing.printf("Schedule not available for event:", EVENT, style=printing.YELLOW)
 
+    def send_teams(self, *args):
+        teams = tba_event.team_list()
+        if teams:
+            self.server.socketctl.blanket_send(make_message(MsgTypes.TEAM_LIST, teams))
+        else:
+            printing.printf("Team list not availible for event:",EVENT, style=printing.YELLOW)
+
     def strat(self, *args, **kwargs):
         if len(args) == 1:
             # Match num
@@ -61,5 +68,6 @@ class Commands:
 
     q = quit
     ss = send_schedule
+    st = send_teams
     s = strat
     d = drive = data

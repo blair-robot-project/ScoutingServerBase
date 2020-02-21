@@ -10,6 +10,7 @@ class MsgTypes(Enum):
     MULTI = 'MULTI'
     SYNC = 'SYNC'
     SCHEDULE = 'SCHEDULE'
+    TEAM_LIST = 'TEAM_LIST'
     ERROR = 'ERROR'
     SYNC_SUMMARY = 'SYNC_SUMMARY'
 

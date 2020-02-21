@@ -52,6 +52,9 @@ class Event(TBA):
     def teams_in_match(self, match, level='qm', set_num=None):
         return match_to_teams(self.get_match(match, level=level, set_num=set_num))
 
+    def team_list(self):
+        return list(map(lambda x: str(x['team_number']), self.get_teams()))
+
 
 def frc_strip(s):
     return s.strip('frc')
