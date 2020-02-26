@@ -29,7 +29,7 @@ class Commands:
     def __init__(self, server):
         self.server = server
 
-    def quit(self, *args):
+    def quit_(self, *args):
         printing.printf('Are you sure you want to quit? (y/n)', style=printing.QUIT, end=' ')
         if input() == 'y':
             self.running = False
@@ -66,7 +66,7 @@ class Commands:
     def sum(self, *args):
         pass
 
-    q = quit
+    q = quit_
     ss = send_schedule
     st = send_teams
     s = strat

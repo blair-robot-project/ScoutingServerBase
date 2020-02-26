@@ -42,7 +42,7 @@ def invalid_msg(msg, client):
 # TODO: move to datactl
 def summarize_data(data, client_name):
     printing.printf(('Data' if data[Fields.REVISION] == 0 else 'Edit') + ' from ' + data[Fields.SCOUT_NAME] + ' on ' +
-                    client_name + ' for team ' + str(data[Fields.TEAM_ID]) + ' in match ' + str(data[Fields.MATCH_ID]),
+                    client_name + ' for team ' + str(data[Fields.TEAM]) + ' in match ' + str(data[Fields.MATCH]),
                     style=printing.NEW_DATA, log=True, logtag='msgctl.handle_msg')
 
 
@@ -57,10 +57,7 @@ class MessageController:
             self.msg_strings[client] = []
         self.msg_strings[client].append(msg)
         msg = messages_to_json(self.msg_strings[client])
-        if msg is None:
-            # TODO; not invalid if the message is split. Figure out a more meaningful way to deal with invalid messages
-            invalid_msg(msg, client)
-        else:
+        if msg is not None:
             if msg['type'] == MsgTypes.DATA:
                 self.datactl.queue_data(msg['body'], client.name)
                 summarize_data(msg['body'], client.name)
