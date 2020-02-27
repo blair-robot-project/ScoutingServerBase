@@ -3,6 +3,7 @@ from queue import Queue
 
 from dataconstants import Fields, ABS_DATA_DIR, JSON_FILE, CSV_FILE, ORDER
 from controllers import systemctl
+import interface.printing as printing
 
 
 class DataController:
@@ -11,16 +12,26 @@ class DataController:
     data_changed = True
 
     def __init__(self):
-        if False:  # TODO: Check for file
+        try:
             self.data = load_json_file()
+        except:
+            pass
 
     def queue_data(self, data, source):
         self.data_queue.put((data, source))
 
     def update(self):
         # While there is data to add, parse it
+        data = False
         while not self.data_queue.empty():
+            data = True
             self.parse_data(*self.data_queue.get())
+        
+        if data:
+            write_json(self.data)
+            self.to_csv()
+            self.data_changed = True
+        
         # If there is a flash drive and there is new data for it, upload the data
         if self.data_changed and systemctl.checkdev():
             _update_drive()
@@ -32,16 +43,12 @@ class DataController:
             self.data[source][str(data[Fields.TIMESTAMP])] = dict()
         self.data[source][str(data[Fields.TIMESTAMP])][str(data[Fields.REVISION])] = data
 
-        write_json(self.data)
-        self.to_csv()
-        self.data_changed = True
-
     def to_csv(self):
         s = ','.join(ORDER) + '\n'
         for v in self.data.values():
             for id in v.values():
                 m = id[str(max(map(int, id.keys())))]
-                s += ','.join([str(m[f]) for f in ORDER]) + '\n'
+                s += ','.join([str(m[f]) if f in m else missing_field(f, m[Fields.TIMESTAMP], m[Fields.REVISION]) for f in ORDER]) + '\n'
         write_file(CSV_FILE, s, mode='w')
 
     def sync_summary(self, client):
@@ -50,6 +57,10 @@ class DataController:
     def drive_update_request(self):
         self.data_changed = True
 
+
+def missing_field(f, t, r):
+    printing.printf(f'Missing field {f} from data entry {t}.{r}', style=printing.ERROR, log=True, logtag='datactl.error')
+    return 'ERROR'
 
 def read_file(file):
     with open(ABS_DATA_DIR + file) as f:
