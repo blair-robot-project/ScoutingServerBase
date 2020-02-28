@@ -57,7 +57,6 @@ class DataController:
 
     def drive_update_request(self):
         self.data_changed = True
-        self.update()
 
 
 def missing_field(f, t, r):

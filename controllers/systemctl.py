@@ -2,6 +2,7 @@ import subprocess as sub
 
 from sys import platform
 from shutil import copyfile
+from time import sleep
 
 from interface import printing
 from dataconstants import DRIVE_DEV_LOC
@@ -22,11 +23,11 @@ def checkdev():
     return len(_run('ls ' + DRIVE_DEV_LOC)[0]) > 0
 
 # Mounts a flash drive
-def mount():
+def mount(second_try=False):
     if not checkdev():
         return None
-    printing.printf('Found drive at ' + DRIVE_DEV_LOC + ', attempting to mount ...',
-                    end=' ', style=printing.FLASH_DRIVE, log=True, logtag='system.mount')
+    if not second_try: printing.printf('Found drive at ' + DRIVE_DEV_LOC + ', attempting to mount ...',
+                                        end=' ', style=printing.FLASH_DRIVE, log=True, logtag='system.mount')
     p = _run('udisksctl mount -b ' + DRIVE_DEV_LOC)
     error_string = p[1].decode('utf-8').strip('\n')
     if 'AlreadyMounted' in error_string:
@@ -34,6 +35,10 @@ def mount():
         printing.printf("Drive already mounted to " + loc, style=printing.YELLOW,
                         log=True, logtag='system.mount')
         return loc
+    elif 'Error looking up object for device' in error_string and not second_try:
+        print('Too fast, trying again')
+        sleep(0.25)
+        return mount(True)
     elif error_string:
         printing.printf('Error mounting: ' + error_string, style=printing.ERROR,
                         log=True, logtag='system.mount.error')
@@ -85,10 +90,11 @@ def gethostMAC():
             out = _run('hcitool dev')
             return out[0].decode('utf8').split('\n')[1].split()[1]
         elif platform == 'darwin': #macOS
+            # Mac is not yet fully supported
             out = _run('system_profiler SPBluetoothDataType')
             return out[0].decode('utf8').split('\n')[5].split()[1]
         else:
-            printing.printf('Server only runs on Linux & Mac, not Windows', style=printing.WARNING,
+            printing.printf('Server only runs on Linux, not Windows', style=printing.WARNING,
                             log=True, logtag='system.gethostMAC')
     except IndexError:
         if out[0]:
