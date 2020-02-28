@@ -26,7 +26,7 @@ def checkdev():
     return [d for d in DRIVE_DEV_LOCS if devs.count(d) == 1]
 
 # Use this instead: udisksctl mount -b /dev/sdXY
-# Doesn't require sudo
+#   (doesn't require sudo)
 # Mounts a flash drive
 def mount():
     devs = checkdev()
@@ -75,7 +75,6 @@ def unmount():
 # Finds the MAC address of the bluetooth adapter
 # If hcitool is not installed, you can change the script to use some other command,
 #   or you can just find it manually and hard code it in
-# noinspection PyPep8Naming
 def gethostMAC():
     out = ''
     try:

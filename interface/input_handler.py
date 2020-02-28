@@ -35,6 +35,9 @@ class Commands:
             self.running = False
             interrupt_main()
 
+    def event(self, *args):
+        printing.printf(tba_event.event_key, style=printing.PURPLE)
+
     def send_schedule(self, *args):
         schedule = tba_event.full_schedule()
         if schedule:
@@ -60,8 +63,9 @@ class Commands:
     def data(self, *args):
         self.server.data_controller.drive_update_request()
 
-    def send(self, *args):
-        self.server.socketctl.blanket_send(' '.join(args))
+    # For testing only
+    # def send(self, *args):
+        # self.server.socketctl.blanket_send(' '.join(args))
 
     def sum(self, *args):
         pass
