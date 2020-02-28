@@ -35,6 +35,7 @@ class DataController:
         # If there is a flash drive and there is new data for it, upload the data
         if self.data_changed and systemctl.checkdev():
             _update_drive()
+            self.data_changed = False
 
     def parse_data(self, data, source):
         if source not in self.data:
@@ -56,6 +57,7 @@ class DataController:
 
     def drive_update_request(self):
         self.data_changed = True
+        self.update()
 
 
 def missing_field(f, t, r):
@@ -84,8 +86,11 @@ def write_json(o):
 
 # Writes data to a removable device
 def _update_drive():
-    # TODO: Implement
-    ...
+    mount_point = systemctl.mount()
+    if mount_point:
+        systemctl.copy(ABS_DATA_DIR + CSV_FILE, mount_point + '/' + CSV_FILE)
+        systemctl.unmount()
+    
 
 
 def find_missing():

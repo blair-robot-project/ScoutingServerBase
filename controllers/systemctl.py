@@ -1,12 +1,10 @@
 import subprocess as sub
-import sys
+
+from sys import platform
+from shutil import copyfile
 
 from interface import printing
-from dataconstants import MEDIA_DIR
-
-# Possible locations of a flash drive
-DRIVE_DEV_LOCS = ['/dev/sdb', '/dev/sda', '/dev/sdc']
-
+from dataconstants import DRIVE_DEV_LOC
 
 # Runs a command in the shell
 def _run(command):
@@ -21,54 +19,59 @@ def _run(command):
 
 # Checks for a flash drive
 def checkdev():
-    # Look through sd* devices, see if any of them are flash drives (but don't take the hard drive!)
-    devs = str(_run('ls /dev/sd*')[0])
-    return [d for d in DRIVE_DEV_LOCS if devs.count(d) == 1]
+    return len(_run('ls ' + DRIVE_DEV_LOC)[0]) > 0
 
-# Use this instead: udisksctl mount -b /dev/sdXY
-#   (doesn't require sudo)
 # Mounts a flash drive
 def mount():
-    devs = checkdev()
-    if not devs:
-        return False
-    dev = devs[0]
-    printing.printf('Found drive at ' + dev + ', attempting to mount to ' + MEDIA_DIR + ' ...',
+    if not checkdev():
+        return None
+    printing.printf('Found drive at ' + DRIVE_DEV_LOC + ', attempting to mount ...',
                     end=' ', style=printing.FLASH_DRIVE, log=True, logtag='system.mount')
-    p = _run('sudo mount ' + dev + ' ' + MEDIA_DIR)
-    if p[1]:
-        printing.printf('Error mounting: ' + p[1].decode('utf-8'), style=printing.ERROR,
-                        log=True, logtag='system.mount.error')
-        return False
-    else:
-        printing.printf('Mounting successful' + _stdoutmessage(p[0]), style=printing.FLASH_DRIVE,
+    p = _run('udisksctl mount -b ' + DRIVE_DEV_LOC)
+    error_string = p[1].decode('utf-8').strip('\n')
+    if 'AlreadyMounted' in error_string:
+        loc = error_string.split('mounted at')[1].strip(' .\'`')
+        printing.printf("Drive already mounted to " + loc, style=printing.YELLOW,
                         log=True, logtag='system.mount')
-        return True
+        return loc
+    elif error_string:
+        printing.printf('Error mounting: ' + error_string, style=printing.ERROR,
+                        log=True, logtag='system.mount.error')
+        return None
+    else:
+        message = p[0].decode('utf-8').strip('\n')
+        printing.printf(message, style=printing.FLASH_DRIVE,
+                        log=True, logtag='system.mount')
+        return message.split('at')[1].strip('. ')
 
 
 # Copies the data file to the mounted flash drive
 def copy(fin, fout):
     printing.printf('Copying ' + fin + ' to ' + fout + ' ...', end=' ', style=printing.FLASH_DRIVE,
                     log=True, logtag='system.copy')
-    p = _run('sudo cp ' + fin + ' ' + fout)
+    
+    # with open(fout, 'w') as f:
+        # f.write(open(fin).read())
+    #copyfile(fin, fout)
+    p = _run('cp ' + fin + ' ' + fout)
     if p[1]:
-        printing.printf('Error copying: ' + p[1].decode('utf-8'), style=printing.ERROR,
-                        log=True, logtag='system.copy.error')
+       printing.printf('Error copying: ' + p[1].decode('utf-8'), style=printing.ERROR,
+                       log=True, logtag='system.copy.error')
     else:
-        printing.printf('Copying successful' + _stdoutmessage(p[0]), style=printing.FLASH_DRIVE,
-                        log=True, logtag='system.copy')
+       printing.printf('Copying successful', style=printing.FLASH_DRIVE,
+                       log=True, logtag='system.copy')
 
 
 # Unmounts the flash drive
 def unmount():
-    printing.printf('Unmounting drive from ' + MEDIA_DIR + ' ...', end=' ', style=printing.FLASH_DRIVE,
+    printing.printf('Unmounting drive from ' + DRIVE_DEV_LOC + ' ...', end=' ', style=printing.FLASH_DRIVE,
                     log=True, logtag='system.unmount')
-    p = _run('sudo umount ' + MEDIA_DIR)
+    p = _run('udisksctl unmount -b ' + DRIVE_DEV_LOC)
     if p[1]:
         printing.printf('Error unmounting: ' + p[1].decode('utf-8'), style=printing.ERROR,
                         log=True, logtag='system.unmount.error')
     else:
-        printing.printf('Unmounting successful, remove device' + _stdoutmessage(p[0]),
+        printing.printf('Unmounting successful, remove device',
                         style=printing.FLASH_DRIVE_SUCCESS, log=True, logtag='system.unmount')
 
 
@@ -78,7 +81,6 @@ def unmount():
 def gethostMAC():
     out = ''
     try:
-        platform = sys.platform
         if platform == 'linux':
             out = _run('hcitool dev')
             return out[0].decode('utf8').split('\n')[1].split()[1]
@@ -96,6 +98,3 @@ def gethostMAC():
             printing.printf('hcitool/system_profiler not found, please install it or edit systemctl.py to use something else',
                             style=printing.ERROR, log=True, logtag='system.gethostMAC.error')
 
-
-def _stdoutmessage(s):
-    return (' with message: ' + s.decode('utf-8')) if s else ''

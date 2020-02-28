@@ -8,7 +8,8 @@ except FileNotFoundError:
     local_constants = {
         'DATA_FILE_NAME': input('Data file base name (e.g. \'data\') '),
         'ABS_DATA_DIR': input('Absolute data directory (e.g. \'/home/user/Desktop\') '),
-        'MEDIA_DIR': input('Media directory (location flash drive is mounted to) ')
+        'EVENT': input('TBA event id (e.g. \'2020mdbet\') '),
+        'DRIVE_DEV_LOC': input('Place where the flash drive will be mounted (e.g. \'/dev/sda\') ')
     }
     with open(LOCAL_CONSTANTS_FILE, 'w') as f:
         json.dump(local_constants, f)
@@ -16,15 +17,16 @@ except FileNotFoundError:
 JSON_FILE = local_constants['DATA_FILE_NAME'] + '.json'
 CSV_FILE = local_constants['DATA_FILE_NAME'] + '.csv'
 ABS_DATA_DIR = local_constants['ABS_DATA_DIR']
-MEDIA_DIR = local_constants['MEDIA_DIR']
+EVENT = local_constants['EVENT']
+
+# Location of a flash drive
+DRIVE_DEV_LOC = local_constants['DRIVE_DEV_LOC']
 
 TBA_SAVE_FILE = 'tba.json'
 
 MESSAGE_SIZE = 1024
 
 LOG_FILE = 'log'
-
-EVENT = '2019chcmp'
 
 
 def enum(**enums):
