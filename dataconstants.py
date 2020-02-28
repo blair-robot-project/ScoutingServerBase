@@ -8,8 +8,7 @@ except FileNotFoundError:
     local_constants = {
         'DATA_FILE_NAME': input('Data file base name (e.g. \'data\') '),
         'ABS_DATA_DIR': input('Absolute data directory (e.g. \'/home/user/Desktop\') '),
-        'EVENT': input('TBA event id (e.g. \'2020mdbet\') '),
-        'DRIVE_DEV_LOC': input('Place where the flash drive will be mounted (e.g. \'/dev/sda\') ')
+        'EVENT': input('TBA event id (e.g. \'2020mdbet\') ')
     }
     with open(LOCAL_CONSTANTS_FILE, 'w') as f:
         json.dump(local_constants, f)
@@ -18,9 +17,6 @@ JSON_FILE = local_constants['DATA_FILE_NAME'] + '.json'
 CSV_FILE = local_constants['DATA_FILE_NAME'] + '.csv'
 ABS_DATA_DIR = local_constants['ABS_DATA_DIR']
 EVENT = local_constants['EVENT']
-
-# Location of a flash drive
-DRIVE_DEV_LOC = local_constants['DRIVE_DEV_LOC']
 
 TBA_SAVE_FILE = 'tba.json'
 
