@@ -18,6 +18,17 @@ def _run(command):
         printing.printf(e, style=printing.ERROR)
 
 
+# iter that yields each line of output as it comes
+def continued_execute(cmd):
+    popen = sub.Popen(cmd, stdout=sub.PIPE, universal_newlines=True)
+    for stdout_line in iter(popen.stdout.readline, ""):
+        yield stdout_line 
+    popen.stdout.close()
+    return_code = popen.wait()
+    if return_code:
+        raise sub.CalledProcessError(return_code, cmd)
+
+
 # From https://askubuntu.com/questions/938255/how-to-perform-the-same-operation-as-pressing-the-eject-button-in-nautilus-by-r
 def find_usb_partitions():
     parts = tuple(
@@ -25,11 +36,14 @@ def find_usb_partitions():
         for p in os.listdir('/dev/disk/by-id')
         if p.startswith('usb-')
     )
+    print(parts)
     parts_numbered = set()
     for p in parts:
         p_strip = p.rstrip('0123456789')
         if p != p_strip:
             parts_numbered.add(p_strip)
+    print(parts)
+    print(parts_numbered)
     parts = tuple(p for p in parts if p not in parts_numbered)
     del parts_numbered
     return parts
@@ -66,23 +80,20 @@ def mount():
         printing.printf('Drive ' + devs[0] + ' already mounted to ' + loc, style=printing.YELLOW,
                             log=True, logtag='system.mount')
         return loc
-    done = 0
+    tries = 0
     printing.printf('Found drive at ' + dev[0] + ', attempting to mount ...', end=' ', style=printing.FLASH_DRIVE)
-    while done < 10:
+    while tries < 10:
         p = _run('udisksctl mount -b ' + dev[0])
         error_string = p[1].decode('utf-8').strip('\n')
-        if 'Error looking up object for device' in error_string:
+        if error_string:
             sleep(.2)
-            done += 1
-        elif error_string:
-            printing.printf('Error mounting: ' + error_string, style=printing.ERROR,
-                            log=True, logtag='system.mount.error')
-            return None
+            tries += 1
         else:
             message = p[0].decode('utf-8').strip('\n')
             printing.printf(message, style=printing.FLASH_DRIVE,
                             log=True, logtag='system.mount')
             return message.split('at')[1].strip('. ')
+    print(tries)
     printing.printf('Error mounting: ' + error_string, style=printing.ERROR,
                             log=True, logtag='system.mount.error')
     return None
@@ -117,6 +128,9 @@ def unmount():
         else:
             printing.printf('Unmounting successful, remove device',
                             style=printing.FLASH_DRIVE_SUCCESS, log=True, logtag='system.unmount')
+
+
+
 
 
 # Finds the MAC address of the bluetooth adapter
