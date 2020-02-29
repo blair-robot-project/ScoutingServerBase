@@ -41,7 +41,7 @@ class SocketController:
                 # Setup connection
                 connection = Connection(client_sock, MAC_DICT.get(client_info[0], client_info[0]),
                                         lambda msg: self.on_receive(msg, connection),
-                                        lambda: self.clients.remove(connection))
+                                        lambda: safe_remove(self.clients, connection))
                 self.clients.add(connection)
 
                 # Listen for data
@@ -61,3 +61,10 @@ class SocketController:
         self.clients.clear()
         self.server_sock.close()
         printing.printf('Closed server', style=printing.STATUS, log=True, logtag='socketctl.close')
+
+
+def safe_remove(s, k):
+    try:
+        s.remove(k)
+    except KeyError:
+        pass
