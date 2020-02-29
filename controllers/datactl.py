@@ -49,7 +49,7 @@ class DataController:
         for v in self.data.values():
             for id in v.values():
                 m = id[str(max(map(int, id.keys())))]
-                s += ','.join([str(m[f]) if f in m else missing_field(f, m[Fields.TIMESTAMP], m[Fields.REVISION]) for f in ORDER]) + '\n'
+                s += ','.join([csv_safe(m,f) if f in m else missing_field(f, m[Fields.TIMESTAMP], m[Fields.REVISION]) for f in ORDER]) + '\n'
         write_file(CSV_FILE, s, mode='w')
 
     def sync_summary(self, client):
@@ -95,3 +95,10 @@ def _update_drive():
 def find_missing():
     # TODO: Implement
     ...
+
+
+def csv_safe(m, f):
+    if f == Fields.COMMENTS or f == Fields.SCOUT_NAME:
+        return '"'+m[f]+'"'
+    else:
+        return str(m[f])

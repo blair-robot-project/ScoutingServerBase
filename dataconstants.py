@@ -75,7 +75,7 @@ ORDER = [Fields.TEAM, Fields.MATCH, Fields.ALLIANCE_COLOR, Fields.NO_SHOW, Field
          Fields.SPINNER_POS, Fields.ATTEMPTED_CLIMB, Fields.PARK, Fields.SOLO_CLIMB, Fields.DOUBLE_CLIMB, 
          Fields.WAS_LIFTED, Fields.SOLO_CLIMB_NYF, Fields.DOUBLE_CLIMB_NYF, Fields.WAS_LIFTED_NYF, 
          Fields.CLIMB_TIME, Fields.ENDGAME_SCORE, Fields.LEVEL, Fields.DEAD, Fields.DEFENSE, Fields.COMMENTS, 
-         Fields.SCOUT_NAME, Fields.REVISION, Fields.TIMESTAMP, Fields.REVISION, Fields.TIMESTAMP]
+         Fields.SCOUT_NAME, Fields.REVISION, Fields.TIMESTAMP, Fields.REVISION]
 
 MAC_DICT = {'00:FC:8B:3B:42:46': 'R1 Demeter',
             '00:FC:8B:39:C1:09': 'R2 Hestia',
