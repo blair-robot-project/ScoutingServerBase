@@ -1,48 +1,7 @@
 from enum import Enum
 
-# from dataconstants import Fields
+from dataconstants import Fields
 
-def enum(**enums):
-    return type('Enum', (), enums)
-
-FieldsEnum = enum(TEAM_ID='teamId',
-                  MATCH_ID='matchId',
-                  ALLIANCE_COLOR='alliance',
-                  NO_SHOW='noShow',
-                  PRELOAD='preload',
-                  AUTO_MOVE='autoMove',
-                  HIT_PARTNER='hitPartner',
-                  AUTO_INTAKE='autoIntake',
-                  AUTO_CENTER='autoCenter',
-                  AUTO_LOW='autoLow',
-                  AUTO_MISS='autoMiss',
-                  HIGH='high',
-                  CENTER='center',
-                  LOW='low',
-                  MISS='miss',
-                  SPINNER_ROT='spinnerRot',
-                  SPINNER_POS='spinnerPos',
-                  ATTEMPTED_CLIMB='attemptedClimb',
-                  PARK='park',
-                  SOLO_CLIMB='soloClimb',
-                  DOUBLE_CLIMB='doubleClimb',
-                  WAS_LIFTED='wasLifted',
-                  CLIMB_TIME='climbTime',
-                  ENDGAME_SCORE='endgameScore',
-                  LEVEL='level',
-                  DEAD='dead',
-                  DEFENSE='defense',
-                  COMMENTS='comments',
-                  SCOUT_NAME='scoutName',
-                  REVISION='revision',
-                  TIMESTAMP='timestamp',
-                  MATCH='match',
-                  TEAM='team',
-                  SOLO_CLIMB_NYF='soloClimbNYF',
-                  DOUBLE_CLIMB_NYF='doubleClimbNYF',
-                  WAS_LIFTED_NYF='wasLiftedNYF')
-
-Fields = FieldsEnum()
 
 # Stores and calculates data about a team, and outputs it in the format of the match strategy sheets
 class Team:
@@ -111,7 +70,7 @@ class Team:
         self.center += match[Fields.CENTER]
         self.miss += match[Fields.MISS]
         self.spinner2 = self.spinner2 or match[Fields.SPINNER_ROT]
-        self.spinner3 = self.spinner2 or match[Fields.SPINNER_POS]
+        self.spinner3 = self.spinner3 or match[Fields.SPINNER_POS]
 
         self.climb_attempts += match[Fields.ATTEMPTED_CLIMB] in (1, 2)
         self.climb_success += match[Fields.SOLO_CLIMB_NYF] == 1 or match[Fields.DOUBLE_CLIMB_NYF] ==1
@@ -126,6 +85,22 @@ class Team:
     def calc_values(self):
         return {
                 'team': self.team,
+                'auto_move': percent(self.avg(self.auto_move)),
+                'hit_partner': percent(self.avg(self.hit_partner)),
+                'auto_intake': percent(self.avg(self.auto_intake)),
+                'auto_low': self.avg(self.auto_low),
+                'auto_high': self.avg(self.auto_high + self.auto_center),
+                'auto_percent_center': percent(self.auto_center/(self.auto_high+self.auto_center)),
+                'auto_miss': self.avg(self.auto_miss),
+                
+                'low': self.avg(self.auto_low),
+                'high': self.avg(self.high + self.center),
+                'percent_center': percent(self.center/(self.high+self.center)),
+                'miss': self.avg(self.miss),
+                'spinner': 'y' if self.spinner2 or self.spinner3 else 'n',
+
+                'climb_attempts': percent(self.avg(self.climb_attempts)),
+                'climb_success': percent(self.climb_success/self.climb_attempts),
                }
 
     def summary(self, form=Forms.strat):
@@ -144,7 +119,7 @@ class Team:
             r = sum(x) / (1 if len(x) == 0 else len(x))
             if itint:
                 r = int(r)
-        return r if not perc else self.percent(r)
+        return r if not perc else percent(r)
 
 
 def percent(n):
