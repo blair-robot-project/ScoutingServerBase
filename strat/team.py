@@ -1,7 +1,48 @@
 from enum import Enum
 
-import dataconstants
+# from dataconstants import Fields
 
+def enum(**enums):
+    return type('Enum', (), enums)
+
+FieldsEnum = enum(TEAM_ID='teamId',
+                  MATCH_ID='matchId',
+                  ALLIANCE_COLOR='alliance',
+                  NO_SHOW='noShow',
+                  PRELOAD='preload',
+                  AUTO_MOVE='autoMove',
+                  HIT_PARTNER='hitPartner',
+                  AUTO_INTAKE='autoIntake',
+                  AUTO_CENTER='autoCenter',
+                  AUTO_LOW='autoLow',
+                  AUTO_MISS='autoMiss',
+                  HIGH='high',
+                  CENTER='center',
+                  LOW='low',
+                  MISS='miss',
+                  SPINNER_ROT='spinnerRot',
+                  SPINNER_POS='spinnerPos',
+                  ATTEMPTED_CLIMB='attemptedClimb',
+                  PARK='park',
+                  SOLO_CLIMB='soloClimb',
+                  DOUBLE_CLIMB='doubleClimb',
+                  WAS_LIFTED='wasLifted',
+                  CLIMB_TIME='climbTime',
+                  ENDGAME_SCORE='endgameScore',
+                  LEVEL='level',
+                  DEAD='dead',
+                  DEFENSE='defense',
+                  COMMENTS='comments',
+                  SCOUT_NAME='scoutName',
+                  REVISION='revision',
+                  TIMESTAMP='timestamp',
+                  MATCH='match',
+                  TEAM='team',
+                  SOLO_CLIMB_NYF='soloClimbNYF',
+                  DOUBLE_CLIMB_NYF='doubleClimbNYF',
+                  WAS_LIFTED_NYF='wasLiftedNYF')
+
+Fields = FieldsEnum()
 
 # Stores and calculates data about a team, and outputs it in the format of the match strategy sheets
 class Team:
@@ -23,114 +64,76 @@ class Team:
 
     detail_form = '\033[7m\033[95m{team:4s}\033[0m\n'
 
-    # noinspection PyArgumentList
+    NO_DATA = 'No data avalible'
+
     Forms = Enum('Forms', 'strat quick detail')
 
-    total, lowh, lowc, highc, highh = 0, 0, 0, 0, 0
-    autocross, start1, start2, prec, preh, autoc, autoh = 0, 0, 0, 0, 0, 0, 0
-    droph, dropc = 0, 0
-    lowr = False
-
-    comments = ''
 
     def __init__(self, team, partner=True):
+        self.total = 0
+
         self.team = team
+        self.auto_move, self.hit_partner, self.auto_intake, self.auto_low, self.auto_high, self.auto_center, self.auto_miss = 0, 0, 0, 0, 0, 0, 0
+        self.low, self.high, self.center, self.miss = 0, 0, 0, 0
+        self.spinner2, self.spinner3 = False, False
+        self.climb_attempts, self.climb_success = 0, 0
+        self.climb_time = []
+        self.dead = []
         self.defense = []
-        self.habattempt, self.habsuccess, self.climbtime = [0, 0, 0, 0], [0, 0, 0, 0], [[], []]
-        self.climb = [0, 0]
+        self.comments = []
+
         if not partner:
             self.partner = False
             self.strat_header, self.strat_form = self.opp_header, self.opp_form
 
-    def getteam(self):
+    def get_team(self):
         return self.team
 
-    def getheader(self):
+    def get_header(self):
         return self.strat_header
 
-    def getcomments(self):
-        return self.comments
+    def get_comments(self):
+        return '\n\t'.join(self.comments)
 
-    def addline(self, line):
+    def add_match(self, match):
         self.total += 1
 
-        self.autocross += int(line[dataconstants.MOVED_FORWARD])
-        self.start1 += line[dataconstants.STARTING_LEVEL] == '1'
-        self.start2 += line[dataconstants.STARTING_LEVEL] == '2'
-        if line[dataconstants.PRELOAD] == '1':
-            self.preh += 1
-            self.autoh += line[dataconstants.AUTO_PLACE] == '1'
-        elif line[dataconstants.PRELOAD] == '2':
-            self.prec += 1
-            self.autoc += line[dataconstants.AUTO_PLACE] == '1'
+        self.auto_move += match[Fields.AUTO_MOVE]
+        self.hit_partner += match[Fields.HIT_PARTNER]
+        self.auto_intake += match[Fields.AUTO_INTAKE]
+        self.auto_low += match[Fields.AUTO_LOW]
+        self.auto_high += match[Fields.AUTO_HIGH]
+        self.auto_center += match[Fields.AUTO_CENTER]
+        self.auto_miss += match[Fields.AUTO_MISS]
 
-        self.lowc += int(line[dataconstants.CSC]) + int(line[dataconstants.L1RC])
-        self.lowh += int(line[dataconstants.CSH]) + int(line[dataconstants.L1RH])
-        self.highc += int(line[dataconstants.L2RC]) + int(line[dataconstants.L3RC])
-        self.highh += int(line[dataconstants.L2RH]) + int(line[dataconstants.L3RH])
+        self.low += match[Fields.LOW]
+        self.high += match[Fields.HIGH]
+        self.center += match[Fields.CENTER]
+        self.miss += match[Fields.MISS]
+        self.spinner2 = self.spinner2 or match[Fields.SPINNER_ROT]
+        self.spinner3 = self.spinner2 or match[Fields.SPINNER_POS]
 
-        self.droph += int(line[dataconstants.DROP_HATCH])
-        self.dropc += int(line[dataconstants.DROP_CARGO])
+        self.climb_attempts += match[Fields.ATTEMPTED_CLIMB] in (1, 2)
+        self.climb_success += match[Fields.SOLO_CLIMB_NYF] == 1 or match[Fields.DOUBLE_CLIMB_NYF] ==1
 
-        if int(line[dataconstants.L1RH]) + int(line[dataconstants.L3RH]) + int(line[dataconstants.L1RH]):
-            self.lowr = True
+        #self.dead
+        #self.defense
 
-        attempt = int(line[dataconstants.HAB_ATTEMPT])
-        self.habattempt[attempt] += 1
-        self.habsuccess[attempt] += attempt == int(line[dataconstants.HAB_REACHED])
-
-        if int(line[dataconstants.HAB_SUCCESS]) > 1:
-            self.climbtime[int(line[dataconstants.HAB_REACHED]) - 2].append(int(line[dataconstants.CLIMB_TIME]))
-            self.climb[int(line[dataconstants.HAB_REACHED]) - 2] += 1
-
-        d = int(line[dataconstants.DEFENSE])
-        if d:
-            self.defense.append(d)
-
-        comment = line[dataconstants.COMMENTS]
+        comment = match[Fields.COMMENTS]
         if comment:
-            self.comments += comment + '\n\t'
+            self.comments.append(comment)
 
-    def calcvalues(self):
-        return {'team': self.team,
-                'lowc': self.avg(self.lowc),
-                'lowh': self.avg(self.lowh),
-                'highc': self.avg(self.highc),
-                'highh': self.avg(self.highh),
-                'defensep': self.avg(len(self.defense), perc=True),
-                'defenses': self.avg(self.defense, itint=False),
-
-                'cross': self.avg(self.autocross, perc=True),
-                'start1': self.avg(self.start1, perc=True),
-                'start2': self.avg(self.start2, perc=True),
-                'preloadc': self.avg(self.prec, perc=True),
-                'preloadh': self.avg(self.preh, perc=True),
-                'autoc': self.percent(0 if not self.prec else self.autoc / self.prec),
-                'autoh': self.percent(0 if not self.preh else self.autoh / self.preh),
-                'lowr': 'y' if self.lowr else 'n',
-                'attempt1': self.avg(self.habattempt[1], perc=True),
-                'attempt2': self.avg(self.habattempt[2], perc=True),
-                'attempt3': self.avg(self.habattempt[3], perc=True),
-                'success2': self.percent(0 if not self.habattempt[2] else self.habsuccess[2] / self.habattempt[2]),
-                'success3': self.percent(0 if not self.habattempt[3] else self.habsuccess[3] / self.habattempt[3]),
-                'time2': self.avg(self.climbtime[0]),
-                'time3': self.avg(self.climbtime[1]),
-
-                'droph': self.avg(self.droph),
-                'dropc': self.avg(self.dropc),
-                'climb2': self.avg(self.climb[0], perc=True),
-                'climb3': self.avg(self.climb[1], perc=True),
-
-                'allhatch': self.avg(self.lowh + self.highh),
-                'allcargo': self.avg(self.lowc + self.highc),
-                'height': ('h' if self.highh > 2 else 'x') + ('c' if self.highc > 2 else 'x'), }
+    def calc_values(self):
+        return {
+                'team': self.team,
+               }
 
     def summary(self, form=Forms.strat):
         forms = {self.Forms.strat: self.strat_form, self.Forms.quick: self.quick_form,
                  self.Forms.detail: self.detail_form}
         if self.total:
-            return forms[form].format(**self.calcvalues())
-        return '{0:4s}: '.format(self.team) + dataconstants.NO_DATA
+            return forms[form].format(**self.calc_values())
+        return '{0:4s}: '.format(self.team) + self.NO_DATA
 
     def avg(self, x, perc=False, itint=True):
         if type(x) in (int, float):
@@ -143,6 +146,6 @@ class Team:
                 r = int(r)
         return r if not perc else self.percent(r)
 
-    @staticmethod
-    def percent(n):
-        return int(n * 100)
+
+def percent(n):
+    return int(n * 100)
