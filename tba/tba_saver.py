@@ -1,20 +1,21 @@
 import json
 
 from dataconstants import EVENT, TBA_SAVE_FILE
-from tba.tba import main_event
+from tba.tba import Event
 
 
 class TBASaver:
-    def __init__(self):
+    def __init__(self, event_id):
         try:
             self.data = json.load(open(TBA_SAVE_FILE))
         except FileNotFoundError:
             self.data = {'teams':[],'schedule':{}}
+        self.event = Event(event_id)
 
     def update(self):
         self.data = {
-            'teams': main_event.team_list(),
-            'schedule': main_event.full_schedule(),
+            'teams': main_event.get_team_list(),
+            'schedule': main_event.get_full_schedule(),
         }
         self.save()
 
@@ -36,10 +37,3 @@ class TBASaver:
 
     def all_matches(self):
         return self.data['schedule'].keys()
-
-
-def frc_strip(s):
-    return s.strip('frc')
-
-def match_to_teams(match_json):
-    return {k: list(map(frc_strip, v['team_keys'])) for k, v in match_json['alliances'].items()} if match_json else None

@@ -4,7 +4,6 @@ from threading import Thread
 from controllers.messagectl import make_message, MsgTypes
 from dataconstants import EVENT
 from interface import printing
-from tba.tba import main_event as tba_event
 
 
 class InputHandler:
@@ -35,18 +34,18 @@ class Commands:
             self.running = False
             interrupt_main()
 
-    def event(self, *args):
-        printing.printf(tba_event.event_key, style=printing.PURPLE)
+    def update_tba(self, *args):
+        self.server.tba.update()
 
     def send_schedule(self, *args):
-        schedule = tba_event.full_schedule()
+        schedule = self.server.tba.full_schedule()
         if schedule:
             self.server.socketctl.blanket_send(make_message(MsgTypes.SCHEDULE, schedule))
         else:
             printing.printf("Schedule not available for event:", EVENT, style=printing.YELLOW)
 
     def send_teams(self, *args):
-        teams = tba_event.team_list()
+        teams = self.server.tba.team_list()
         if teams:
             self.server.socketctl.blanket_send(make_message(MsgTypes.TEAM_LIST, teams))
         else:
@@ -55,7 +54,7 @@ class Commands:
     def strat(self, *args, **kwargs):
         if len(args) == 1:
             # Match num
-            print(tba_event.teams_in_match(*args, **kwargs))
+            print(self.server.tba.teams_in_match(*args, **kwargs))
         else:
             # List of teams
             print(*args)
@@ -67,10 +66,8 @@ class Commands:
     # def send(self, *args):
         # self.server.socketctl.blanket_send(' '.join(args))
 
-    def sum(self, *args):
-        pass
-
     q = quit_
+    tba = update_tba
     ss = send_schedule
     st = send_teams
     s = strat

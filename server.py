@@ -4,10 +4,12 @@ from os import _exit as osexit
 from controllers import datactl
 from controllers.messagectl import MessageController
 from controllers.socketctl import SocketController
+from dataconstants import EVENT
 from interface import printing
 from interface.header import print_header
 from interface.input_handler import InputHandler
 from interface.logger import log
+from tba.tba_saver import TBASaver
 
 
 class Server:
@@ -21,6 +23,8 @@ class Server:
         self.data_controller = datactl.DataController()
         msgctl = MessageController(self.data_controller)
         self.socketctl = SocketController(msgctl.handle_msg)
+
+        self.tba = TBASaver(EVENT)
 
     def main(self):
         self.input_handler.start_listening()
