@@ -16,11 +16,11 @@ class InputHandler:
 
     def input_loop(self):
         while self.commands.running:
-            try:
-                i = input().split(' ')
-                exec('self.commands.' + i[0] + '("' + '","'.join(i[1:]) + '")')
-            except Exception as e:
-                printing.printf("Invalid command.", e.__class__.__name__, e, style=printing.YELLOW)
+            # try:
+            i = input().split(' ')
+            exec('self.commands.' + i[0] + '("' + '","'.join(i[1:]) + '")')
+            # except Exception as e:
+                # printing.printf("Invalid command.", e.__class__.__name__, e, style=printing.YELLOW)
 
 
 class Commands:
@@ -61,6 +61,9 @@ class Commands:
     def data(self, *args):
         self.server.data_controller.drive_update_request()
 
+    def missing(self, *args):
+        self.server.data_controller.find_missing(self.server.tba.match_schedule())
+
     # For testing only
     # def send(self, *args):
         # self.server.socketctl.blanket_send(' '.join(args))
@@ -71,3 +74,4 @@ class Commands:
     st = send_teams
     s = strat
     d = drive = data
+    m = missing

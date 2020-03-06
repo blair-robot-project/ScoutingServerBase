@@ -49,13 +49,14 @@ def print_header(width=None):
 
     tw = TextWrapper(width=width)
     printing.printf(tw.fill('Commands:') + '\n' +
-                    tw.fill('q:   quit') + '\n' +
-                    tw.fill('d:   request drive update (should be automatic when you insert a drive)') + '\n' +
-                    tw.fill('tba: update team list and match schedule from tba') + '\n' +
-                    tw.fill('st:  send team list to all connected devices') + '\n' +
-                    tw.fill('ss:  send match schedule to all connected devices') + '\n' +
-                    tw.fill('s m:  get strat summary for match m') + '\n' +
-                    tw.fill('s t t ...:  get strat summary for teams') + '\n' +
+                    tw.fill('q:\tquit') + '\n' +
+                    tw.fill('d:\trequest drive update (should be automatic when you insert a drive)') + '\n' +
+                    tw.fill('tba:\tupdate team list and match schedule from tba') + '\n' +
+                    tw.fill('st:\tsend team list to all connected devices') + '\n' +
+                    tw.fill('ss:\tsend match schedule to all connected devices') + '\n' +
+                    tw.fill('s m:\tget strat summary for match m') + '\n' +
+                    tw.fill('s t t ...: get strat summary for teams') + '\n' +
+                    tw.fill('m:\tcheck for missing and duplicate data') + '\n' +
                     '\n' +
                     'If there are any issues, try restarting the server first',  
                     style=printing.INSTRUCTIONS)
