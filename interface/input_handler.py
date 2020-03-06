@@ -16,11 +16,11 @@ class InputHandler:
 
     def input_loop(self):
         while self.commands.running:
-            # try:
-            i = input().split(' ')
-            exec('self.commands.' + i[0] + '("' + '","'.join(i[1:]) + '")')
-            # except Exception as e:
-                # printing.printf("Invalid command.", e.__class__.__name__, e, style=printing.YELLOW)
+            try:
+                i = input().split(' ')
+                exec('self.commands.' + i[0] + '("' + '","'.join(i[1:]) + '")')
+            except Exception as e:
+                printing.printf("Invalid command.", e.__class__.__name__, e, style=printing.YELLOW)
 
 
 class Commands:
