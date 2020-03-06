@@ -4,6 +4,7 @@ from threading import Thread
 from controllers.messagectl import make_message, MsgTypes
 from dataconstants import EVENT
 from interface import printing
+from strat.summarize import strategy
 
 
 class InputHandler:
@@ -15,11 +16,11 @@ class InputHandler:
 
     def input_loop(self):
         while self.commands.running:
-            try:
-                i = input().split(' ')
-                exec('self.commands.' + i[0] + '("' + '","'.join(i[1:]) + '")')
-            except Exception as e:
-                printing.printf("Invalid command.", e.__class__.__name__, e, style=printing.YELLOW)
+            # try:
+            i = input().split(' ')
+            exec('self.commands.' + i[0] + '("' + '","'.join(i[1:]) + '")')
+            # except Exception as e:
+                # printing.printf("Invalid command.", e.__class__.__name__, e, style=printing.YELLOW)
 
 
 class Commands:
@@ -38,7 +39,7 @@ class Commands:
         self.server.tba.update()
 
     def send_schedule(self, *args):
-        schedule = self.server.tba.full_schedule()
+        schedule = self.server.tba.match_schedule()
         if schedule:
             self.server.socketctl.blanket_send(make_message(MsgTypes.SCHEDULE, schedule))
         else:
@@ -53,11 +54,9 @@ class Commands:
 
     def strat(self, *args, **kwargs):
         if len(args) == 1:
-            # Match num
-            print(self.server.tba.teams_in_match(*args, **kwargs))
+            printing.printf(strategy(self.server.tba.teams_in_match(*args)), style=printing.DATA_OUTPUT)
         else:
-            # List of teams
-            print(*args)
+            printing.printf(strategy(args), style=printing.DATA_OUTPUT)
 
     def data(self, *args):
         self.server.data_controller.drive_update_request()

@@ -8,6 +8,7 @@ except FileNotFoundError:
     local_constants = {
         'DATA_FILE_NAME': input('Data file base name (e.g. \'data\') '),
         'ABS_DATA_DIR': input('Absolute data directory (e.g. \'/home/user/Desktop\') '),
+        'TEAM': input('Team number (e.g. 449) '),
         'EVENT': input('TBA event id (e.g. \'2020mdbet\') ')
     }
     with open(LOCAL_CONSTANTS_FILE, 'w') as f:
@@ -17,6 +18,7 @@ JSON_FILE = local_constants['DATA_FILE_NAME'] + '.json'
 CSV_FILE = local_constants['DATA_FILE_NAME'] + '.csv'
 ABS_DATA_DIR = local_constants['ABS_DATA_DIR']
 EVENT = local_constants['EVENT']
+TEAM = local_constants['TEAM']
 
 TBA_SAVE_FILE = 'tba.json'
 
@@ -39,6 +41,7 @@ FieldsEnum = enum(TEAM_ID='teamId',
                   HIT_PARTNER='hitPartner',
                   AUTO_INTAKE='autoIntake',
                   AUTO_CENTER='autoCenter',
+                  AUTO_HIGH='autoHigh',
                   AUTO_LOW='autoLow',
                   AUTO_MISS='autoMiss',
                   HIGH='high',

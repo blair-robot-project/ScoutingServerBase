@@ -14,8 +14,8 @@ class TBASaver:
 
     def update(self):
         self.data = {
-            'teams': main_event.get_team_list(),
-            'schedule': main_event.get_full_schedule(),
+            'teams': self.event.get_team_list(),
+            'schedule': self.event.get_full_schedule(),
         }
         self.save()
 
@@ -32,7 +32,7 @@ class TBASaver:
     def schedule_for_team(self, team):
         return [m for m in self.all_matches() if team in self.data['schedule'][m]['red']+self.data['schedule'][m]['blue']]
 
-    def teams_in_match(self, match, level='qm', set_num=None):
+    def teams_in_match(self, match):
         return self.data['schedule'][str(match)]
 
     def all_matches(self):

@@ -6,17 +6,11 @@ from dataconstants import Fields
 # Stores and calculates data about a team, and outputs it in the format of the match strategy sheets
 class Team:
     partner = True
-    strat_header = 'team: cross | srt lvl | auto(h:c) | pre(h:c) |#| l h | l c | l r | h h | h c | defense |#| ' \
-                   '  attempt   | success | time '
+    ally_header = 'team: cross | shots(L:H) |#| low | high(O:I) | miss | trench | spinner |#| climb(a%:s%) | time '
+    ally_form = '{team:>4s}:  {auto_move:3d}% | {auto_low:2.1f}:{auto_high:2.1f} |#| {low:2.1f} | {high:2.1f}:{percent_center:3d}% | {miss:2.1f}  |  qual  | {spinner:1s} |#| {climb_attempts:3d}%:{climb_success:3d}% | {climb_time:2d}'
 
-    strat_form = '{team:4s}:  {cross:3d}% | {start1:3d}:{start2:3d} | {autoh:4d}:{autoc:4d} |  {preloadh:3d}:{' \
-                 'preloadc:3d} |#| {lowh:3.1f} | {lowc:3.1f} |  {lowr:1s}  | {highh:3.1f} | {highc:3.1f} | {' \
-                 'defensep:3d}:{defenses:1.1f} |#| {attempt1:3d}:{attempt2:3d}:{attempt3:3d} | {success2:3d}:{' \
-                 'success3:3d} | {time2:2d}:{time3:2d} '
-
-    opp_header = 'team: l h | l c | h h | h c | drop(h:c) |  climb  | defense'
-    opp_form = '{team:4s}: {lowh:3.1f} | {lowc:3.1f} | {highh:3.1f} | {highc:3.1f} |  ' \
-               '{droph:3.1f}:{dropc:3.1f}  | {climb2:3d}:{climb3:3d} | {defensep:3d}:{defenses:1.1f}'
+    opp_header = 'team: cross | shots(L:H) |#| low | high(O:I) | miss | trench | spinner |#| climb(a%:s%) | time '
+    opp_form = '{team:>4s}:  {auto_move:3d}% | {auto_low:2.1f}:{auto_high:2.1f} |#| {low:2.1f} | {high:2.1f}:{percent_center:3d}% | {miss:2.1f}   |  qual  | {spinner:1s} |#| {climb_attempts:3d}%:{climb_success:3d}% | {climb_time:2d}'
 
     quick_form = '\033[7m\033[95m{team:4s}\033[0m SS:{autoh:3d}:{autoc:3d} H:{allhatch:2.1f} C:{allcargo:2.1f} ' \
                  'HI:{height:2s} EG:{success2:3d}:{success3:3d}'
@@ -41,8 +35,13 @@ class Team:
         self.defense = []
         self.comments = []
 
-        if not partner:
-            self.partner = False
+        self.set_partner(partner)
+
+    def set_partner(self, partner):
+        self.partner = partner
+        if partner:
+            self.strat_header, self.strat_form = self.ally_header, self.ally_form
+        else:
             self.strat_header, self.strat_form = self.opp_header, self.opp_form
 
     def get_team(self):
@@ -73,7 +72,8 @@ class Team:
         self.spinner3 = self.spinner3 or match[Fields.SPINNER_POS]
 
         self.climb_attempts += match[Fields.ATTEMPTED_CLIMB] in (1, 2)
-        self.climb_success += match[Fields.SOLO_CLIMB_NYF] == 1 or match[Fields.DOUBLE_CLIMB_NYF] ==1
+        self.climb_success += match[Fields.SOLO_CLIMB_NYF] == 1 or match[Fields.DOUBLE_CLIMB_NYF] == 1
+        self.climb_time.append(match[Fields.CLIMB_TIME])
 
         #self.dead
         #self.defense
@@ -90,17 +90,18 @@ class Team:
                 'auto_intake': percent(self.avg(self.auto_intake)),
                 'auto_low': self.avg(self.auto_low),
                 'auto_high': self.avg(self.auto_high + self.auto_center),
-                'auto_percent_center': percent(self.auto_center/(self.auto_high+self.auto_center)),
+                'auto_percent_center': percent(self.auto_center/(self.auto_high+self.auto_center) if self.auto_high+self.auto_center else 0),
                 'auto_miss': self.avg(self.auto_miss),
                 
                 'low': self.avg(self.auto_low),
                 'high': self.avg(self.high + self.center),
-                'percent_center': percent(self.center/(self.high+self.center)),
+                'percent_center': percent(self.center/(self.high+self.center) if (self.high+self.center) else 0),
                 'miss': self.avg(self.miss),
                 'spinner': 'y' if self.spinner2 or self.spinner3 else 'n',
 
                 'climb_attempts': percent(self.avg(self.climb_attempts)),
-                'climb_success': percent(self.climb_success/self.climb_attempts),
+                'climb_success': percent(self.climb_success/self.climb_attempts if self.climb_attempts else 0),
+                'climb_time': self.avg(self.climb_time)
                }
 
     def summary(self, form=Forms.strat):
