@@ -55,7 +55,9 @@ def print_header(width=None):
                     tw.fill('st:  send team list to all connected devices') + '\n' +
                     tw.fill('ss:  send match schedule to all connected devices') + '\n' +
                     tw.fill('s m:  get strat summary for match m') + '\n' +
-                    tw.fill('s t t ...:  get strat summary for teams') + '\n', 
+                    tw.fill('s t t ...:  get strat summary for teams') + '\n' +
+                    '\n' +
+                    'If there are any issues, try restarting the server first',  
                     style=printing.INSTRUCTIONS)
     printing.printf()
     printing.printf('-' * width + '\n\n', style=printing.UNDERLINE)
