@@ -6,13 +6,13 @@ from dataconstants import Fields
 # Stores and calculates data about a team, and outputs it in the format of the match strategy sheets
 class Team:
     partner = True
-    ally_header = 'team: cross | shots(L:H) |#| low | high(O:I) | miss | trench | spinner |#| climb(a%:s%) | time '
-    ally_form = '{team:>4s}:  {auto_move:3d}% | {auto_low:2.1f}:{auto_high:2.1f} |#| {low:2.1f} | {high:2.1f}:{percent_center:3d}% | {miss:2.1f}  |  qual  | {spinner:1s} |#| {climb_attempts:3d}%:{climb_success:3d}% | {climb_time:2d}'
+    ally_header = 'team: cross | shots(L:H) | taken(M/A) |#|  low(M/A) |   high(I/M/A)  |.| spin |#| climb | time '
+    ally_form = '{team:>4s}:  {auto_move:3d}% |  {auto_low:4.1f}:{auto_high:4.1f} | {auto_m:4.1f}/{auto_a:4.1f}  |#| {low_m:4.1f}/{low_a:4.1f} | {high_i:4.1f}/{high_m:4.1f}/{high_a:4.1f} |.|  {spinner:1s}   |#| {climb_success:2d}/{climb_attempts:2d} | {climb_time:2.0f}'
 
-    opp_header = 'team: cross | shots(L:H) |#| low | high(O:I) | miss | trench | spinner |#| climb(a%:s%) | time '
-    opp_form = '{team:>4s}:  {auto_move:3d}% | {auto_low:2.1f}:{auto_high:2.1f} |#| {low:2.1f} | {high:2.1f}:{percent_center:3d}% | {miss:2.1f}   |  qual  | {spinner:1s} |#| {climb_attempts:3d}%:{climb_success:3d}% | {climb_time:2d}'
+    opp_header = 'team:  auto |.| spin |  low | high |.| climb '
+    opp_form = '{team:>4s}:  {auto_pts:4.1f} |.|   {spinner:1s}  | {low_m:4.1f} | {high_m:4.1f} |.| {climb_success:2d}/{climb_attempts:2d}'
 
-    quick_form = '\033[7m\033[95m{team:4s}\033[0m SS:{autoh:3d}:{autoc:3d} H:{allhatch:2.1f} C:{allcargo:2.1f} ' \
+    quick_form = '\033[7m\033[95m{team:4s}\033[0m SS:{autoh:3d}:{autoc:3d} H:{allhatch:4.1f} C:{allcargo:4.1f} ' \
                  'HI:{height:2s} EG:{success2:3d}:{success3:3d}'
 
     detail_form = '\033[7m\033[95m{team:4s}\033[0m\n'
@@ -85,23 +85,26 @@ class Team:
     def calc_values(self):
         return {
                 'team': self.team,
+                
                 'auto_move': percent(self.avg(self.auto_move)),
                 'hit_partner': percent(self.avg(self.hit_partner)),
                 'auto_intake': percent(self.avg(self.auto_intake)),
                 'auto_low': self.avg(self.auto_low),
                 'auto_high': self.avg(self.auto_high + self.auto_center),
-                'auto_percent_center': percent(self.auto_center/(self.auto_high+self.auto_center) if self.auto_high+self.auto_center else 0),
-                'auto_miss': self.avg(self.auto_miss),
-                
-                'low': self.avg(self.auto_low),
-                'high': self.avg(self.high + self.center),
-                'percent_center': percent(self.center/(self.high+self.center) if (self.high+self.center) else 0),
-                'miss': self.avg(self.miss),
+                'auto_m': self.avg(self.auto_low + self.auto_high + self.auto_center),
+                'auto_a': self.avg(self.auto_low + self.auto_high + self.auto_center + self.auto_miss),
+                'auto_pts': self.avg(5*self.auto_move + 2*self.auto_low + 4*self.auto_high + 6*self.auto_center),
+
+                'low_m': self.avg(self.auto_low),
+                'low_a': self.avg(self.auto_low + (self.miss if self.low and not (self.high or self.center) else 0)),
+                'high_i': self.avg(self.center),
+                'high_m': self.avg(self.high + self.center),
+                'high_a': self.avg(self.high + self.center + (self.miss if self.high or self.center or not self.low else 0)),
                 'spinner': 'y' if self.spinner2 or self.spinner3 else 'n',
 
-                'climb_attempts': percent(self.avg(self.climb_attempts)),
-                'climb_success': percent(self.climb_success/self.climb_attempts if self.climb_attempts else 0),
-                'climb_time': self.avg(self.climb_time)
+                'climb_attempts': self.climb_attempts,
+                'climb_success': self.climb_success,
+                'climb_time': self.avg(self.climb_time),
                }
 
     def summary(self, form=Forms.strat):
