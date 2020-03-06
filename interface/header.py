@@ -47,12 +47,15 @@ def print_header(width=None):
     printing.printf(('{:^' + str(width) + '}').format('Runs with Python3 on Linux'), style=printing.INSTRUCTIONS)
     printing.printf('-' * width + '\n', style=printing.INSTRUCTIONS)
 
-    # printing.printf('Instructions for use:', style=printing.INSTRUCTIONS)
-    # tw = TextWrapper(width=width)
-    # printing.printf(tw.fill('Commands:') + '\n' +
-                    # tw.fill('q: quit') + '\n' +
-                    # tw.fill('d: request drive update (should be automatic)') + '\n' +
-                    # tw.fill('st: send team list to all connected devices') + '\n' +
-                    # tw.fill('ss: send match schedule to all connected devices'), style=printing.INSTRUCTIONS)
-    # printing.printf()
-    # printing.printf('-' * width + '\n\n', style=printing.UNDERLINE)
+    tw = TextWrapper(width=width)
+    printing.printf(tw.fill('Commands:') + '\n' +
+                    tw.fill('q:   quit') + '\n' +
+                    tw.fill('d:   request drive update (should be automatic when you insert a drive)') + '\n' +
+                    tw.fill('tba: update team list and match schedule from tba') + '\n' +
+                    tw.fill('st:  send team list to all connected devices') + '\n' +
+                    tw.fill('ss:  send match schedule to all connected devices') + '\n' +
+                    tw.fill('s m:  get strat summary for match m') + '\n' +
+                    tw.fill('s t t ...:  get strat summary for teams') + '\n', 
+                    style=printing.INSTRUCTIONS)
+    printing.printf()
+    printing.printf('-' * width + '\n\n', style=printing.UNDERLINE)
