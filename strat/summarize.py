@@ -16,7 +16,7 @@ def strategy(alliances, side=None):
 
     log('datactl.getdata', 'Strategy data request for ' + ', '.join(teams_joined))
 
-    opp_mask = slice(None if side=='blue' else len(alliances['red']), len(alliances['red']) if side=='blue' else None, None)
+    opp_mask = slice(len(alliances[side]), None, None)
     teams = _maketeams(teams_joined, opp_mask)
 
     d = list(map(lambda t: t.summary(), teams))
@@ -29,7 +29,6 @@ def _maketeams(team_numbers, opponent_mask=slice(0,0,None)):
     data = load_json_file()
 
     teams = [Team(t) for i, t in enumerate(team_numbers)]
-    print(teams, opponent_mask)
     list(map(lambda t: t.set_partner(False), teams[opponent_mask]))
 
     for device in data.values():
