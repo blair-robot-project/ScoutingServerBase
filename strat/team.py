@@ -76,7 +76,7 @@ class Team:
         if match[Fields.SOLO_CLIMB_NYF] == 1 or match[Fields.DOUBLE_CLIMB_NYF] == 1:
             self.climb_success += 1
             self.climb_time.append(match[Fields.CLIMB_TIME])
-            # self.level.append(match[Fields.LEVEL])
+            self.level.append(match[Fields.LEVEL])
 
         self.dead.append(match[Fields.DEAD])
         self.defense.append(match[Fields.DEFENSE])
