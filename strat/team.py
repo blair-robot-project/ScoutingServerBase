@@ -6,11 +6,11 @@ from dataconstants import Fields
 # Stores and calculates data about a team, and outputs it in the format of the match strategy sheets
 class Team:
     partner = True
-    ally_header = 'team: cross | shots(L:H) | taken(M/A) |#|  low(M/A) |   high(I/M/A)  |.| spin |#| climb | time |##| hitpart|level|dead(b:h:d)|def(p:a)'
-    ally_form = '{team:>4s}:  {auto_move:3d}% |  {auto_low:4.1f}:{auto_high:4.1f} | {auto_m:4.1f}/{auto_a:4.1f}  |#| {low_m:4.1f}/{low_a:4.1f} | {high_i:4.1f}/{high_m:4.1f}/{high_a:4.1f} |.|  {spinner:1s}   |#| {climb_success:2d}/{climb_attempts:2d} |  {climb_time:2.0f}  |##|  {hit_partner:3d}%  | {level:3d}%|   {dead_b:1d}:{dead_hd:1d}:{dead_d:1d}   |  {defense_p:1d}:{defense_a:1d}'
+    ally_header = 'team: cross | shots | taken(M/A) |#|  low(M/A) |   high(I/M/A)  |.| spin |#| climb | time |##| hitpart|level|dead(b:h:d)|def(p:a)'
+    ally_form = '{team:>4s}:  {auto_move:3d}% |   {auto_target:2s}  | {auto_m:4.1f}/{auto_a:4.1f}  |#| {low_m:4.1f}/{low_a:4.1f} | {high_i:4.1f}/{high_m:4.1f}/{high_a:4.1f} |.|  {spinner:1s}   |#| {climb_success:2d}/{climb_attempts:2d} |  {climb_time:2.0f}  |##|  {hit_partner:3d}%  | {level:3d}%|   {dead_b:1d}:{dead_hd:1d}:{dead_d:1d}   |  {defense_p:1d}:{defense_a:1d}'
 
-    opp_header = 'team:  auto |.| spin |  low | high |.| climb |##| defense(p:a)'
-    opp_form = '{team:>4s}:  {auto_pts:4.1f} |.|   {spinner:1s}  | {low_m:4.1f} | {high_m:4.1f} |.| {climb_success:2d}/{climb_attempts:2d} |##| {defense_p:1d}:{defense_a:1d}'
+    opp_header = 'team:  auto |.| spin |  low(M/A) |   high(I/M/A)  |.| climb |##| defense(p:a)'
+    opp_form = '{team:>4s}:  {auto_pts:4.1f} |.|   {spinner:1s}  | {low_m:4.1f}/{low_a:4.1f} | {high_i:4.1f}/{high_m:4.1f}/{high_a:4.1f} |.| {climb_success:2d}/{climb_attempts:2d} |##| {defense_p:1d}:{defense_a:1d}'
 
     quick_form = '\033[7m\033[95m{team:4s}\033[0m SS:{autoh:3d}:{autoc:3d} H:{allhatch:4.1f} C:{allcargo:4.1f} ' \
                  'HI:{height:2s} EG:{success2:3d}:{success3:3d}'
@@ -76,7 +76,7 @@ class Team:
         if match[Fields.SOLO_CLIMB_NYF] == 1 or match[Fields.DOUBLE_CLIMB_NYF] == 1:
             self.climb_success += 1
             self.climb_time.append(match[Fields.CLIMB_TIME])
-            self.level.append(match[Fields.LEVEL])
+            # self.level.append(match[Fields.LEVEL])
 
         self.dead.append(match[Fields.DEAD])
         self.defense.append(match[Fields.DEFENSE])
@@ -92,8 +92,7 @@ class Team:
                 'auto_move': percent(self.avg(self.auto_move)),
                 'hit_partner': percent(self.avg(self.auto_move)),
                 'auto_intake': percent(self.avg(self.auto_intake)),
-                'auto_low': self.avg(self.auto_low),
-                'auto_high': self.avg(self.auto_high + self.auto_center),
+                'auto_target': 'LH' if self.auto_low and (self.auto_high or self.auto_center) else 'L' if self.auto_low else 'H' if self.auto_high or self.auto_center else '-',
                 'auto_m': self.avg(self.auto_low + self.auto_high + self.auto_center),
                 'auto_a': self.avg(self.auto_low + self.auto_high + self.auto_center + self.auto_miss),
                 'auto_pts': self.avg(5*self.auto_move + 2*self.auto_low + 4*self.auto_high + 6*self.auto_center),
@@ -122,7 +121,7 @@ class Team:
                  self.Forms.detail: self.detail_form}
         if self.total:
             return forms[form].format(**self.calc_values())
-        return '{0:4s}: '.format(self.team) + self.NO_DATA
+        return '{0:>4s}: '.format(self.team) + self.NO_DATA
 
     def avg(self, x, perc=False, itint=True):
         if type(x) in (int, float):

@@ -60,5 +60,4 @@ def print_header(width=None):
                     '\n' +
                     'If there are any issues, try restarting the server first',  
                     style=printing.INSTRUCTIONS)
-    printing.printf()
     printing.printf('-' * width + '\n\n', style=printing.UNDERLINE)
