@@ -1,15 +1,11 @@
 # FRC Team 449: Scouting Server
 Server for scouting app for the FIRST Robotics Competition.
 
-Runs with Python3 on Linux, uses Bluetooth for data transfer. (Mac compatibility is under development)
+Runs with Python3 on Linux, uses Bluetooth for data transfer.
+
+Developer guide: https://docs.google.com/document/d/e/2PACX-1vQpE_YFEds7wYMVhjdKt83wotm8Ipkgs-GRpsbDIZcJ7YfAHh-yOWM-xYtVrYNQaZ4T-TNwSessGhNM/pub
 
 __To be used with the Android app:__ https://github.com/carter-wilson/ScoutingApp
-
-### Usage
-
-To run this server, run `server.py` with Python3 on a Linux computer with Bluetooth enabled, and follow the printed instructions.
-
-Devices must be paired (but not necessarily connected) before use.
 
 
 ### Copyright and License
