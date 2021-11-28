@@ -20,7 +20,9 @@ class SocketController:
         self.host_mac = gethostMAC()
         if self.host_mac:
             # Setup server socket
-            self.server_sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+            self.server_sock = socket.socket(
+                socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM
+            )
             self.server_sock.bind((self.host_mac, PORT))
             self.server_sock.listen(BACKLOG)
             self.server_sock.settimeout(None)
@@ -39,9 +41,12 @@ class SocketController:
 
             if self.connecting:
                 # Setup connection
-                connection = Connection(client_sock, MAC_DICT.get(client_info[0], client_info[0]),
-                                        lambda msg: self.on_receive(msg, connection),
-                                        lambda: safe_remove(self.clients, connection))
+                connection = Connection(
+                    client_sock,
+                    MAC_DICT.get(client_info[0], client_info[0]),
+                    lambda msg: self.on_receive(msg, connection),
+                    lambda: safe_remove(self.clients, connection),
+                )
                 self.clients.add(connection)
 
                 # Listen for data
@@ -60,7 +65,9 @@ class SocketController:
             connection.close()
         self.clients.clear()
         self.server_sock.close()
-        printing.printf('Closed server', style=printing.STATUS, log=True, logtag='socketctl.close')
+        printing.printf(
+            "Closed server", style=printing.STATUS, log=True, logtag="socketctl.close"
+        )
 
 
 def safe_remove(s, k):

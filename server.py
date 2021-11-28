@@ -14,8 +14,8 @@ from tba.tba_saver import TBASaver
 
 class Server:
     def __init__(self):
-        log('server.main', '+' * 20)
-        log('server.main', 'Server started')
+        log("server.main", "+" * 20)
+        log("server.main", "Server started")
 
         print_header()
         self.input_handler = InputHandler(self)
@@ -29,7 +29,12 @@ class Server:
     def main(self):
         self.input_handler.start_listening()
 
-        printing.printf('Waiting for connections', style=printing.STATUS, log=True, logtag='server.main')
+        printing.printf(
+            "Waiting for connections",
+            style=printing.STATUS,
+            log=True,
+            logtag="server.main",
+        )
         self.socketctl.start_connecting()
 
         while True:
@@ -41,13 +46,13 @@ class Server:
 
                 self.socketctl.close()
 
-                log('server.main', 'Server stopped')
-                log('server.main', '-' * 20)
+                log("server.main", "Server stopped")
+                log("server.main", "-" * 20)
 
                 # Quit everything (closes all the many threads)
                 osexit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     server = Server()
     server.main()
