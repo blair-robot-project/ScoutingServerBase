@@ -82,9 +82,9 @@ def _maketeams(team_numbers, opponent_mask=slice(0, 0, None)):
 
 def detailed_summary(team_numbers):
     teams = _maketeams(team_numbers)
-    return list(map(lambda x: x.summary(form=Team.Forms.detail), teams))
+    return [team.summary(form=Team.Forms.DETAIL) for team in teams]
 
 
 def quick_summary(team_numbers):
     teams = _maketeams(team_numbers)
-    return list(map(lambda x: x.summary(form=Team.Forms.quick), teams))
+    return [team.summary(form=Team.Forms.QUICK) for team in teams]

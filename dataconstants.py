@@ -26,90 +26,63 @@ MESSAGE_SIZE = 1024
 
 LOG_FILE = "log"
 
-
-def enum(**enums):
-    return type("Enum", (), enums)
+column_names = [
+    "TEAM_ID",
+    "MATCH_ID",
+    "ALLIANCE_COLOR",
+    "NO_SHOW",
+    "PRELOAD",
+    "AUTO_MOVE",
+    "HIT_PARTNER",
+    "AUTO_INTAKE",
+    "AUTO_CENTER",
+    "AUTO_HIGH",
+    "AUTO_LOW",
+    "AUTO_MISS",
+    "HIGH",
+    "CENTER",
+    "LOW",
+    "MISS",
+    "SPINNER_ROT",
+    "SPINNER_POS",
+    "ATTEMPTED_CLIMB",
+    "PARK",
+    "SOLO_CLIMB",
+    "DOUBLE_CLIMB",
+    "WAS_LIFTED",
+    "CLIMB_TIME",
+    "ENDGAME_SCORE",
+    "LEVEL",
+    "DEAD",
+    "DEFENSE",
+    "COMMENTS",
+    "SCOUT_NAME",
+    "REVISION",
+    "TIMESTAMP",
+    "MATCH",
+    "TEAM",
+    "SOLO_CLIMB_NYF",
+    "DOUBLE_CLIMB_NYF",
+    "WAS_LIFTED_NYF",
+]
 
 
 # TODO: do this in a less dumb way
-FieldsEnum = enum(
-    TEAM_ID="teamId",
-    MATCH_ID="matchId",
-    ALLIANCE_COLOR="alliance",
-    NO_SHOW="noShow",
-    PRELOAD="preload",
-    AUTO_MOVE="autoMove",
-    HIT_PARTNER="hitPartner",
-    AUTO_INTAKE="autoIntake",
-    AUTO_CENTER="autoCenter",
-    AUTO_HIGH="autoHigh",
-    AUTO_LOW="autoLow",
-    AUTO_MISS="autoMiss",
-    HIGH="high",
-    CENTER="center",
-    LOW="low",
-    MISS="miss",
-    SPINNER_ROT="spinnerRot",
-    SPINNER_POS="spinnerPos",
-    ATTEMPTED_CLIMB="attemptedClimb",
-    PARK="park",
-    SOLO_CLIMB="soloClimb",
-    DOUBLE_CLIMB="doubleClimb",
-    WAS_LIFTED="wasLifted",
-    CLIMB_TIME="climbTime",
-    ENDGAME_SCORE="endgameScore",
-    LEVEL="level",
-    DEAD="dead",
-    DEFENSE="defense",
-    COMMENTS="comments",
-    SCOUT_NAME="scoutName",
-    REVISION="revision",
-    TIMESTAMP="timestamp",
-    MATCH="match",
-    TEAM="team",
-    SOLO_CLIMB_NYF="soloClimbNYF",
-    DOUBLE_CLIMB_NYF="doubleClimbNYF",
-    WAS_LIFTED_NYF="wasLiftedNYF",
-)
+def _create_fields_enum():
+    """
+    Returns a tuple containing an enum with column names and a list with the string values of the fields of that enum
+    """
 
-Fields = FieldsEnum()
+    def to_camel_case(snake):
+        pass
 
-ORDER = [
-    Fields.TEAM,
-    Fields.MATCH,
-    Fields.ALLIANCE_COLOR,
-    Fields.NO_SHOW,
-    Fields.AUTO_MOVE,
-    Fields.HIT_PARTNER,
-    Fields.AUTO_INTAKE,
-    Fields.AUTO_LOW,
-    Fields.AUTO_HIGH,
-    Fields.AUTO_CENTER,
-    Fields.AUTO_MISS,
-    Fields.LOW,
-    Fields.HIGH,
-    Fields.CENTER,
-    Fields.MISS,
-    Fields.SPINNER_ROT,
-    Fields.SPINNER_POS,
-    Fields.ATTEMPTED_CLIMB,
-    Fields.PARK,
-    Fields.SOLO_CLIMB,
-    Fields.DOUBLE_CLIMB,
-    Fields.WAS_LIFTED,
-    Fields.SOLO_CLIMB_NYF,
-    Fields.DOUBLE_CLIMB_NYF,
-    Fields.WAS_LIFTED_NYF,
-    Fields.CLIMB_TIME,
-    Fields.ENDGAME_SCORE,
-    Fields.LEVEL,
-    Fields.DEAD,
-    Fields.DEFENSE,
-    Fields.COMMENTS,
-    Fields.SCOUT_NAME,
-    Fields.REVISION,
-    Fields.TIMESTAMP,
-]
+    name_dict = {name: to_camel_case(name) for name in column_names}
+    fields_enum = type("Enum", (), name_dict)
+    order = [name_dict[snake] for snake in column_names]
+    return fields_enum(), order
+
+
+Fields, ORDER = _create_fields_enum()
 
 MAC_DICT = {
     "00:FC:8B:3B:42:46": "R1 Demeter",

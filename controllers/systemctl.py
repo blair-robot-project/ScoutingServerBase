@@ -2,7 +2,6 @@ import os
 import subprocess as sub
 
 from sys import platform
-from shutil import copyfile
 from time import sleep
 
 from interface import printing
@@ -23,7 +22,7 @@ def _run(command):
         printing.printf(e, style=printing.ERROR)
 
 
-# From https://askubuntu.com/questions/938255/how-to-perform-the-same-operation-as-pressing-the-eject-button-in-nautilus-by-r
+# From https://askubuntu.com/questions/938255/
 def find_usb_partitions():
     parts = tuple(
         os.path.realpath(os.path.join("/dev/disk/by-id", p))

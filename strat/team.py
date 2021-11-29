@@ -23,7 +23,10 @@ class Team:
 
     NO_DATA = "No data avalible"
 
-    Forms = Enum("Forms", "strat quick detail")
+    class Forms(Enum):
+        STRAT = "strat"
+        QUICK = "quick"
+        DETAIL = "detail"
 
     def __init__(self, team, partner=True):
         self.total = 0
@@ -149,7 +152,7 @@ class Team:
             self.Forms.quick: self.quick_form,
             self.Forms.detail: self.detail_form,
         }
-        if self.total:
+        if self.total > 0:
             return forms[form].format(**self.calc_values())
         return "{0:>4s}: ".format(self.team) + self.NO_DATA
 
