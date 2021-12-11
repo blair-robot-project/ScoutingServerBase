@@ -146,11 +146,11 @@ class Team:
             "defense_a": self.defense.count(2),
         }
 
-    def summary(self, form=Forms.strat):
+    def summary(self, form=Forms.STRAT):
         forms = {
-            self.Forms.strat: self.strat_form,
-            self.Forms.quick: self.quick_form,
-            self.Forms.detail: self.detail_form,
+            Forms.STRAT: self.strat_form,
+            Forms.QUICK: self.quick_form,
+            Forms.DETAIL: self.detail_form,
         }
         if self.total > 0:
             return forms[form].format(**self.calc_values())
