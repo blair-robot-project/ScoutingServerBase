@@ -1,12 +1,12 @@
-import socket
+import bluetooth
 from threading import Thread
 
-from dataconstants import MAC_DICT
-from interface import printing
-from controllers.connection import Connection
-from controllers.systemctl import gethostMAC
+from frc449server.dataconstants import MAC_DICT
+from frc449server.interface import printing
+from frc449server.controllers.connection import Connection
+from frc449server.controllers.systemctl import get_host_mac
 
-PORT = 1
+PORT = 4
 BACKLOG = 1
 # Max message size
 SIZE = 1024
@@ -17,15 +17,13 @@ class SocketController:
     connecting = False
 
     def __init__(self, on_receive):
-        self.host_mac = gethostMAC()
+        self.host_mac = get_host_mac()
         if self.host_mac:
             # Setup server socket
-            self.server_sock = socket.socket(
-                socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM
-            )
+            self.server_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
             self.server_sock.bind((self.host_mac, PORT))
             self.server_sock.listen(BACKLOG)
-            self.server_sock.settimeout(None)
+            self.server_sock.settimeout(3)
 
             self.on_receive = on_receive
 
@@ -38,6 +36,12 @@ class SocketController:
         while self.connecting:
             # Wait for connection
             client_sock, client_info = self.server_sock.accept()
+
+            printing.printf(
+                f"Connected to client! {client_info}",
+                log=True,
+                style=printing.STATUS,
+                logtag="socketctl.connect")
 
             if self.connecting:
                 # Setup connection

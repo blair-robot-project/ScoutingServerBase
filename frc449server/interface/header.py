@@ -1,44 +1,14 @@
 from shutil import get_terminal_size
 from textwrap import TextWrapper
 
-from interface import printing
-
-LOGO = """
-                     ,:++:,                      
-                   :++++++++:                    
-            _     :++++  ++++:     _              
-          ,++++:  '++++  ++++' ,:++++;           
-         :++  '+:  :++++++++:  +++  ++'          
-  ,++,    + THE +'   ':++:'    :+++++:     ,,:,,    
-:++++++++++++++++++++++++++++++++++++++++++++-++, 
-    +++++ BLAIR ++++ ROBOT +++ PROJECT ++++:   ++'
-'+,++++++++++++++++++++++++++++++++++++++++++-++'
- '++++'        '++++++    ++++++'          '':'' 
-                '++++++  ++++++'                 
-                 '++++++++++++'                  
-                  '++++++++++'                    
-                   '++++++++'                     
-                   :++++++++:                    
-                  .++++++++++.                   
-                 ++++++''++++++                 
-               .++++++'  '++ 4 +.                
-              .++++++      ++ 4 +.               
-             ;+++++:        '+ / +.              
-          ;+++++++,          ,+ 9 +++,           
-         :++++++++:          :++++++++'          
-         '++' '+++'          '++++'+++'          
-          ';   +'              '+'  ;'           
-                                 '              
-"""
+from frc449server import dataconstants
+from frc449server.interface import printing
 
 
 def print_header(width=None):
     # Fill width of screen
     if not width:
         width = get_terminal_size(fallback=(100, 24))[0]
-
-    logo = LOGO.replace("\n", "\n" + " " * int((width - 50) / 2))
-    printing.printf(logo, style=printing.LOGO)
 
     printing.printf(
         ("{:^" + str(width) + "}").format("FRC Team 449: The Blair Robot Project"),
@@ -83,3 +53,9 @@ def print_header(width=None):
         style=printing.INSTRUCTIONS,
     )
     printing.printf("-" * width + "\n\n", style=printing.UNDERLINE)
+
+    printing.printf("Before starting, make a folder where all the configuration files and data will go.\n"
+                    f"In it should be a '{dataconstants.FIELD_NAMES_FILE}' with a comma-separated list of fields"
+                    "that the app sends over\n"
+                    f"There should also be a '{dataconstants.MAC_DICT_FILE}' mapping MAC addresses to client names",
+                    style=printing.INSTRUCTIONS)

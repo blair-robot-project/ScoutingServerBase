@@ -1,10 +1,9 @@
 from _thread import interrupt_main
 from threading import Thread
 
-from controllers.messagectl import make_message, MsgTypes
-from dataconstants import EVENT
-from interface import printing
-from strat.summarize import strategy
+from frc449server.controllers.messagectl import make_message, MsgTypes
+from frc449server.interface import printing
+from frc449server.strat.summarize import strategy
 
 
 class InputHandler:
@@ -18,7 +17,8 @@ class InputHandler:
         while self.commands.running:
             # try:
             i = input().split(" ")
-            exec("self.commands." + i[0] + '("' + '","'.join(i[1:]) + '")')
+            cmd = getattr(self.commands, i[0])
+            cmd(*i[1:])
             # except Exception as e:
             # printing.printf("Invalid command.", e.__class__.__name__, e, style=printing.YELLOW)
 
@@ -28,6 +28,7 @@ class Commands:
 
     def __init__(self, server):
         self.server = server
+        self.dataconsts = server.dataconsts
 
     def quit_(self, *args):
         printing.printf(
@@ -48,7 +49,7 @@ class Commands:
             )
         else:
             printing.printf(
-                "Schedule not available for event:", EVENT, style=printing.YELLOW
+                "Schedule not available for event:", self.dataconsts.EVENT, style=printing.YELLOW
             )
 
     def send_teams(self, *args):
@@ -57,17 +58,17 @@ class Commands:
             self.server.socketctl.blanket_send(make_message(MsgTypes.TEAM_LIST, teams))
         else:
             printing.printf(
-                "Team list not availible for event:", EVENT, style=printing.YELLOW
+                "Team list not availible for event:", self.dataconsts.EVENT, style=printing.YELLOW
             )
 
     def strat(self, *args, **kwargs):
         if len(args) == 1:
             printing.printf(
-                strategy(self.server.tba.teams_in_match(*args)),
+                strategy(self.server.tba.teams_in_match(*args), self.dataconsts),
                 style=printing.DATA_OUTPUT,
             )
         else:
-            printing.printf(strategy(args), style=printing.DATA_OUTPUT)
+            printing.printf(strategy(args, self.dataconsts), style=printing.DATA_OUTPUT)
 
     def data(self, *args):
         self.server.data_controller.drive_update_request()

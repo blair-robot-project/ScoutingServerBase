@@ -1,15 +1,17 @@
 # noinspection PyProtectedMember
 from os import _exit as osexit
 
-from controllers import datactl
-from controllers.messagectl import MessageController
-from controllers.socketctl import SocketController
-from dataconstants import EVENT
-from interface import printing
-from interface.header import print_header
-from interface.input_handler import InputHandler
-from interface.logger import log
-from tba.tba_saver import TBASaver
+import sys
+
+from frc449server import dataconstants
+from frc449server.controllers import datactl
+from frc449server.controllers.messagectl import MessageController
+from frc449server.controllers.socketctl import SocketController
+from frc449server.interface import printing
+from frc449server.interface.header import print_header
+from frc449server.interface.input_handler import InputHandler
+from frc449server.interface.logger import log
+from frc449server.tba.tba_saver import TBASaver
 
 
 class Server:
@@ -18,15 +20,20 @@ class Server:
         log("server.main", "Server started")
 
         print_header()
+        if len(sys.argv) > 1:
+            data_dir = sys.argv[1]
+        else:
+            data_dir = input("Absolute data directory (e.g. '/home/user/Desktop') ")
+        self.dataconsts = dataconstants.DataConstants(data_dir)
         self.input_handler = InputHandler(self)
 
-        self.data_controller = datactl.DataController()
+        self.data_controller = datactl.DataController(self.dataconsts)
         msgctl = MessageController(self.data_controller)
         self.socketctl = SocketController(msgctl.handle_msg)
 
-        self.tba = TBASaver(EVENT)
+        self.tba = TBASaver(self.dataconsts.EVENT)
 
-    def main(self):
+    def run(self):
         self.input_handler.start_listening()
 
         printing.printf(
@@ -51,8 +58,3 @@ class Server:
 
                 # Quit everything (closes all the many threads)
                 osexit(1)
-
-
-if __name__ == "__main__":
-    server = Server()
-    server.main()

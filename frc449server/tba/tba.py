@@ -1,10 +1,11 @@
 import requests
 
-import tba.API as API
-from interface import printing
-
+from frc449server.interface import printing
+from frc449server.tba import API
 
 # TODO: make everything safe on errors and on no internet
+
+
 class TBA:
     url = "https://www.thebluealliance.com/api/v3/"
     auth_key = "wUIrT2VGJOsHSz9zIOWHttKm4Ahid37DVYMmgb9gNyrtqS39cZkofL1dBBZNsx13"
