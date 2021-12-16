@@ -48,16 +48,24 @@ class DataConstants:
                             log=True,
                             logtag="dataconstants.load_fields")
         with open(field_names_file) as field_names:
-            line = next(field_names)
-            column_names = [name.strip() for name in line.split(",")]
-            # `name_dict` maps snake_case field names to camelCase field names (e.g. "TEAM_ID": "teamId")
-            name_dict = {name: _camel_case(name) for name in column_names}
+            try:
+                line = next(field_names)
+            except StopIteration:
+                printing.printf(
+                    f"{field_names_file} is empty",
+                    style=printing.ERROR,
+                    log=True,
+                    logtag="dataconstants.load_fields")
+                raise
+            column_names = [name.strip() for name in line.split()]
+            # `name_dict` maps capitalized snake_case field names to camelCase field names (e.g. "TEAM_ID": "teamId")
+            name_dict = {_snake_case(name): name for name in column_names}
             # add all the general fields too
             for gen_field in GeneralFields:
                 name_dict[gen_field.name] = gen_field.value
             self.FIELD_NAMES = type("Enum", (), name_dict)()
+            print("colnames=", name_dict)
             print("fieldnames=", vars(self.FIELD_NAMES))
-            print("something=", self.FIELD_NAMES.SOMETHING)
             self.ORDER = list(name_dict.values())
 
         # Get MAC address of clients
@@ -85,8 +93,19 @@ class GeneralFields(Enum):
     RECORDER_NAME = "recorderName"
 
 
-def _camel_case(snake):
-    return snake[0].lower() + ("A" + snake[1:].replace("_", "")).title()[1:]
+def _snake_case(camel):
+    """Turn a camelCase name into CAPITALIZED_SNAKE_CASE"""
+    snake = ""
+    prev = None
+    for char in camel:
+        if char.isupper() or (char.isnumeric() and prev and prev.islower()):
+            # Only make new words for uppercase letters and numbers
+            snake += "_" + char
+        else:
+            snake += char.upper()
+        prev = char
+        
+    return snake
 
 
 MAC_DICT = {
