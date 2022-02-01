@@ -1,7 +1,7 @@
 import bluetooth
 from threading import Thread
 
-from frc449server.dataconstants import MAC_DICT
+from frc449server.dataconstants import DataConstants
 from frc449server.interface import printing
 from frc449server.controllers.connection import Connection
 from frc449server.controllers.systemctl import get_host_mac
@@ -16,7 +16,7 @@ class SocketController:
     clients = set()
     connecting = False
 
-    def __init__(self, on_receive):
+    def __init__(self, on_receive, dataconsts: DataConstants):
         self.host_mac = get_host_mac()
         if self.host_mac:
             # Setup server socket
@@ -47,7 +47,7 @@ class SocketController:
                 # Setup connection
                 connection = Connection(
                     client_sock,
-                    MAC_DICT.get(client_info[0], client_info[0]),
+                    self.dataconsts.MAC_DICT.get(client_info[0], client_info[0]),
                     lambda msg: self.on_receive(msg, connection),
                     lambda: safe_remove(self.clients, connection),
                 )

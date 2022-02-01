@@ -28,9 +28,9 @@ class DataConstants:
             print("Please enter the following file names and directory locations:")
             local_constants = {"TEAM": input("Team number (e.g. 449) "),
                                "EVENT": input("TBA event id (e.g. '2020mdbet') "),
-                               "ALLIANCE_SIZE": input("Alliance size (default 2)"),
+                               "ALLIANCE_SIZE": input("Alliance size (default 3)"),
                                "DRIVE": input("Flash drive location (e.g. 'D:') (default none) ")}
-            local_constants["ALLIANCE_SIZE"] = int(local_constants["ALLIANCE_SIZE"] or 2)
+            local_constants["ALLIANCE_SIZE"] = int(local_constants["ALLIANCE_SIZE"] or 3)
             with open(local_consts_path, "w") as f:
                 json.dump(local_constants, f)
 
@@ -64,8 +64,6 @@ class DataConstants:
             for gen_field in GeneralFields:
                 name_dict[gen_field.name] = gen_field.value
             self.FIELD_NAMES = type("Enum", (), name_dict)()
-            print("colnames=", name_dict)
-            print("fieldnames=", vars(self.FIELD_NAMES))
             self.ORDER = list(name_dict.values())
 
         # Get MAC address of clients
@@ -106,14 +104,3 @@ def _snake_case(camel):
         prev = char
         
     return snake
-
-
-MAC_DICT = {
-    "00:FC:8B:3B:42:46": "R1 Demeter",
-    "00:FC:8B:39:C1:09": "R2 Hestia",
-    "78:E1:03:A3:18:78": "R3 Hera",
-    "78:E1:03:A1:E2:F2": "B1 Hades",
-    "78:E1:03:A4:F7:70": "B2 Poseidon",
-    "00:FC:8B:3F:E4:EF": "B3 Zeus",
-    "00:FC:8B:3F:28:28": "Backup 1",
-}

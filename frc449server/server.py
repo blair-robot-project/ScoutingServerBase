@@ -29,7 +29,7 @@ class Server:
 
         self.data_controller = datactl.DataController(self.dataconsts)
         msgctl = MessageController(self.data_controller)
-        self.socketctl = SocketController(msgctl.handle_msg)
+        self.socketctl = SocketController(msgctl.handle_msg, self.dataconsts)
 
         self.tba = TBASaver(self.dataconsts.EVENT)
 

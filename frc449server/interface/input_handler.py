@@ -17,7 +17,16 @@ class InputHandler:
         while self.commands.running:
             # try:
             i = input().split(" ")
-            cmd = getattr(self.commands, i[0])
+            try:
+                cmd = getattr(self.commands, i[0])
+            except AttributeError:
+                printing.printf(
+                    f"Command '{i[0]}' not found",
+                    log=True,
+                    logtag="input_handler.input_loop",
+                    style=printing.ERROR,
+                )
+                continue
             cmd(*i[1:])
             # except Exception as e:
             # printing.printf("Invalid command.", e.__class__.__name__, e, style=printing.YELLOW)
