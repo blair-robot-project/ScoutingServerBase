@@ -1,0 +1,17 @@
+{
+    "eventName": "worlds",
+    "fields": [
+        {
+            "name": "AutoLow",
+            "type": "num",
+            "min": 0,
+            "max": 100
+        },
+        {
+            "name": "Climb",
+            "type": "choice",
+            "choices": ["None", "Low", "Mid", "High", "Traversal"],
+            "defaultChoice": "None"
+        }
+    ]
+}

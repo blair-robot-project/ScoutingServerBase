@@ -13,7 +13,7 @@ SIZE = 1024
 
 
 class SocketController:
-    clients = set()
+    clients: set[Connection] = set()
     connecting = False
 
     def __init__(self, on_receive, dataconsts: DataConstants):
