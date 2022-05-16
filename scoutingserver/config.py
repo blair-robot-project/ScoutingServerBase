@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import List
 
+
 class FieldType(Enum):
     NUM = 1
     BOOL = 2
@@ -33,11 +34,18 @@ class FieldConfig:
 
 
 class EventConfig:
-    def __init__(self, event_name: str, our_team: int, alliance_size: int, field_configs: List[FieldConfig]):
+    def __init__(
+        self,
+        event_name: str,
+        our_team: int,
+        alliance_size: int,
+        field_configs: List[FieldConfig],
+    ):
         self.event_name = event_name
         self.our_team = our_team
         self.alliance_size = alliance_size
         self.field_configs = field_configs
+
 
 def event_config_hook(dict):
     if "eventName" in dict:

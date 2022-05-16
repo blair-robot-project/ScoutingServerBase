@@ -35,7 +35,11 @@ def strategy(alliances, dataconsts: dataconstants.DataConstants, side=None):
     )
 
 
-def _maketeams(team_numbers, dataconsts: dataconstants.DataConstants, opponent_mask=slice(0, 0, None)):
+def _maketeams(
+    team_numbers,
+    dataconsts: dataconstants.DataConstants,
+    opponent_mask=slice(0, 0, None),
+):
     data = load_json_file(dataconsts)
 
     teams = [Team(t, dataconsts) for i, t in enumerate(team_numbers)]

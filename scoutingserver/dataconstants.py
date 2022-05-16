@@ -12,6 +12,7 @@ TBA_SAVE_FILE = "tba.json"
 
 MESSAGE_SIZE = 1024
 
+
 class DataConstants:
     def __init__(self, data_dir):
         self.abs_data_dir = os.path.abspath(data_dir)

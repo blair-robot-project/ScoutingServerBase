@@ -42,7 +42,8 @@ class SocketController:
                 f"Connected to client! {client_info}",
                 log=True,
                 style=printing.STATUS,
-                logtag="socketctl.connect")
+                logtag="socketctl.connect",
+            )
 
             if self.connecting:
                 # Setup connection

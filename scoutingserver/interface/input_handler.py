@@ -58,7 +58,9 @@ class Commands:
             )
         else:
             printing.printf(
-                "Schedule not available for event:", self.dataconsts.EVENT, style=printing.YELLOW
+                "Schedule not available for event:",
+                self.dataconsts.EVENT,
+                style=printing.YELLOW,
             )
 
     def send_teams(self, *args):
@@ -67,7 +69,9 @@ class Commands:
             self.server.socketctl.blanket_send(make_message(MsgTypes.TEAM_LIST, teams))
         else:
             printing.printf(
-                "Team list not availible for event:", self.dataconsts.EVENT, style=printing.YELLOW
+                "Team list not availible for event:",
+                self.dataconsts.EVENT,
+                style=printing.YELLOW,
             )
 
     def strat(self, *args, **kwargs):

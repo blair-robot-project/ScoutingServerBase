@@ -1,4 +1,3 @@
-
 def calc_quick_stats(fields, fieldConfigs, total):
     """
     Calculate the most necessary year-specific stats

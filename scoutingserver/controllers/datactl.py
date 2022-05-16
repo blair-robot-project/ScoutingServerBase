@@ -70,17 +70,19 @@ class DataController:
             for id in v.values():
                 m = id[str(max(map(int, id.keys())))]
                 s += (
-                        ",".join(
-                            [
-                                csv_safe(m, f)
-                                if f in m
-                                else missing_field(
-                                    f, m[GeneralFields.TIMESTAMP.value], m[GeneralFields.REVISION.value]
-                                )
-                                for f in self.dataconsts.ORDER
-                            ]
-                        )
-                        + "\n"
+                    ",".join(
+                        [
+                            csv_safe(m, f)
+                            if f in m
+                            else missing_field(
+                                f,
+                                m[GeneralFields.TIMESTAMP.value],
+                                m[GeneralFields.REVISION.value],
+                            )
+                            for f in self.dataconsts.ORDER
+                        ]
+                    )
+                    + "\n"
                 )
         write_file(CSV_FILE_NAME, s, self.dataconsts, mode="w")
 
@@ -100,7 +102,9 @@ class DataController:
                 match = m[max(m.keys(), key=int)]
                 if match[GeneralFields.MATCH.value] not in teams_by_match:
                     teams_by_match[match[GeneralFields.MATCH.value]] = []
-                teams_by_match[match[GeneralFields.MATCH.value]].append(match[GeneralFields.TEAM.value])
+                teams_by_match[match[GeneralFields.MATCH.value]].append(
+                    match[GeneralFields.TEAM.value]
+                )
 
         max_match = max(teams_by_match.keys(), key=int)
         for i in range(1, int(max_match)):

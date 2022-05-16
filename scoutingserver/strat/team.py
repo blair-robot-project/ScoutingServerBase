@@ -33,6 +33,7 @@ class Team:
     def get_header(self):
         return self.strat_header
 
+    # todo handle comments
     def get_comments(self):
         return "\n\t".join(self.comments)
 
@@ -60,7 +61,7 @@ class Team:
                     self.stats[field.name].append(match[field.name])
 
     def calc_values(self):
-        res = { "team": self.team }
+        res = {"team": self.team}
 
         field_configs = self.dataconsts.config.field_configs
         for field in field_configs:
@@ -90,9 +91,10 @@ class Team:
             return "{0:>4s}: ".format(self.team) + self.NO_DATA
 
         stats = self.calc_values()
-        get_extra_stats = scoring.calc_quick_stats if quick else scoring.calc_detailed_stats
+        get_extra_stats = (
+            scoring.calc_quick_stats if quick else scoring.calc_detailed_stats
+        )
         stats.update(get_extra_stats())
-        
+
         field_names = sorted(stats.keys())
         return "\n".join(stats[field] for field in field_names)
-        
