@@ -1,8 +1,8 @@
 from threading import Thread
 
-from frc449server.dataconstants import MESSAGE_SIZE
-from frc449server.interface import printing
-from frc449server.interface.logger import log
+from scoutingserver.dataconstants import MESSAGE_SIZE
+from scoutingserver.interface import printing
+from scoutingserver.interface.logger import log
 
 
 class Connection:

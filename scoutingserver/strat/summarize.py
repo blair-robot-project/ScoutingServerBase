@@ -1,8 +1,8 @@
-from frc449server.interface import printing
-from frc449server import dataconstants
-from frc449server.controllers.datactl import load_json_file
-from frc449server.interface.logger import log
-from frc449server.strat.team import Team
+from scoutingserver.interface import printing
+from scoutingserver import dataconstants
+from scoutingserver.controllers.datactl import load_json_file
+from scoutingserver.interface.logger import log
+from scoutingserver.strat.team import Team
 
 
 # Get the data string to return from the list of teams

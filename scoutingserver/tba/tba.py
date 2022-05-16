@@ -1,7 +1,7 @@
 import requests
 
-from frc449server.interface import printing
-from frc449server.tba import API
+from scoutingserver.interface import printing
+from scoutingserver.tba import API
 
 # TODO: make everything safe on errors and on no internet
 

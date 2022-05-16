@@ -2,10 +2,10 @@ import json
 import os
 from queue import Queue
 
-from frc449server import dataconstants
-import frc449server.interface.printing as printing
-from frc449server.controllers import systemctl
-from frc449server.dataconstants import JSON_FILE_NAME, CSV_FILE_NAME, GeneralFields
+from scoutingserver import dataconstants
+import scoutingserver.interface.printing as printing
+from scoutingserver.controllers import systemctl
+from scoutingserver.dataconstants import JSON_FILE_NAME, CSV_FILE_NAME, GeneralFields
 
 
 class DataController:

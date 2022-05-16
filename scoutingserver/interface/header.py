@@ -1,8 +1,8 @@
 from shutil import get_terminal_size
 from textwrap import TextWrapper
 
-from frc449server import dataconstants
-from frc449server.interface import printing
+from scoutingserver import dataconstants
+from scoutingserver.interface import printing
 
 
 def print_header(width=None):

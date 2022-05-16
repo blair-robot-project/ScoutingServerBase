@@ -3,15 +3,15 @@ from os import _exit as osexit
 
 import sys
 
-from frc449server import dataconstants
-from frc449server.controllers import datactl
-from frc449server.controllers.messagectl import MessageController
-from frc449server.controllers.socketctl import SocketController
-from frc449server.interface import printing
-from frc449server.interface.header import print_header
-from frc449server.interface.input_handler import InputHandler
-from frc449server.interface.logger import log
-from frc449server.tba.tba_saver import TBASaver
+from scoutingserver import dataconstants
+from scoutingserver.controllers import datactl
+from scoutingserver.controllers.messagectl import MessageController
+from scoutingserver.controllers.socketctl import SocketController
+from scoutingserver.interface import printing
+from scoutingserver.interface.header import print_header
+from scoutingserver.interface.input_handler import InputHandler
+from scoutingserver.interface.logger import log
+from scoutingserver.tba.tba_saver import TBASaver
 
 
 class Server:
