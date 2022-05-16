@@ -1,16 +1,11 @@
 from enum import Enum
+from typing import List
 
-
-class EventConfig:
-    def __init__(self, event_name, field_configs):
-        self.event_name = event_name
-        self.field_configs = field_configs
-
-    def from_dict(dict):
-        return EventConfig(
-            dict["eventName"],
-            list(map(FieldConfig.from_dict, dict["fields"])),
-        )
+class FieldType(Enum):
+    NUM = 1
+    BOOL = 2
+    CHOICE = 3
+    TEXT = 4
 
 
 class FieldConfig:
@@ -18,9 +13,9 @@ class FieldConfig:
         self,
         name: str,
         typ: FieldType,
-        min=0,
-        max=100,
-        inc=1,
+        min=0.0,
+        max=100.0,
+        inc=1.0,
         choices=[],
         default_choice="",
     ):
@@ -36,9 +31,27 @@ class FieldConfig:
         self.choices = choices
         self.default_choice = default_choice
 
-    def from_dict(dict):
+
+class EventConfig:
+    def __init__(self, event_name: str, our_team: int, alliance_size: int, field_configs: List[FieldConfig]):
+        self.event_name = event_name
+        self.our_team = our_team
+        self.alliance_size = alliance_size
+        self.field_configs = field_configs
+
+def event_config_hook(dict):
+    if "eventName" in dict:
+        # Must be an event
+        return EventConfig(
+            dict["eventName"],
+            int(dict.get("ourTeam", 449)),
+            int(dict.get("alliance_size", 3)),
+            dict["fields"],
+        )
+    else:
+        # Must be a field
         name = dict["name"]
-        typ = Field[dict["type"]]
+        typ = FieldType[dict["type"].upper()]
         if typ == FieldType.NUM:
             return FieldConfig(
                 name,
@@ -56,10 +69,3 @@ class FieldConfig:
             )
         else:
             return FieldConfig(name, typ)
-
-
-class FieldType(Enum):
-    NUM = 1
-    BOOL = 2
-    CHOICE = 3
-    TEXT = 4

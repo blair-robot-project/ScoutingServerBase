@@ -1,5 +1,6 @@
 import bluetooth
 from threading import Thread
+from typing import Set
 
 from scoutingserver.dataconstants import DataConstants
 from scoutingserver.interface import printing
@@ -13,7 +14,7 @@ SIZE = 1024
 
 
 class SocketController:
-    clients: set[Connection] = set()
+    clients: Set[Connection] = set()
     connecting = False
 
     def __init__(self, on_receive, dataconsts: DataConstants):

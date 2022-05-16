@@ -5,11 +5,11 @@ from queue import Queue
 from scoutingserver import dataconstants
 import scoutingserver.interface.printing as printing
 from scoutingserver.controllers import systemctl
-from scoutingserver.dataconstants import JSON_FILE_NAME, CSV_FILE_NAME, GeneralFields
+from scoutingserver.dataconstants import JSON_FILE_NAME, CSV_FILE_NAME
 
 
 class DataController:
-    data_queue = Queue()
+    data_queue: Queue = Queue()
     data = dict()
     data_changed = True
 

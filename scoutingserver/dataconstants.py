@@ -4,7 +4,7 @@ import os
 from enum import Enum
 
 from scoutingserver.interface import printing
-from scoutingserver.config import EventConfig
+from scoutingserver.config import event_config_hook
 
 JSON_FILE_NAME = "data.json"
 CSV_FILE_NAME = "data.csv"
@@ -19,7 +19,7 @@ class DataConstants:
         self.CSV_FILE_PATH = os.path.join(self.abs_data_dir, CSV_FILE_NAME)
 
         config_path = input("Config file: ")
-        config = json.loads(open(config_path), object_hook=EventConfig.from_dict)
+        self.config = json.load(open(config_path), object_hook=event_config_hook)
 
         # The location of the removable device to copy data to
         self.DRIVE = input("Flash drive location (e.g. 'D:') (default none) ")

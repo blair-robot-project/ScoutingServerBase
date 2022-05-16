@@ -7,7 +7,7 @@ from scoutingserver.strat.team import Team
 
 # Get the data string to return from the list of teams
 def strategy(alliances, dataconsts: dataconstants.DataConstants, side=None):
-    all_size = dataconsts.ALLIANCE_SIZE
+    all_size = dataconsts.config.alliance_size
     if type(alliances) != dict:
         alliances = {"red": alliances[:all_size], "blue": alliances[all_size:]}
     if not side:
@@ -83,9 +83,9 @@ def _maketeams(team_numbers, dataconsts: dataconstants.DataConstants, opponent_m
 
 def detailed_summary(team_numbers, dataconsts: dataconstants.DataConstants):
     teams = _maketeams(team_numbers, dataconsts)
-    return [team.summary(form=Team.Forms.DETAIL) for team in teams]
+    return [team.summary(quick=False) for team in teams]
 
 
 def quick_summary(team_numbers, dataconsts: dataconstants.DataConstants):
     teams = _maketeams(team_numbers, dataconsts)
-    return [team.summary(form=Team.Forms.QUICK) for team in teams]
+    return [team.summary(quick=True) for team in teams]

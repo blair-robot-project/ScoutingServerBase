@@ -53,9 +53,3 @@ def print_header(width=None):
         style=printing.INSTRUCTIONS,
     )
     printing.printf("-" * width + "\n\n", style=printing.UNDERLINE)
-
-    printing.printf("Before starting, make a folder where all the configuration files and data will go.\n"
-                    f"In it should be a '{dataconstants.FIELD_NAMES_FILE}' with a comma-separated list of fields"
-                    "that the app sends over\n"
-                    f"There should also be a '{dataconstants.MAC_DICT_FILE}' mapping MAC addresses to client names",
-                    style=printing.INSTRUCTIONS)

@@ -1,7 +1,6 @@
 import json
 from enum import Enum
 
-from scoutingserver.dataconstants import GeneralFields
 from scoutingserver.interface import printing
 
 
