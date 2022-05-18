@@ -11,7 +11,7 @@ def strategy(alliances, dataconsts: dataconstants.DataConstants, side=None):
     if type(alliances) != dict:
         alliances = {"red": alliances[:all_size], "blue": alliances[all_size:]}
     if not side:
-        side = "blue" if dataconsts.TEAM in alliances["blue"] else "red"
+        side = "blue" if dataconsts.config.our_team in alliances["blue"] else "red"
 
     teams_joined = alliances[side] + alliances["blue" if side == "red" else "red"]
 

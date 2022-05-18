@@ -9,6 +9,14 @@ class FieldType(Enum):
     TEXT = 4
 
 
+class GeneralFields:
+    """Fields that will be sent each year"""
+    TEAM_NUMBER = "teamNumber"
+    ALLIANCE = "alliance"
+    STATION = "station"
+    COMMENTS = "comments"
+
+
 class FieldConfig:
     def __init__(
         self,

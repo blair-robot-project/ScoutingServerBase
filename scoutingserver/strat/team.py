@@ -17,6 +17,7 @@ class Team:
 
         self.team = team
         self.stats = {}
+        self.comments = []
 
         self.set_partner(partner)
 
@@ -33,7 +34,6 @@ class Team:
     def get_header(self):
         return self.strat_header
 
-    # todo handle comments
     def get_comments(self):
         return "\n\t".join(self.comments)
 
@@ -59,6 +59,8 @@ class Team:
                     self.stats[field.name] = []
                 if match[field.name]:
                     self.stats[field.name].append(match[field.name])
+        
+        self.comments.append(match["comments"])
 
     def calc_values(self):
         res = {"team": self.team}
