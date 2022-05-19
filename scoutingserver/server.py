@@ -25,7 +25,7 @@ class Server:
         else:
             data_dir = input("Absolute data directory (e.g. '/home/user/Desktop') ")
         
-        config_path = input("Config file: ")
+        config_path = input("Event config file: ")
         self.config = json.load(open(config_path), object_hook=event_config_hook)
         
         # The location of the removable device to copy data to

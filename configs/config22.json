@@ -1,16 +1,19 @@
 {
     "eventName": "worlds",
     "ourTeam": 449,
+    "serviceId": "qasdfaskljdfkljfdakjsdafkjdfsakjl",
     "fields": [
         {
             "name": "AutoLow",
             "type": "num",
+            "charId": "dsfaklasdfkljdkjldsaflkjsadkljfasdjl",
             "min": 0,
             "max": 100
         },
         {
             "name": "Climb",
             "type": "choice",
+            "charId": "lid8u48u4q384u3klk",
             "choices": ["None", "Low", "Mid", "High", "Traversal"],
             "defaultChoice": "None"
         }

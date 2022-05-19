@@ -6,7 +6,7 @@ from scoutingserver.strat.team import Team
 
 
 # Get the data string to return from the list of teams
-def strategy(alliances, config: EventConfig, side=None):
+def strategy(alliances, config: EventConfig, data_dir: str, side=None):
     all_size = config.alliance_size
     if type(alliances) != dict:
         alliances = {"red": alliances[:all_size], "blue": alliances[all_size:]}
@@ -18,7 +18,7 @@ def strategy(alliances, config: EventConfig, side=None):
     log("datactl.getdata", "Strategy data request for " + ", ".join(teams_joined))
 
     opp_mask = slice(len(alliances[side]), None, None)
-    teams = _maketeams(teams_joined, config, opp_mask)
+    teams = _maketeams(teams_joined, config, data_dir, opp_mask)
 
     d = list(map(lambda t: t.summary(), teams))
     log("datactl.getdata", "/".join(d))
@@ -38,9 +38,10 @@ def strategy(alliances, config: EventConfig, side=None):
 def _maketeams(
     team_numbers,
     config: EventConfig,
+    data_dir: str,
     opponent_mask=slice(0, 0, None),
 ):
-    data = load_json_file(dataconsts)
+    data = load_json_file(data_dir)
 
     teams = [Team(t, config) for i, t in enumerate(team_numbers)]
     list(map(lambda t: t.set_partner(False), teams[opponent_mask]))
@@ -85,11 +86,11 @@ def _maketeams(
     return teams
 
 
-def detailed_summary(team_numbers, config: EventConfig):
-    teams = _maketeams(team_numbers, config)
+def detailed_summary(team_numbers, config: EventConfig, data_dir: str):
+    teams = _maketeams(team_numbers, config, data_dir)
     return [team.summary(quick=False) for team in teams]
 
 
-def quick_summary(team_numbers, config: EventConfig):
-    teams = _maketeams(team_numbers, config)
+def quick_summary(team_numbers, config: EventConfig, data_dir: str):
+    teams = _maketeams(team_numbers, config, data_dir)
     return [team.summary(quick=True) for team in teams]
