@@ -1,13 +1,14 @@
 import json
+import os
 
 from scoutingserver.dataconstants import TBA_SAVE_FILE
 from scoutingserver.tba.tba import Event
 
 
 class TBASaver:
-    def __init__(self, event_id):
+    def __init__(self, event_id, data_dir):
         try:
-            self.data = json.load(open(TBA_SAVE_FILE))
+            self.data = json.load(open(os.path.join(data_dir, TBA_SAVE_FILE)))
         except FileNotFoundError:
             self.data = {"teams": [], "schedule": {}}
         self.event = Event(event_id)

@@ -5,13 +5,12 @@ import sys
 
 from scoutingserver.config import load_config
 from scoutingserver.controllers import datactl
-from scoutingserver.controllers.messagectl import MessageController
 from scoutingserver.controllers.gattctl import GattController
 from scoutingserver.interface import printing
 from scoutingserver.interface.header import print_header
 from scoutingserver.interface.input_handler import InputHandler
 from scoutingserver.interface.logger import log
-from scoutingserver.tba.tba_saver import TBASaver
+# from scoutingserver.tba.tba_saver import TBASaver
 
 
 class Server:
@@ -21,9 +20,9 @@ class Server:
 
         print_header()
         if len(sys.argv) > 1:
-            data_dir = sys.argv[1]
+            self.data_dir = sys.argv[1]
         else:
-            data_dir = input("Absolute data directory (e.g. '/home/user/Desktop') ")
+            self.data_dir = input("Absolute data directory (e.g. '/home/user/Desktop') ")
         # The location of the removable device to copy data to
         drive = input("Flash drive location (e.g. 'D:') (default none) ") or None
 
@@ -31,10 +30,10 @@ class Server:
 
         self.input_handler = InputHandler(self)
 
-        self.data_controller = datactl.DataController(self.config, data_dir, drive)
-        self.gattcl = GattController(msgctl.handle_msg, self.config)
+        self.data_controller = datactl.DataController(self.config, self.data_dir, drive)
+        self.gattcl = GattController(self.data_controller.on_receive, self.config)
 
-        self.tba = TBASaver(self.config.event_name)
+        # self.tba = TBASaver(self.config.event_name)
 
     def run(self):
         self.input_handler.start_listening()

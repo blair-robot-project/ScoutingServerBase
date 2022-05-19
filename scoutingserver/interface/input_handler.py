@@ -7,14 +7,14 @@ from scoutingserver.strat.summarize import strategy
 
 class InputHandler:
     def __init__(self, server):
-        self.commands = Commands(server)
+        self.server = server
 
     def start_listening(self):
         Thread(target=self.input_loop).start()
 
     def input_loop(self):
-        while self.commands.running:
-            # try:
+        running = True
+        while running:
             cmd, *args = input().split(" ")
 
             if cmd == "q":
@@ -22,23 +22,23 @@ class InputHandler:
                     "Are you sure you want to quit? (y/n)", style=printing.QUIT, end=" "
                 )
                 if input() == "y":
-                    self.running = False
+                    running = False
                     interrupt_main()
-            elif cmd == "tba":
-                self.server.tba.update()
+            # elif cmd == "tba":
+            #     self.server.tba.update()
             elif cmd == "s":
                 if len(args) == 1:
                     printing.printf(
                         strategy(
                             self.server.tba.teams_in_match(*args),
-                            self.config,
+                            self.server.config,
                             self.data_dir,
                         ),
                         style=printing.DATA_OUTPUT,
                     )
                 else:
                     printing.printf(
-                        strategy(args, self.config, self.data_dir),
+                        strategy(args, self.server.config, self.server.data_dir),
                         style=printing.DATA_OUTPUT,
                     )
             elif cmd == "s":
@@ -49,7 +49,7 @@ class InputHandler:
                 )
             else:
                 printing.printf(
-                    f"Command '{i[0]}' not found",
+                    f"Command '{cmd}' not found",
                     log=True,
                     logtag="input_handler.input_loop",
                     style=printing.ERROR,

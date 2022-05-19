@@ -1,3 +1,4 @@
+black
 bleak
 requests>=2.27.1
 types-requests-2.27.25
