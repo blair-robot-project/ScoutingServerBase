@@ -8,6 +8,7 @@ from scoutingserver.controllers import systemctl
 from scoutingserver.dataconstants import JSON_FILE_NAME, CSV_FILE_NAME
 from scoutingserver.config import EventConfig, GeneralFields
 
+
 class DataController:
     data_queue: Queue = Queue()
     data = dict()

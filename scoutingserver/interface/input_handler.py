@@ -78,11 +78,15 @@ class Commands:
     def strat(self, *args, **kwargs):
         if len(args) == 1:
             printing.printf(
-                strategy(self.server.tba.teams_in_match(*args), self.config, self.data_dir),
+                strategy(
+                    self.server.tba.teams_in_match(*args), self.config, self.data_dir
+                ),
                 style=printing.DATA_OUTPUT,
             )
         else:
-            printing.printf(strategy(args, self.config, self.data_dir), style=printing.DATA_OUTPUT)
+            printing.printf(
+                strategy(args, self.config, self.data_dir), style=printing.DATA_OUTPUT
+            )
 
     def data(self, *args):
         self.server.data_controller.drive_update_request()

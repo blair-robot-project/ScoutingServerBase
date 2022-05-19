@@ -59,7 +59,7 @@ class Team:
                     self.stats[field.name] = []
                 if match[field.name]:
                     self.stats[field.name].append(match[field.name])
-        
+
         self.comments.append(match["comments"])
 
     def calc_values(self):

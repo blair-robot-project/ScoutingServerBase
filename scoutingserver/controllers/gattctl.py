@@ -4,9 +4,14 @@ import bleak
 from scoutingserver.config import EventConfig, FieldConfig, FieldType
 from scoutingserver.interface import printing
 
-class GattController:
 
-    def __init__(self, on_receive, config: EventConfig, timeout = 5):
+class GattController:
+    def __init__(
+        self,
+        on_receive: Callable[[dict, bleak.BleakClient], None],
+        config: EventConfig,
+        timeout=5,
+    ):
         self.on_receive = on_receive
         self.config = config
         self.timeout
@@ -45,10 +50,10 @@ class GattController:
                 bytes = client.read_gatt_char(field_config.char_id)
                 fields[field_config.name] = self._bytes_to_field(field_config, bytes)
 
-            self.on_receive(fields)
+            self.on_receive(fields, client)
 
             client.disconnect()
-    
+
     def _bytes_to_field(self, field_config: FieldConfig, bytes):
         """Convert a byte array to a proper value based on that field's config"""
         if field_config.type == FieldType.NUM:

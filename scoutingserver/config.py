@@ -11,46 +11,19 @@ class FieldType(Enum):
 
 class GeneralFields:
     """Configs for fields that will be sent each year"""
+
     TeamNumber = FieldConfig(
-        "teamNumber",
-        FieldType.NUM,
-        "todo uuid",
-        min = 0,
-        max = 1000000,
-        inc = 1
+        "teamNumber", FieldType.NUM, "todo uuid", min=0, max=1000000, inc=1
     )
     Alliance = FieldConfig(
-        "alliance",
-        FieldType.CHOICE,
-        "todo uuid",
-        choices = ["Blue", "Red"]
+        "alliance", FieldType.CHOICE, "todo uuid", choices=["Blue", "Red"]
     )
-    Station = FieldConfig(
-        "station",
-        FieldType.NUM,
-        "todo uuid",
-        min = 1,
-        max = 3,
-        inc = 1
-    )
-    Timestamp = FieldConfig(
-        "timestamp",
-        FieldType.TEXT,
-        "todo uuid"
-    )
+    Station = FieldConfig("station", FieldType.NUM, "todo uuid", min=1, max=3, inc=1)
+    Timestamp = FieldConfig("timestamp", FieldType.TEXT, "todo uuid")
     Revision = FieldConfig(
-        "revision",
-        FieldType.NUM,
-        "todo uuid",
-        min = 0,
-        max = 100,
-        inc = 1
+        "revision", FieldType.NUM, "todo uuid", min=0, max=100, inc=1
     )
-    Comments = FieldConfig(
-        "comments",
-        FieldType.TEXT,
-        "todo uuid"
-    )
+    Comments = FieldConfig("comments", FieldType.TEXT, "todo uuid")
 
 
 class FieldConfig:
@@ -62,7 +35,7 @@ class FieldConfig:
         min=0.0,
         max=100.0,
         inc=1.0,
-        choices: List[str]=[],
+        choices: List[str] = [],
         default_choice="",
     ):
         self.name = name
@@ -123,7 +96,11 @@ def event_config_hook(dict):
             return FieldConfig(name, typ, charac)
         elif typ == FieldType.CHOICE:
             return FieldConfig(
-                name, typ, charac, choices=dict["choices"], default_choice=dict["defaultChoice"]
+                name,
+                typ,
+                charac,
+                choices=dict["choices"],
+                default_choice=dict["defaultChoice"],
             )
         else:
             return FieldConfig(name, typ, charac)
