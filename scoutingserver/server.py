@@ -3,7 +3,7 @@ from os import _exit as osexit
 
 import sys
 
-from scoutingserver import dataconstants
+from scoutingserver.config import load_config
 from scoutingserver.controllers import datactl
 from scoutingserver.controllers.messagectl import MessageController
 from scoutingserver.controllers.gattctl import GattController
@@ -24,16 +24,14 @@ class Server:
             data_dir = sys.argv[1]
         else:
             data_dir = input("Absolute data directory (e.g. '/home/user/Desktop') ")
-
-        config_path = input("Event config file: ")
-        self.config = json.load(open(config_path), object_hook=event_config_hook)
-
         # The location of the removable device to copy data to
-        self.DRIVE = input("Flash drive location (e.g. 'D:') (default none) ")
+        drive = input("Flash drive location (e.g. 'D:') (default none) ") or None
+
+        self.config = load_config(input("Event config file: "))
 
         self.input_handler = InputHandler(self)
 
-        self.data_controller = datactl.DataController(self.config)
+        self.data_controller = datactl.DataController(self.config, data_dir, drive)
         msgctl = MessageController(self.data_controller)
         self.gattcl = GattController(msgctl.handle_msg, self.config)
 

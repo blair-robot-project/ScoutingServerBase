@@ -4,6 +4,8 @@ import bleak
 from scoutingserver.config import EventConfig, FieldConfig, FieldType
 from scoutingserver.interface import printing
 
+# todo write this
+SYNCED_CHAR_UUID = "dfsa;ijaf;jasdf;jasdfk;lfas;lj"
 
 class GattController:
     def __init__(
@@ -14,9 +16,7 @@ class GattController:
     ):
         self.on_receive = on_receive
         self.config = config
-        self.timeout
-        # A queue of data returned from servers
-        self.queue = asyncio.Queue()
+        self.timeout = timeout
 
     def start(self):
         loop = asyncio.get_event_loop()
@@ -27,7 +27,7 @@ class GattController:
 
     async def _run(self):
         # Scan for devices with the service we want
-        scanner = bleak.BleakScanner(service_uuids=[self.config.serviceId])
+        scanner = bleak.BleakScanner(service_uuids=[self.config.service_id])
         scanner.register_detection_callback(_on_advertise)
 
         while True:
@@ -45,12 +45,16 @@ class GattController:
             if not client.is_connected():
                 return
 
+            client.read_gatt_char(SYNCED_CHAR_UUID, bytearray([0x0]))
+
             fields = {}
             for field_config in self.config.field_configs:
                 bytes = client.read_gatt_char(field_config.char_id)
                 fields[field_config.name] = self._bytes_to_field(field_config, bytes)
 
             self.on_receive(fields, client)
+
+            client.write_gatt_char(SYNCED_CHAR_UUID, bytearray([0x1]))
 
             client.disconnect()
 

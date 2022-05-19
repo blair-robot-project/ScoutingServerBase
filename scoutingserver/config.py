@@ -50,36 +50,8 @@ class FieldConfig:
         # Only if typ is CHOICE
         self.choices = choices
         self.default_choice = default_choice
-
-
-class EventConfig:
-    def __init__(
-        self,
-        event_name: str,
-        our_team: int,
-        alliance_size: int,
-        serviceId: str,
-        field_configs: List[FieldConfig],
-    ):
-        self.event_name = event_name
-        self.our_team = our_team
-        self.alliance_size = alliance_size
-        self.serviceId = serviceId
-        self.field_configs = field_configs
-
-
-def event_config_hook(dict):
-    if "eventName" in dict:
-        # Must be an event
-        return EventConfig(
-            dict["eventName"],
-            int(dict.get("ourTeam", 449)),
-            int(dict.get("alliance_size", 3)),
-            dict["serviceId"],
-            dict["fields"],
-        )
-    else:
-        # Must be a field
+    
+    def from_dict(dict):
         name = dict["name"]
         typ = FieldType[dict["type"].upper()]
         charac = dict["charId"]
@@ -104,3 +76,40 @@ def event_config_hook(dict):
             )
         else:
             return FieldConfig(name, typ, charac)
+
+
+class EventConfig:
+    def __init__(
+        self,
+        event_name: str,
+        our_team: int,
+        alliance_size: int,
+        service_id: str,
+        field_configs: List[FieldConfig],
+    ):
+        self.event_name = event_name
+        self.our_team = our_team
+        self.alliance_size = alliance_size
+        self.service_id = service_id
+        self.field_configs = field_configs
+    
+    def from_dict(dict):
+        return EventConfig(
+            dict["eventName"],
+            int(dict.get("ourTeam", 449)),
+            int(dict.get("alliance_size", 3)),
+            dict["serviceId"],
+            dict["fields"],
+        )
+
+
+def _event_config_hook(dict):
+    if "eventName" in dict:
+        # Must be an event
+        return EventConfig.from_dict(dict)
+    else:
+        # Must be a field
+        return FieldConfig.from_dict(dict)
+
+def load_config(config_path):
+    return json.load(open(config_path), object_hook=_event_config_hook)
