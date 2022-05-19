@@ -22,16 +22,16 @@ class FieldConfig:
         self,
         name: str,
         typ: FieldType,
-        characId: str,
+        char_id: str,
         min=0.0,
         max=100.0,
         inc=1.0,
-        choices=[],
+        choices: List[str]=[],
         default_choice="",
     ):
         self.name = name
         self.typ = typ
-        self.characId = characId
+        self.char_id = char_id
 
         # Only if typ is NUM
         self.min = min
@@ -49,11 +49,13 @@ class EventConfig:
         event_name: str,
         our_team: int,
         alliance_size: int,
+        serviceId: str,
         field_configs: List[FieldConfig],
     ):
         self.event_name = event_name
         self.our_team = our_team
         self.alliance_size = alliance_size
+        self.serviceId = serviceId
         self.field_configs = field_configs
 
 
@@ -64,13 +66,14 @@ def event_config_hook(dict):
             dict["eventName"],
             int(dict.get("ourTeam", 449)),
             int(dict.get("alliance_size", 3)),
+            dict["serviceId"],
             dict["fields"],
         )
     else:
         # Must be a field
         name = dict["name"]
         typ = FieldType[dict["type"].upper()]
-        charac = dict["characId"]
+        charac = dict["charId"]
         if typ == FieldType.NUM:
             return FieldConfig(
                 name,
