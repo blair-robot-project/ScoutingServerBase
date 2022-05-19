@@ -56,7 +56,9 @@ class GattController:
             fields = {}
             for field_config in self.config.field_configs:
                 bytearr = await client.read_gatt_char(field_config.char_id)
-                fields[field_config.name] = self._bytearr_to_field(field_config, bytearr)
+                fields[field_config.name] = self._bytearr_to_field(
+                    field_config, bytearr
+                )
 
             self.on_receive(fields, client)
 
