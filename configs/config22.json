@@ -1,19 +1,27 @@
 {
     "eventName": "worlds",
     "ourTeam": 449,
-    "serviceId": "qasdfaskljdfkljfdakjsdafkjdfsakjl",
+    "serviceId": "c595616f-c51d-4ec1-b162-4bff25a0fcf8",
+    "syncedCharId": "d305d938-5c0d-4dc1-bc44-9b9f78c24380",
     "fields": [
         {
             "name": "AutoLow",
             "type": "num",
-            "charId": "dsfaklasdfkljdkjldsaflkjsadkljfasdjl",
+            "charId": "2675d196-fdbc-4e08-9d07-87fd0691aa66",
+            "min": 0,
+            "max": 100
+        },
+        {
+            "name": "TeleopLow",
+            "type": "num",
+            "charId": "61c18584-e1f4-4871-ab30-3795673caa72",
             "min": 0,
             "max": 100
         },
         {
             "name": "Climb",
             "type": "choice",
-            "charId": "lid8u48u4q384u3klk",
+            "charId": "5d4de410-8923-43a2-858d-32d78511b536",
             "choices": ["None", "Low", "Mid", "High", "Traversal"],
             "defaultChoice": "None"
         }

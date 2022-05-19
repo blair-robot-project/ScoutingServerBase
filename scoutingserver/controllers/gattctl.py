@@ -1,11 +1,11 @@
 import asyncio
+from typing import Callable
+
 import bleak
 
 from scoutingserver.config import EventConfig, FieldConfig, FieldType
 from scoutingserver.interface import printing
 
-# todo write this
-SYNCED_CHAR_UUID = "dfsa;ijaf;jasdf;jasdfk;lfas;lj"
 
 class GattController:
     def __init__(
@@ -19,10 +19,15 @@ class GattController:
         self.timeout = timeout
 
     def start(self):
+        """
+        Start scanning for devices. Connect to the ones with
+        the service we want and get data from them.
+        """
         loop = asyncio.get_event_loop()
         self.task = loop.create_task(self._run())
 
     def stop(self):
+        """Stop scanning for and connecting to devices"""
         self.task.cancel()
 
     async def _run(self):
@@ -35,37 +40,39 @@ class GattController:
             await asyncio.sleep(5.0)
             await scanner.stop()
 
-    def _on_advertise(device, ad_data):
+    async def _on_advertise(device, ad_data):
         with bleak.BleakClient(device) as client:
             if not client.is_connected():
                 try:
-                    client.connect()
+                    await client.connect()
                 except Exception as e:
                     printing.printf(e, style=printing.ERROR)
             if not client.is_connected():
                 return
 
-            client.read_gatt_char(SYNCED_CHAR_UUID, bytearray([0x0]))
+            # Tell the peripheral it hasn't synced yet
+            await client.write_gatt_char(SYNCED_CHAR_UUID, bytearray([0x0]))
 
             fields = {}
             for field_config in self.config.field_configs:
-                bytes = client.read_gatt_char(field_config.char_id)
-                fields[field_config.name] = self._bytes_to_field(field_config, bytes)
+                bytearr = await client.read_gatt_char(field_config.char_id)
+                fields[field_config.name] = self._bytearr_to_field(field_config, bytearr)
 
             self.on_receive(fields, client)
 
-            client.write_gatt_char(SYNCED_CHAR_UUID, bytearray([0x1]))
+            # Tell the peripheral syncing is done
+            await client.write_gatt_char(SYNCED_CHAR_UUID, bytearray([0x1]))
 
-            client.disconnect()
+            await client.disconnect()
 
-    def _bytes_to_field(self, field_config: FieldConfig, bytes):
-        """Convert a byte array to a proper value based on that field's config"""
+    def _bytearr_to_field(self, field_config: FieldConfig, bytearr: bytearray):
+        """Convert a bytearray to a proper value based on that field's config"""
         if field_config.type == FieldType.NUM:
-            return int.from_bytes(bytes)
+            return int.from_bytes(bytearr, "big")
         elif field_config.type == FieldType.BOOL:
-            return bool(int.from_bytes(bytes))
-        elif field.config_type == FieldType.CHOICE:
-            ind = int.from_bytes(bytes)
+            return bool(int.from_bytes(bytearr, "big"))
+        elif field_config.type == FieldType.CHOICE:
+            ind = int.from_bytes(bytearr, "big")
             return field_config.choices[ind]
-        elif field.config_type == FieldType.TEXT:
-            return bytes.decode("utf-8")
+        elif field_config.type == FieldType.TEXT:
+            return bytearr.decode("utf-8")

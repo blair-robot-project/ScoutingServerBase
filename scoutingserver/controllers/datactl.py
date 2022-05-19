@@ -1,6 +1,7 @@
 import json
 import os
 from queue import Queue
+from typing import Dict, Any
 
 from scoutingserver import dataconstants
 import scoutingserver.interface.printing as printing
@@ -25,8 +26,24 @@ class DataController:
         self.data = load_json_file(data_dir)
         self.drive = drive
 
-    def queue_data(self, data, source):
+    def on_receive(self, data: Dict[str, Any], source: str):
+        """
+        Callback to triggered by gattctl when a peripheral gives new data
+        Parameters:
+        data: A dictionary of the field names and values
+        source: The peripheral device name
+        """
         self.data_queue.put((data, source))
+        printing.printf(
+            ("Data" if data[GeneralFields.Revision.name] == 0 else "Edit")
+            + f" from {data[GeneralFields.RecorderName.name]}"
+            + f" on {source}"
+            + f" for team {data[GeneralFields.TeamNumber.name]}"
+            + f" in match {data[GeneralFields.MatchName.name]}",
+            style=printing.NEW_DATA,
+            log=True,
+            logtag="datactl.on_receive",
+        )
 
     def update(self):
         # While there is data to add, parse it
@@ -93,12 +110,6 @@ class DataController:
                     + "\n"
                 )
         write_file(CSV_FILE_NAME, s, self.data_dir, mode="w")
-
-    def sync_summary(self, client):
-        return {
-            i: max(map(int, revs.keys()))
-            for i, revs in self.data.get(client, dict()).items()
-        }
 
     def drive_update_request(self):
         self.data_changed = True

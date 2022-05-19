@@ -1,3 +1,4 @@
+import json
 from enum import Enum
 from typing import List
 
@@ -9,28 +10,25 @@ class FieldType(Enum):
     TEXT = 4
 
 
-class GeneralFields:
-    """Configs for fields that will be sent each year"""
-
-    TeamNumber = FieldConfig(
-        "teamNumber", FieldType.NUM, "todo uuid", min=0, max=1000000, inc=1
-    )
-    Alliance = FieldConfig(
-        "alliance", FieldType.CHOICE, "todo uuid", choices=["Blue", "Red"]
-    )
-    Station = FieldConfig("station", FieldType.NUM, "todo uuid", min=1, max=3, inc=1)
-    Timestamp = FieldConfig("timestamp", FieldType.TEXT, "todo uuid")
-    Revision = FieldConfig(
-        "revision", FieldType.NUM, "todo uuid", min=0, max=100, inc=1
-    )
-    Comments = FieldConfig("comments", FieldType.TEXT, "todo uuid")
-
-
 class FieldConfig:
+    """Configuration for a field"""
+
+    name: str
+    type: FieldType
+    #: UUID for corresponding GATT characteristic
+    char_id: str
+
+    min: float
+    max: float
+    inc: float
+
+    choices: List[str]
+    default_choice: str
+
     def __init__(
         self,
         name: str,
-        typ: FieldType,
+        type: FieldType,
         char_id: str,
         min=0.0,
         max=100.0,
@@ -39,7 +37,7 @@ class FieldConfig:
         default_choice="",
     ):
         self.name = name
-        self.typ = typ
+        self.type = type
         self.char_id = char_id
 
         # Only if typ is NUM
@@ -50,7 +48,7 @@ class FieldConfig:
         # Only if typ is CHOICE
         self.choices = choices
         self.default_choice = default_choice
-    
+
     def from_dict(dict):
         name = dict["name"]
         typ = FieldType[dict["type"].upper()]
@@ -78,6 +76,53 @@ class FieldConfig:
             return FieldConfig(name, typ, charac)
 
 
+class GeneralFields:
+    """Configs for fields that will be sent each year"""
+
+    MatchName = FieldConfig(
+        "matchName", FieldType.TEXT, "a3c1723b-b439-43f0-a2b0-acb724c64528"
+    )
+    RecorderName = FieldConfig(
+        "recorderName", FieldType.TEXT, "63b525ee-5c90-4775-b9d8-2b2de19d43c3"
+    )
+    TeamNumber = FieldConfig(
+        "teamNumber",
+        FieldType.NUM,
+        "dce8aaf2-12e3-43c2-a915-fdf6750981fa",
+        min=0,
+        max=1000000,
+        inc=1,
+    )
+    Alliance = FieldConfig(
+        "alliance",
+        FieldType.CHOICE,
+        "aa0c3c5e-4f0f-46d7-828c-ec7f7518f41e",
+        choices=["Blue", "Red"],
+    )
+    Station = FieldConfig(
+        "station",
+        FieldType.NUM,
+        "3474f023-5a13-4b90-bb01-89eab3a8d58e",
+        min=1,
+        max=3,
+        inc=1,
+    )
+    Timestamp = FieldConfig(
+        "timestamp", FieldType.TEXT, "e6343506-5225-44bf-853f-ffe51b20985e"
+    )
+    Revision = FieldConfig(
+        "revision",
+        FieldType.NUM,
+        "147da5b9-864c-41ec-a231-b2a45ac96afd",
+        min=0,
+        max=100,
+        inc=1,
+    )
+    Comments = FieldConfig(
+        "comments", FieldType.TEXT, "6592806f-553e-47f6-bde4-6d29555227c8"
+    )
+
+
 class EventConfig:
     def __init__(
         self,
@@ -92,7 +137,7 @@ class EventConfig:
         self.alliance_size = alliance_size
         self.service_id = service_id
         self.field_configs = field_configs
-    
+
     def from_dict(dict):
         return EventConfig(
             dict["eventName"],
@@ -111,5 +156,7 @@ def _event_config_hook(dict):
         # Must be a field
         return FieldConfig.from_dict(dict)
 
-def load_config(config_path):
+
+def load_config(config_path) -> EventConfig:
+    """Load a config given the config's path"""
     return json.load(open(config_path), object_hook=_event_config_hook)

@@ -1,7 +1,8 @@
 from enum import Enum
+from typing import List
 
 from scoutingserver import dataconstants
-from scoutingserver.config import EventConfig, FieldType
+from scoutingserver.config import EventConfig, FieldType, GeneralFields
 from scoutingserver import scoring
 
 
@@ -17,7 +18,7 @@ class Team:
 
         self.team = team
         self.stats = {}
-        self.comments = []
+        self.comments: List[str] = []
 
         self.set_partner(partner)
 
@@ -54,13 +55,8 @@ class Team:
                 if field.name not in self.stats:
                     self.stats[field.name] = {choice: 0 for choice in field.choices}
                 self.stats[field.name][match[field.name]] += 1
-            elif field.typ == FieldType.TEXT:
-                if field.name not in self.stats:
-                    self.stats[field.name] = []
-                if match[field.name]:
-                    self.stats[field.name].append(match[field.name])
 
-        self.comments.append(match["comments"])
+        self.comments.append(match[GeneralFields.Comments.name])
 
     def calc_values(self):
         res = {"team": self.team}

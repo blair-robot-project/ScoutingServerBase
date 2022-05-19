@@ -1,7 +1,6 @@
 from _thread import interrupt_main
 from threading import Thread
 
-from scoutingserver.controllers.messagectl import make_message, MsgTypes
 from scoutingserver.interface import printing
 from scoutingserver.strat.summarize import strategy
 
@@ -18,7 +17,7 @@ class InputHandler:
             # try:
             i = input().split(" ")
             try:
-                cmd = getattr(self.commands, i[0])
+                cmd = self.commands.cmds[i[0]]
             except AttributeError:
                 printing.printf(
                     f"Command '{i[0]}' not found",
@@ -39,6 +38,13 @@ class Commands:
         self.server = server
         self.config = server.config
         self.data_dir = data_dir
+        self.cmds = {
+            "q": quit_,
+            "tba": update_tba,
+            "s": strat,
+            "d": data,
+            "m": missing,
+        }
 
     def quit_(self, *args):
         printing.printf(
@@ -50,30 +56,6 @@ class Commands:
 
     def update_tba(self, *args):
         self.server.tba.update()
-
-    def send_schedule(self, *args):
-        schedule = self.server.tba.match_schedule()
-        if schedule:
-            self.server.socketctl.blanket_send(
-                make_message(MsgTypes.SCHEDULE, schedule)
-            )
-        else:
-            printing.printf(
-                "Schedule not available for event:",
-                self.config.event_name,
-                style=printing.YELLOW,
-            )
-
-    def send_teams(self, *args):
-        teams = self.server.tba.team_list()
-        if teams:
-            self.server.socketctl.blanket_send(make_message(MsgTypes.TEAM_LIST, teams))
-        else:
-            printing.printf(
-                "Team list not availible for event:",
-                self.config.event_name,
-                style=printing.YELLOW,
-            )
 
     def strat(self, *args, **kwargs):
         if len(args) == 1:
@@ -98,10 +80,3 @@ class Commands:
     # def send(self, *args):
     # self.server.socketctl.blanket_send(' '.join(args))
 
-    q = quit_
-    tba = update_tba
-    ss = send_schedule
-    st = send_teams
-    s = strat
-    d = drive = data
-    m = missing

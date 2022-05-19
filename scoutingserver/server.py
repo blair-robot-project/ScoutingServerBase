@@ -32,7 +32,6 @@ class Server:
         self.input_handler = InputHandler(self)
 
         self.data_controller = datactl.DataController(self.config, data_dir, drive)
-        msgctl = MessageController(self.data_controller)
         self.gattcl = GattController(msgctl.handle_msg, self.config)
 
         self.tba = TBASaver(self.config.event_name)
@@ -46,7 +45,7 @@ class Server:
             log=True,
             logtag="server.main",
         )
-        self.socketctl.start_connecting()
+        self.gattcl.start()
 
         while True:
             try:
@@ -55,7 +54,7 @@ class Server:
                 # Make sure everything made it into the data file
                 self.data_controller.update()
 
-                self.socketctl.close()
+                self.gattcl.stop()
 
                 log("server.main", "Server stopped")
                 log("server.main", "-" * 20)

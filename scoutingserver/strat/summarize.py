@@ -1,5 +1,5 @@
 from scoutingserver.interface import printing
-from scoutingserver.config import EventConfig
+from scoutingserver.config import EventConfig, GeneralFields
 from scoutingserver.controllers.datactl import load_json_file
 from scoutingserver.interface.logger import log
 from scoutingserver.strat.team import Team
@@ -49,7 +49,7 @@ def _maketeams(
     for device in data.values():
         for match in device.values():
             m = match[max(match.keys(), key=int)]
-            t = m[dataconstants.GeneralFields.TEAM.value]
+            t = m[GeneralFields.TeamNumber.name]
             if t in team_numbers:
                 try:
                     teams[team_numbers.index(t)].add_match(m)
