@@ -4,8 +4,8 @@ from os import _exit as osexit
 import sys
 
 from scoutingserver.config import load_config
-from scoutingserver.controllers import datactl
-from scoutingserver.controllers.gattctl import GattController
+from scoutingserver.data import datactl
+from scoutingserver.data.gattctl import GattController
 from scoutingserver.interface import printing
 from scoutingserver.interface.header import print_header
 from scoutingserver.interface.input_handler import InputHandler

@@ -2,7 +2,7 @@ from _thread import interrupt_main
 from threading import Thread
 
 from scoutingserver.interface import printing
-from scoutingserver.strat.summarize import strategy
+from scoutingserver.summarize import strategy
 
 
 class InputHandler:

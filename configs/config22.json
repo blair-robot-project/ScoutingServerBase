@@ -1,6 +1,7 @@
 {
-    "eventName": "worlds",
+    "eventName": "dcmp2022",
     "ourTeam": 449,
+    "allianceSize": 3,
     "serviceId": "c595616f-c51d-4ec1-b162-4bff25a0fcf8",
     "syncedCharId": "d305d938-5c0d-4dc1-bc44-9b9f78c24380",
     "fields": [

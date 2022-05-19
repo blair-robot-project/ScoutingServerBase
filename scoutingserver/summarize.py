@@ -1,8 +1,8 @@
 from scoutingserver.interface import printing
 from scoutingserver.config import EventConfig, GeneralFields
-from scoutingserver.controllers.datactl import load_json_file
+from scoutingserver.data.datactl import load_json_file
 from scoutingserver.interface.logger import log
-from scoutingserver.strat.team import Team
+from scoutingserver.team import Team
 
 
 # Get the data string to return from the list of teams

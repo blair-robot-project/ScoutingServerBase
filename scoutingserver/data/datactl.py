@@ -5,7 +5,7 @@ from typing import Dict, Any
 
 from scoutingserver import dataconstants
 import scoutingserver.interface.printing as printing
-from scoutingserver.controllers import systemctl
+from scoutingserver.data import systemctl
 from scoutingserver.dataconstants import JSON_FILE_NAME, CSV_FILE_NAME
 from scoutingserver.config import EventConfig, GeneralFields
 

@@ -142,7 +142,7 @@ class EventConfig:
         return EventConfig(
             dict["eventName"],
             int(dict.get("ourTeam", 449)),
-            int(dict.get("alliance_size", 3)),
+            int(dict.get("allianceSize", 3)),
             dict["serviceId"],
             dict["fields"],
         )
