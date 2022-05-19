@@ -6,7 +6,7 @@ import sys
 from scoutingserver import dataconstants
 from scoutingserver.controllers import datactl
 from scoutingserver.controllers.messagectl import MessageController
-from scoutingserver.controllers.socketctl import SocketController
+from scoutingserver.controllers.gattctl import GattController
 from scoutingserver.interface import printing
 from scoutingserver.interface.header import print_header
 from scoutingserver.interface.input_handler import InputHandler
@@ -35,7 +35,7 @@ class Server:
 
         self.data_controller = datactl.DataController(self.config)
         msgctl = MessageController(self.data_controller)
-        self.socketctl = SocketController(msgctl.handle_msg, self.config)
+        self.gattcl = GattController(msgctl.handle_msg, self.config)
 
         self.tba = TBASaver(self.config.event_name)
 

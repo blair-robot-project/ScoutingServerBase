@@ -10,11 +10,47 @@ class FieldType(Enum):
 
 
 class GeneralFields:
-    """Fields that will be sent each year"""
-    TEAM_NUMBER = "teamNumber"
-    ALLIANCE = "alliance"
-    STATION = "station"
-    COMMENTS = "comments"
+    """Configs for fields that will be sent each year"""
+    TeamNumber = FieldConfig(
+        "teamNumber",
+        FieldType.NUM,
+        "todo uuid",
+        min = 0,
+        max = 1000000,
+        inc = 1
+    )
+    Alliance = FieldConfig(
+        "alliance",
+        FieldType.CHOICE,
+        "todo uuid",
+        choices = ["Blue", "Red"]
+    )
+    Station = FieldConfig(
+        "station",
+        FieldType.NUM,
+        "todo uuid",
+        min = 1,
+        max = 3,
+        inc = 1
+    )
+    Timestamp = FieldConfig(
+        "timestamp",
+        FieldType.TEXT,
+        "todo uuid"
+    )
+    Revision = FieldConfig(
+        "revision",
+        FieldType.NUM,
+        "todo uuid",
+        min = 0,
+        max = 100,
+        inc = 1
+    )
+    Comments = FieldConfig(
+        "comments",
+        FieldType.TEXT,
+        "todo uuid"
+    )
 
 
 class FieldConfig:
