@@ -19,8 +19,3 @@ class DataConstants:
         self.JSON_FILE_PATH = os.path.join(self.abs_data_dir, JSON_FILE_NAME)
         self.CSV_FILE_PATH = os.path.join(self.abs_data_dir, CSV_FILE_NAME)
 
-        config_path = input("Config file: ")
-        self.config = json.load(open(config_path), object_hook=event_config_hook)
-
-        # The location of the removable device to copy data to
-        self.DRIVE = input("Flash drive location (e.g. 'D:') (default none) ")

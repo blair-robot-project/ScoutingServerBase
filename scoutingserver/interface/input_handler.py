@@ -37,7 +37,7 @@ class Commands:
 
     def __init__(self, server):
         self.server = server
-        self.dataconsts = server.dataconsts
+        self.config = server.config
 
     def quit_(self, *args):
         printing.printf(
@@ -59,7 +59,7 @@ class Commands:
         else:
             printing.printf(
                 "Schedule not available for event:",
-                self.dataconsts.EVENT,
+                self.config.event_name,
                 style=printing.YELLOW,
             )
 
@@ -70,7 +70,7 @@ class Commands:
         else:
             printing.printf(
                 "Team list not availible for event:",
-                self.dataconsts.EVENT,
+                self.config.event_name,
                 style=printing.YELLOW,
             )
 

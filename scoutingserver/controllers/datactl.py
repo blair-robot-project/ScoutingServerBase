@@ -13,10 +13,15 @@ class DataController:
     data = dict()
     data_changed = True
 
-    def __init__(self, dataconsts: dataconstants.DataConstants):
-        self.dataconsts = dataconsts
-        self.data = load_json_file(dataconsts)
-        self.drive = dataconsts.DRIVE
+    def __init__(self, abs_data_dir, drive):
+        """
+        Parameters:
+        abs_data_dir: Absolute path of directory where data is stored
+        drive: Removable drive to copy data onto (e.g. D:)
+        """
+        self.abs_data_dir = abs_data_dir
+        self.data = load_json_file(abs_data_dir)
+        self.drive = drive
 
     def queue_data(self, data, source):
         self.data_queue.put((data, source))
@@ -29,15 +34,16 @@ class DataController:
             self.parse_data(*self.data_queue.get())
 
         if data:
-            write_json(self.data, self.dataconsts)
+            write_json(self.data, self.abs_data_dir)
             self.to_csv()
             self.data_changed = True
 
+        csv_file_path = os.path.join(self.abs_data_dir, CSV_FILE_NAME)
         # If there is a flash drive and there is new data for it, upload the data
-        if self.data_changed and os.path.exists(self.dataconsts.CSV_FILE_PATH):
+        if self.data_changed and os.path.exists(csv_file_path):
             if self.drive:
                 systemctl.copy(
-                    self.dataconsts.CSV_FILE_PATH,
+                    csv_file_path,
                     os.path.join(self.drive, os.path.sep + CSV_FILE_NAME),
                 )
                 self.data_changed = False
@@ -50,7 +56,7 @@ class DataController:
         mount_point = systemctl.mount()
         if mount_point:
             systemctl.copy(
-                self.dataconsts.CSV_FILE_PATH,
+                os.path.join(self.abs_data_dir, CSV_FILE_NAME),
                 os.path.join(mount_point, CSV_FILE_NAME),
             )
             systemctl.unmount()
@@ -84,7 +90,7 @@ class DataController:
                     )
                     + "\n"
                 )
-        write_file(CSV_FILE_NAME, s, self.dataconsts, mode="w")
+        write_file(CSV_FILE_NAME, s, self.abs_data_dir, mode="w")
 
     def sync_summary(self, client):
         return {
@@ -163,13 +169,13 @@ def missing_field(f, t, r):
     return "ERROR"
 
 
-def write_file(file, s, dataconsts: dataconstants.DataConstants, mode="a"):
-    with open(os.path.join(dataconsts.abs_data_dir, file), mode) as f:
+def write_file(file, s, abs_data_dir, mode="a"):
+    with open(os.path.join(abs_data_dir, file), mode) as f:
         f.write(s)
 
 
-def load_json_file(dataconsts: dataconstants.DataConstants):
-    path = os.path.join(dataconsts.abs_data_dir, JSON_FILE_NAME)
+def load_json_file(abs_data_dir):
+    path = os.path.join(abs_data_dir, JSON_FILE_NAME)
     if not os.path.exists(path):
         with open(path, "w") as f:
             f.write("{}")
@@ -177,8 +183,8 @@ def load_json_file(dataconsts: dataconstants.DataConstants):
         return json.load(f)
 
 
-def write_json(o, dataconsts: dataconstants.DataConstants):
-    with open(os.path.join(dataconsts.abs_data_dir, JSON_FILE_NAME), "w") as f:
+def write_json(o, abs_data_dir):
+    with open(os.path.join(abs_data_dir, JSON_FILE_NAME), "w") as f:
         json.dump(o, f)
 
 

@@ -22,6 +22,7 @@ class FieldConfig:
         self,
         name: str,
         typ: FieldType,
+        characId: str,
         min=0.0,
         max=100.0,
         inc=1.0,
@@ -30,6 +31,7 @@ class FieldConfig:
     ):
         self.name = name
         self.typ = typ
+        self.characId = characId
 
         # Only if typ is NUM
         self.min = min
@@ -68,6 +70,7 @@ def event_config_hook(dict):
         # Must be a field
         name = dict["name"]
         typ = FieldType[dict["type"].upper()]
+        charac = dict["characId"]
         if typ == FieldType.NUM:
             return FieldConfig(
                 name,
@@ -78,10 +81,10 @@ def event_config_hook(dict):
             )
 
         elif typ == FieldType.BOOL:
-            return FieldConfig(name, typ)
+            return FieldConfig(name, typ, charac)
         elif typ == FieldType.CHOICE:
             return FieldConfig(
-                name, typ, choices=dict["choices"], default_choice=dict["defaultChoice"]
+                name, typ, charac, choices=dict["choices"], default_choice=dict["defaultChoice"]
             )
         else:
-            return FieldConfig(name, typ)
+            return FieldConfig(name, typ, charac)

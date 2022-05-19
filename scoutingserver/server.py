@@ -24,14 +24,20 @@ class Server:
             data_dir = sys.argv[1]
         else:
             data_dir = input("Absolute data directory (e.g. '/home/user/Desktop') ")
-        self.dataconsts = dataconstants.DataConstants(data_dir)
+        
+        config_path = input("Config file: ")
+        self.config = json.load(open(config_path), object_hook=event_config_hook)
+        
+        # The location of the removable device to copy data to
+        self.DRIVE = input("Flash drive location (e.g. 'D:') (default none) ")
+
         self.input_handler = InputHandler(self)
 
-        self.data_controller = datactl.DataController(self.dataconsts)
+        self.data_controller = datactl.DataController(self.config)
         msgctl = MessageController(self.data_controller)
-        self.socketctl = SocketController(msgctl.handle_msg, self.dataconsts)
+        self.socketctl = SocketController(msgctl.handle_msg, self.config)
 
-        self.tba = TBASaver(self.dataconsts.config.event_name)
+        self.tba = TBASaver(self.config.event_name)
 
     def run(self):
         self.input_handler.start_listening()

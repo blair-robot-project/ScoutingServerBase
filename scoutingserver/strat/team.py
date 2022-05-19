@@ -1,7 +1,7 @@
 from enum import Enum
 
 from scoutingserver import dataconstants
-from scoutingserver.config import FieldType
+from scoutingserver.config import EventConfig, FieldType
 from scoutingserver import scoring
 
 
@@ -11,9 +11,9 @@ class Team:
 
     NO_DATA = "No data avalible"
 
-    def __init__(self, team, dataconsts: dataconstants.DataConstants, partner=True):
+    def __init__(self, team, config: EventConfig, partner=True):
         self.total = 0
-        self.dataconsts = dataconsts
+        self.config = config
 
         self.team = team
         self.stats = {}
@@ -40,7 +40,7 @@ class Team:
     def add_match(self, match):
         self.total += 1
 
-        for field in self.dataconsts.config.field_configs:
+        for field in self.config.field_configs:
             if field.typ == FieldType.NUM:
                 if field.name not in self.stats:
                     self.stats[field.name] = 0
@@ -65,7 +65,7 @@ class Team:
     def calc_values(self):
         res = {"team": self.team}
 
-        field_configs = self.dataconsts.config.field_configs
+        field_configs = self.config.field_configs
         for field in field_configs:
             stat = self.stats[field.name]
             if field.typ == FieldType.NUM:
