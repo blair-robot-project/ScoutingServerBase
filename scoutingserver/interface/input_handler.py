@@ -27,20 +27,11 @@ class InputHandler:
             # elif cmd == "tba":
             #     self.server.tba.update()
             elif cmd == "s":
-                if len(args) == 1:
-                    printing.printf(
-                        strategy(
-                            self.server.tba.teams_in_match(*args),
-                            self.server.config,
-                            self.data_dir,
-                        ),
-                        style=printing.DATA_OUTPUT,
-                    )
-                else:
-                    printing.printf(
-                        strategy(args, self.server.config, self.server.data_dir),
-                        style=printing.DATA_OUTPUT,
-                    )
+                teams = args if not args else self.server.tba.teams_in_match(*args)
+                printing.printf(
+                    strategy(teams, self.server.config, self.server.data_dir),
+                    style=printing.DATA_OUTPUT
+                )
             elif cmd == "s":
                 self.server.data_controller.drive_update_request()
             elif cmd == "m":

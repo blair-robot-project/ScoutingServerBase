@@ -18,19 +18,10 @@ class Team:
         self.stats = {}
         self.comments: List[str] = []
 
-    def get_team(self):
-        return self.num
-
-    def get_header(self):
-        return self.strat_header
-
-    def get_comments(self):
-        return "\n\t".join(self.comments)
-
     def add_match(self, match):
         self.total += 1
 
-        for field in self.config.field_configs:
+        for field in self.config.spec_field_configs:
             if field.typ == FieldType.NUM:
                 if field.name not in self.stats:
                     self.stats[field.name] = 0
@@ -47,11 +38,10 @@ class Team:
 
         self.comments.append(match[GeneralFields.Comments.name])
 
-    def calc_values(self):
-        res = {"team": self.num}
+    def _calc_values(self):
+        res = {GeneralFields.TeamNum.name: self.num}
 
-        field_configs = self.config.field_configs
-        for field in field_configs:
+        for field in self.config.spec_field_configs:
             stat = self.stats[field.name]
             if field.typ == FieldType.NUM:
                 res[field.name] = stat / self.total if stat != 0 else 0
@@ -77,7 +67,7 @@ class Team:
         if self.total == 0:
             return "{0:>4s}: ".format(self.num) + self.NO_DATA
 
-        stats = self.calc_values()
+        stats = self._calc_values()
         if quick:
             stats = scoring.calc_quick_stats(stats, self.total)
         else:

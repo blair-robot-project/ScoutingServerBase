@@ -21,13 +21,14 @@ def strategy(alliances, config: EventConfig, data_dir: str, side=None):
 
     teams = _maketeams(teams_joined, config, data_dir)
 
-    log("datactl.getdata", "/".join(t.summary(quick=True) for t in teams))
+    summaries = [t.summary(quick=True) for t in teams]
+    log("datactl.getdata", "/".join(summaries))
     return "\n".join[
-        teams[0].get_header(),
-        "\n".join(d[:all_size]),
+        " | ".join(summaries[0].keys()),
+        "\n".join(summaries[:all_size].values()),
         "---",
-        teams[all_size].get_header(),
-        "\n".join(d[all_size:]),
+        " | ".join(summaries[all_size].keys()),
+        "\n".join(summaries[all_size:].values()),
         "===",
         "\n".join([t.num + ": " + "\n\t".join(t.comments) for t in teams]),
     ]
@@ -81,13 +82,3 @@ def _maketeams(
                     logtag="Team.addline.error",
                 )
     return teams
-
-
-def detailed_summary(team_numbers, config: EventConfig, data_dir: str):
-    teams = _maketeams(team_numbers, config, data_dir)
-    return [team.summary(quick=False) for team in teams]
-
-
-def quick_summary(team_numbers, config: EventConfig, data_dir: str):
-    teams = _maketeams(team_numbers, config, data_dir)
-    return [team.summary(quick=True) for team in teams]

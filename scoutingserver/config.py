@@ -79,7 +79,15 @@ class FieldConfig:
 class GeneralFields:
     """Configs for fields that will be sent each year"""
 
-    MatchNum = FieldConfig(
+    all = []
+    """Holds all the general field configs"""
+
+    def _gen_field_config(*args, **kwargs) -> FieldConfig:
+        cfg = FieldConfig(*args, **kwargs)
+        all.append(cfg)
+        return cfg
+
+    MatchNum = _gen_field_config(
         "MatchNum",
         FieldType.NUM,
         "a3c1723b-b439-43f0-a2b0-acb724c64528",
@@ -87,10 +95,10 @@ class GeneralFields:
         max=300,
         inc=1,
     )
-    RecorderName = FieldConfig(
+    RecorderName = _gen_field_config(
         "recorderName", FieldType.TEXT, "63b525ee-5c90-4775-b9d8-2b2de19d43c3"
     )
-    TeamNum = FieldConfig(
+    TeamNum = _gen_field_config(
         "TeamNum",
         FieldType.NUM,
         "dce8aaf2-12e3-43c2-a915-fdf6750981fa",
@@ -98,13 +106,13 @@ class GeneralFields:
         max=1000000,
         inc=1,
     )
-    Alliance = FieldConfig(
+    Alliance = _gen_field_config(
         "alliance",
         FieldType.CHOICE,
         "aa0c3c5e-4f0f-46d7-828c-ec7f7518f41e",
         choices=["Blue", "Red"],
     )
-    Station = FieldConfig(
+    Station = _gen_field_config(
         "station",
         FieldType.NUM,
         "3474f023-5a13-4b90-bb01-89eab3a8d58e",
@@ -112,10 +120,10 @@ class GeneralFields:
         max=3,
         inc=1,
     )
-    Timestamp = FieldConfig(
+    Timestamp = _gen_field_config(
         "timestamp", FieldType.TEXT, "e6343506-5225-44bf-853f-ffe51b20985e"
     )
-    Revision = FieldConfig(
+    Revision = _gen_field_config(
         "revision",
         FieldType.NUM,
         "147da5b9-864c-41ec-a231-b2a45ac96afd",
@@ -123,7 +131,7 @@ class GeneralFields:
         max=100,
         inc=1,
     )
-    Comments = FieldConfig(
+    Comments = _gen_field_config(
         "comments", FieldType.TEXT, "6592806f-553e-47f6-bde4-6d29555227c8"
     )
 
@@ -135,13 +143,15 @@ class EventConfig:
         our_team: int,
         alliance_size: int,
         service_id: str,
-        field_configs: List[FieldConfig],
+        spec_field_configs: List[FieldConfig],
     ):
         self.event_name = event_name
         self.our_team = our_team
         self.alliance_size = alliance_size
         self.service_id = service_id
-        self.field_configs = field_configs
+        self.spec_field_configs = spec_field_configs
+        """The field configs specific to that year"""
+        self.field_configs = GeneralFields.all + spec_field_configs
 
     def from_dict(dict):
         return EventConfig(
