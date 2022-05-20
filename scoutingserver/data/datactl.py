@@ -40,7 +40,7 @@ class DataController:
 
     def on_receive(self, data: Dict[str, Any], source: str):
         """
-        Callback to triggered by gattctl when a peripheral gives new data
+        Callback to triggered by bluetoothctl when a peripheral gives new data
         Parameters:
         data: A dictionary of the field names and values
         source: The peripheral device name

@@ -34,11 +34,7 @@ def strategy(alliances, config: EventConfig, data_dir: str, side=None):
     ]
 
 
-def _maketeams(
-    team_numbers,
-    config: EventConfig,
-    data_dir: str,
-) -> List[Team]:
+def _maketeams(team_numbers, config: EventConfig, data_dir: str) -> List[Team]:
     match_records = load_json_file(data_dir)
 
     teams: List[Team] = [Team(num, config) for num in team_numbers]
@@ -47,7 +43,29 @@ def _maketeams(
         team_num = match_record[GeneralFields.TeamNum.name]
         if team_num in team_numbers:
             team = [team for team in teams if team.num == team_num]
-            if not team:
+            if team:
+                try:
+                    team[0].add_match(match_record)
+                except Exception as e:
+                    printing.printf(
+                        "Unknown error in strategy request: ",
+                        style=printing.ERROR,
+                        log=True,
+                        logtag="Team.addline.error",
+                    )
+                    printing.printf(
+                        str(e),
+                        style=printing.ERROR,
+                        log=True,
+                        logtag="Team.addline.error",
+                    )
+                    printing.printf(
+                        "For match: " + str(match_record),
+                        style=printing.YELLOW,
+                        log=True,
+                        logtag="Team.addline.error",
+                    )
+            else:
                 printing.printf(
                     "Incomplete match record: ",
                     style=printing.ERROR,
@@ -56,27 +74,6 @@ def _maketeams(
                 )
                 printing.printf(
                     match_record,
-                    style=printing.YELLOW,
-                    log=True,
-                    logtag="Team.addline.error",
-                )
-            try:
-                team[0].add_match(match_record)
-            except Exception as e:
-                printing.printf(
-                    "Unknown error in strategy request: ",
-                    style=printing.ERROR,
-                    log=True,
-                    logtag="Team.addline.error",
-                )
-                printing.printf(
-                    str(e),
-                    style=printing.ERROR,
-                    log=True,
-                    logtag="Team.addline.error",
-                )
-                printing.printf(
-                    "For match: " + str(match_record),
                     style=printing.YELLOW,
                     log=True,
                     logtag="Team.addline.error",

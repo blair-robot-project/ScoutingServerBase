@@ -5,7 +5,7 @@ import sys
 
 from scoutingserver.config import load_config
 from scoutingserver.data import datactl
-from scoutingserver.data.gattctl import GattController
+from scoutingserver.data.bluetoothctl import BluetoothController
 from scoutingserver.interface import printing
 from scoutingserver.interface.header import print_header
 from scoutingserver.interface.input_handler import InputHandler
@@ -34,7 +34,7 @@ class Server:
         self.input_handler = InputHandler(self)
 
         self.data_controller = datactl.DataController(self.config, self.data_dir, drive)
-        self.gattcl = GattController(self.data_controller.on_receive, self.config)
+        self.bluetooth_ctl = BluetoothController(self.data_controller.on_receive, self.config)
 
         # self.tba = TBASaver(self.config.event_name)
 
@@ -47,7 +47,7 @@ class Server:
             log=True,
             logtag="server.main",
         )
-        self.gattcl.start()
+        self.bluetooth_ctl.start()
 
         while True:
             try:
@@ -56,7 +56,7 @@ class Server:
                 # Make sure everything made it into the data file
                 self.data_controller.update()
 
-                self.gattcl.stop()
+                self.bluetooth_ctl.stop()
 
                 log("server.main", "Server stopped")
                 log("server.main", "-" * 20)

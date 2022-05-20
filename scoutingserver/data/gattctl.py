@@ -7,7 +7,7 @@ from scoutingserver.config import EventConfig, FieldConfig, FieldType
 from scoutingserver.interface import printing
 
 
-class GattController:
+class BluetoothController:
     def __init__(
         self,
         on_receive: Callable[[dict, bleak.BleakClient], None],

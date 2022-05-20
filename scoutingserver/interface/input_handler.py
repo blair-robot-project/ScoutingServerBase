@@ -30,7 +30,7 @@ class InputHandler:
                 teams = args if not args else self.server.tba.teams_in_match(*args)
                 printing.printf(
                     strategy(teams, self.server.config, self.server.data_dir),
-                    style=printing.DATA_OUTPUT
+                    style=printing.DATA_OUTPUT,
                 )
             elif cmd == "s":
                 self.server.data_controller.drive_update_request()
