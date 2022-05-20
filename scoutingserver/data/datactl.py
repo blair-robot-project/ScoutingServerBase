@@ -7,7 +7,11 @@ from typing import Any, Dict, List
 from scoutingserver import dataconstants
 import scoutingserver.interface.printing as printing
 from scoutingserver.data import systemctl
-from scoutingserver.dataconstants import JSON_FILE_NAME, CSV_FILE_NAME, ALL_REVISIONS_CSV_FILE_NAME
+from scoutingserver.dataconstants import (
+    JSON_FILE_NAME,
+    CSV_FILE_NAME,
+    ALL_REVISIONS_CSV_FILE_NAME,
+)
 from scoutingserver.config import EventConfig, GeneralFields
 
 
@@ -64,7 +68,9 @@ class DataController:
             with open(os.path.join(self.data_dir, JSON_FILE_NAME), "w") as f:
                 json.dump(self.latest_revisions(), f)
             self._to_csv(self.latest_revisions(), CSV_FILE_NAME)
-            self._to_csv(self.match_records, ALL_REVISIONS_CSV_FILE_NAME, suppress_errors=True)
+            self._to_csv(
+                self.match_records, ALL_REVISIONS_CSV_FILE_NAME, suppress_errors=True
+            )
             self.data_changed = True
 
         csv_file_path = os.path.join(self.data_dir, CSV_FILE_NAME)
@@ -127,7 +133,7 @@ class DataController:
                 latest[match_name] = match
             elif latest[match_name][GeneralFields.Revision.name] < revision:
                 latest[match_name] = match
-        
+
         return latest.values()
 
     def drive_update_request(self):

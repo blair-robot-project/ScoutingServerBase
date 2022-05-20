@@ -78,10 +78,10 @@ class Team:
             return "{0:>4s}: ".format(self.num) + self.NO_DATA
 
         stats = self.calc_values()
-        get_extra_stats = (
-            scoring.calc_quick_stats if quick else scoring.calc_detailed_stats
-        )
-        stats.update(get_extra_stats())
+        if quick:
+            stats = scoring.calc_quick_stats(stats, self.total)
+        else:
+            stats = scoring.calc_detailed_stats(stats, self.total)
 
         field_names = sorted(stats.keys())
         return "\n".join(stats[field] for field in field_names)

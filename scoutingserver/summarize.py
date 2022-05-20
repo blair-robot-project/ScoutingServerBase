@@ -21,26 +21,23 @@ def strategy(alliances, config: EventConfig, data_dir: str, side=None):
 
     teams = _maketeams(teams_joined, config, data_dir)
 
-    d = list(map(lambda t: t.summary(), teams))
-    log("datactl.getdata", "/".join(d))
-    return (
-        teams[0].get_header()
-        + "\n"
-        + "\n".join(d[:all_size])
-        + "\n---\n"
-        + teams[all_size].get_header()
-        + "\n"
-        + "\n".join(d[all_size:])
-        + "\n===\n"
-        + "\n".join([t.get_team() + ": " + t.get_comments() for t in teams])
-    )
+    log("datactl.getdata", "/".join(t.summary(quick=True) for t in teams))
+    return "\n".join[
+        teams[0].get_header(),
+        "\n".join(d[:all_size]),
+        "---",
+        teams[all_size].get_header(),
+        "\n".join(d[all_size:]),
+        "===",
+        "\n".join([t.num + ": " + "\n\t".join(t.comments) for t in teams]),
+    ]
 
 
 def _maketeams(
     team_numbers,
     config: EventConfig,
     data_dir: str,
-):
+) -> List[Team]:
     match_records = load_json_file(data_dir)
 
     teams: List[Team] = [Team(num, config) for num in team_numbers]
@@ -57,7 +54,10 @@ def _maketeams(
                     logtag="Team.addline.error",
                 )
                 printing.printf(
-                    match_record, style=printing.YELLOW, log=True, logtag="Team.addline.error"
+                    match_record,
+                    style=printing.YELLOW,
+                    log=True,
+                    logtag="Team.addline.error",
                 )
             try:
                 team[0].add_match(match_record)

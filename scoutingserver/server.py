@@ -10,6 +10,7 @@ from scoutingserver.interface import printing
 from scoutingserver.interface.header import print_header
 from scoutingserver.interface.input_handler import InputHandler
 from scoutingserver.interface.logger import log
+
 # from scoutingserver.tba.tba_saver import TBASaver
 
 
@@ -22,7 +23,9 @@ class Server:
         if len(sys.argv) > 1:
             self.data_dir = sys.argv[1]
         else:
-            self.data_dir = input("Absolute data directory (e.g. '/home/user/Desktop') ")
+            self.data_dir = input(
+                "Absolute data directory (e.g. '/home/user/Desktop') "
+            )
         # The location of the removable device to copy data to
         drive = input("Flash drive location (e.g. 'D:') (default none) ") or None
 

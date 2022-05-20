@@ -1,26 +1,28 @@
-def calc_quick_stats(fields, fieldConfigs, total):
+from typing import Dict
+
+
+def calc_quick_stats(fields, total) -> Dict[str, str]:
     """
-    Calculate the most necessary year-specific stats
+    Calculate/filter the most necessary year-specific stats for a team
 
     Parameters:
     fields: A dictionary of the totals of some stats
-    fieldConfigs: A list of FieldConfigs for the fields dictionary
     total: How many matches have been played
 
-    Returns: A dictionary of extra stats
+    Returns: A dictionary of only the most important stats
     """
-    return {}
+    return fields
 
 
-def calc_detailed_stats(fields, fieldConfigs, total):
+def calc_detailed_stats(fields, total) -> Dict[str, str]:
     """
-    Calculate detailed year-specific stats
+    Calculate detailed year-specific stats for a team
 
     Parameters:
     fields: A dictionary of the totals of some stats
-    fieldConfigs: A list of FieldConfigs for the fields dictionary
     total: How many matches have been played
 
-    Returns: A dictionary of extra stats
+    Returns: A dictionary of the original stats augmented with extra stats
     """
-    return {}
+    fields.update({})
+    return fields
