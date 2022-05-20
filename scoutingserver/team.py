@@ -8,29 +8,18 @@ from scoutingserver import scoring
 
 # Stores and calculates data about a team, and outputs it in the format of the match strategy sheets
 class Team:
-    partner = True
-
     NO_DATA = "No data avalible"
 
-    def __init__(self, team, config: EventConfig, partner=True):
+    def __init__(self, num, config: EventConfig):
         self.total = 0
         self.config = config
 
-        self.team = team
+        self.num = num
         self.stats = {}
         self.comments: List[str] = []
 
-        self.set_partner(partner)
-
-    def set_partner(self, partner):
-        self.partner = partner
-        if partner:
-            self.strat_header, self.strat_form = self.ally_header, self.ally_form
-        else:
-            self.strat_header, self.strat_form = self.opp_header, self.opp_form
-
     def get_team(self):
-        return self.team
+        return self.num
 
     def get_header(self):
         return self.strat_header
@@ -59,7 +48,7 @@ class Team:
         self.comments.append(match[GeneralFields.Comments.name])
 
     def calc_values(self):
-        res = {"team": self.team}
+        res = {"team": self.num}
 
         field_configs = self.config.field_configs
         for field in field_configs:
@@ -86,7 +75,7 @@ class Team:
         quick: Whether the quick version should be given instead of the more detailed one.
         """
         if self.total == 0:
-            return "{0:>4s}: ".format(self.team) + self.NO_DATA
+            return "{0:>4s}: ".format(self.num) + self.NO_DATA
 
         stats = self.calc_values()
         get_extra_stats = (

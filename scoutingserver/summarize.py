@@ -1,3 +1,5 @@
+from typing import List
+
 from scoutingserver.interface import printing
 from scoutingserver.config import EventConfig, GeneralFields
 from scoutingserver.data.datactl import load_json_file
@@ -17,8 +19,7 @@ def strategy(alliances, config: EventConfig, data_dir: str, side=None):
 
     log("datactl.getdata", "Strategy data request for " + ", ".join(teams_joined))
 
-    opp_mask = slice(len(alliances[side]), None, None)
-    teams = _maketeams(teams_joined, config, data_dir, opp_mask)
+    teams = _maketeams(teams_joined, config, data_dir)
 
     d = list(map(lambda t: t.summary(), teams))
     log("datactl.getdata", "/".join(d))
@@ -39,50 +40,46 @@ def _maketeams(
     team_numbers,
     config: EventConfig,
     data_dir: str,
-    opponent_mask=slice(0, 0, None),
 ):
-    data = load_json_file(data_dir)
+    match_records = load_json_file(data_dir)
 
-    teams = [Team(t, config) for i, t in enumerate(team_numbers)]
-    list(map(lambda t: t.set_partner(False), teams[opponent_mask]))
+    teams: List[Team] = [Team(num, config) for num in team_numbers]
 
-    for device in data.values():
-        for match in device.values():
-            m = match[max(match.keys(), key=int)]
-            t = m[GeneralFields.TeamNumber.name]
-            if t in team_numbers:
-                try:
-                    teams[team_numbers.index(t)].add_match(m)
-                except IndexError as e:
-                    printing.printf(
-                        "Incomplete match in data: ",
-                        style=printing.ERROR,
-                        log=True,
-                        logtag="Team.addline.error",
-                    )
-                    printing.printf(
-                        m, style=printing.YELLOW, log=True, logtag="Team.addline.error"
-                    )
-                    log("Team.addline.error", str(e))
-                except Exception as e:
-                    printing.printf(
-                        "Unknown error in strategy request: ",
-                        style=printing.ERROR,
-                        log=True,
-                        logtag="Team.addline.error",
-                    )
-                    printing.printf(
-                        str(e),
-                        style=printing.ERROR,
-                        log=True,
-                        logtag="Team.addline.error",
-                    )
-                    printing.printf(
-                        "For match: " + str(m),
-                        style=printing.YELLOW,
-                        log=True,
-                        logtag="Team.addline.error",
-                    )
+    for match_record in match_records:
+        team_num = match_record[GeneralFields.TeamNum.name]
+        if team_num in team_numbers:
+            team = [team for team in teams if team.num == team_num]
+            if not team:
+                printing.printf(
+                    "Incomplete match record: ",
+                    style=printing.ERROR,
+                    log=True,
+                    logtag="Team.addline.error",
+                )
+                printing.printf(
+                    match_record, style=printing.YELLOW, log=True, logtag="Team.addline.error"
+                )
+            try:
+                team[0].add_match(match_record)
+            except Exception as e:
+                printing.printf(
+                    "Unknown error in strategy request: ",
+                    style=printing.ERROR,
+                    log=True,
+                    logtag="Team.addline.error",
+                )
+                printing.printf(
+                    str(e),
+                    style=printing.ERROR,
+                    log=True,
+                    logtag="Team.addline.error",
+                )
+                printing.printf(
+                    "For match: " + str(match_record),
+                    style=printing.YELLOW,
+                    log=True,
+                    logtag="Team.addline.error",
+                )
     return teams
 
 

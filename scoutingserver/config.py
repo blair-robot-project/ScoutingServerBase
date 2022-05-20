@@ -79,14 +79,19 @@ class FieldConfig:
 class GeneralFields:
     """Configs for fields that will be sent each year"""
 
-    MatchName = FieldConfig(
-        "matchName", FieldType.TEXT, "a3c1723b-b439-43f0-a2b0-acb724c64528"
+    MatchNum = FieldConfig(
+        "MatchNum",
+        FieldType.NUM,
+        "a3c1723b-b439-43f0-a2b0-acb724c64528",
+        min=1,
+        max=300,
+        inc=1,
     )
     RecorderName = FieldConfig(
         "recorderName", FieldType.TEXT, "63b525ee-5c90-4775-b9d8-2b2de19d43c3"
     )
-    TeamNumber = FieldConfig(
-        "teamNumber",
+    TeamNum = FieldConfig(
+        "TeamNum",
         FieldType.NUM,
         "dce8aaf2-12e3-43c2-a915-fdf6750981fa",
         min=0,
