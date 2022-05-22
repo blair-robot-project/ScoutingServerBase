@@ -95,6 +95,9 @@ class GeneralFields:
         max=300,
         inc=1,
     )
+    Synced = _gen_field_config(
+        "synced", FieldType.BOOL, "1a90e4f9-0310-4ce8-9d18-d460e9661f5b"
+    )
     RecorderName = _gen_field_config(
         "recorderName", FieldType.TEXT, "63b525ee-5c90-4775-b9d8-2b2de19d43c3"
     )
